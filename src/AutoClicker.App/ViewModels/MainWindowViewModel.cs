@@ -15,7 +15,10 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IProfileRepository _profileRepository;
     private readonly ClickSequenceExecutor _executor;
+    private readonly IGlobalInputListener _globalListener;
     private readonly IScreenInfoProvider _screenInfoProvider;
+    private readonly object _hotkeySubscriberId = new();
+    private ClickProfile? _lastStartedProfile;
 
     public Window? OwnerWindow { get; set; }
 
@@ -40,10 +43,14 @@ public partial class MainWindowViewModel : ObservableObject
     {
         _profileRepository = profileRepository;
         _executor = executor;
+        _globalListener = globalListener;
         _screenInfoProvider = screenInfoProvider;
         _executor.StatusChanged += OnStatusChanged;
+        _executor.ResolutionChangedDuringRun += OnResolutionChangedDuringRun;
+        _globalListener.HotkeyPressed += OnGlobalHotkeyPressed;
 
         Editor = new ProfileEditorViewModel(globalListener, screenInfoProvider);
+        Editor.HotkeyChanged += hotkey => _globalListener.RegisterHotkey(hotkey, _hotkeySubscriberId);
     }
 
     public async Task InitializeAsync()
@@ -116,11 +123,41 @@ public partial class MainWindowViewModel : ObservableObject
             }
         }
 
+        _lastStartedProfile = profile;
         await _executor.StartAsync(profile);
     }
 
     [RelayCommand]
     private void Stop() => _executor.Stop();
+
+    private void OnGlobalHotkeyPressed(object? sender, GlobalHotkeyEventArgs e)
+    {
+        if (!Equals(e.SubscriberId, _hotkeySubscriberId)) return;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (IsRunning) StopCommand.Execute(null);
+            else StartCommand.Execute(null);
+        });
+    }
+
+    private void OnResolutionChangedDuringRun(object? sender, ResolutionChangedEventArgs e)
+    {
+        Dispatcher.UIThread.Post(async () =>
+        {
+            StatusText = "Zastaveno – změnilo se rozlišení obrazovky";
+
+            var choice = await ShowResolutionMismatchDialogAsync(e.Previous, e.Current);
+            if (choice == ResolutionMismatchChoice.Cancel || _lastStartedProfile is null) return;
+
+            var profile = choice == ResolutionMismatchChoice.Rescale
+                ? ProfileRescaler.Rescale(_lastStartedProfile, e.Previous, e.Current)
+                : _lastStartedProfile with { CapturedScreenSnapshot = e.Current };
+
+            _lastStartedProfile = profile;
+            await _executor.StartAsync(profile);
+        });
+    }
 
     private Task<ResolutionMismatchChoice> ShowResolutionMismatchDialogAsync(ScreenSnapshot from, ScreenSnapshot to)
     {
@@ -142,12 +179,8 @@ public partial class MainWindowViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>
         {
             IsRunning = e.Status == EngineStatus.Running;
-            StatusText = e.Status switch
-            {
-                EngineStatus.Running => "Běží",
-                EngineStatus.Stopped => "Zastaveno",
-                _ => "Nečinný"
-            };
+            if (e.Status == EngineStatus.Running) StatusText = "Běží";
+            else if (e.Status == EngineStatus.Stopped && StatusText != "Zastaveno – změnilo se rozlišení obrazovky") StatusText = "Zastaveno";
         });
     }
 }

@@ -13,6 +13,7 @@ public partial class ProfileEditorViewModel : ObservableObject
     private readonly IGlobalInputListener _globalListener;
     private readonly IScreenInfoProvider _screenInfoProvider;
     private IDisposable? _activeCapture;
+    private HotkeyConfig _hotkey = new();
 
     public Guid ProfileId { get; private set; } = Guid.NewGuid();
 
@@ -23,22 +24,49 @@ public partial class ProfileEditorViewModel : ObservableObject
     private SequenceOrderMode _orderMode = SequenceOrderMode.Sequential;
 
     [ObservableProperty]
-    private int _baseIntervalMs = 500;
+    private decimal _baseIntervalMs = 500;
 
     [ObservableProperty]
-    private int _jitterMs = 50;
+    private decimal _jitterMs = 50;
 
     [ObservableProperty]
     private RepeatMode _repeat = RepeatMode.Infinite;
 
     [ObservableProperty]
-    private int _repeatCount = 1;
+    private decimal _repeatCount = 1;
 
     [ObservableProperty]
     private bool _isCapturingPoint;
 
     [ObservableProperty]
     private SequenceStepViewModel? _selectedStep;
+
+    [ObservableProperty]
+    private bool _humanizationEnabled;
+
+    [ObservableProperty]
+    private decimal _positionJitterRadiusPx = 4;
+
+    [ObservableProperty]
+    private bool _useCurvedMovement = true;
+
+    [ObservableProperty]
+    private decimal _movementDurationMsMin = 120;
+
+    [ObservableProperty]
+    private decimal _movementDurationMsMax = 380;
+
+    [ObservableProperty]
+    private decimal _curveBowStrengthPercent = 25;
+
+    [ObservableProperty]
+    private decimal _overshootChancePercent = 8;
+
+    [ObservableProperty]
+    private string _hotkeyDisplayText = "F6";
+
+    [ObservableProperty]
+    private bool _isCapturingHotkey;
 
     public ObservableCollection<SequenceStepViewModel> Steps { get; } = new();
 
@@ -47,10 +75,15 @@ public partial class ProfileEditorViewModel : ObservableObject
     public IReadOnlyList<SequenceOrderMode> OrderModeValues { get; } = Enum.GetValues<SequenceOrderMode>();
     public IReadOnlyList<RepeatMode> RepeatModeValues { get; } = Enum.GetValues<RepeatMode>();
 
+    /// <summary>Vyvoláno při načtení profilu i po zachycení nové kombinace, ať MainWindowViewModel může přeregistrovat globální hotkey.</summary>
+    public event Action<HotkeyConfig>? HotkeyChanged;
+
     public ProfileEditorViewModel(IGlobalInputListener globalListener, IScreenInfoProvider screenInfoProvider)
     {
         _globalListener = globalListener;
         _screenInfoProvider = screenInfoProvider;
+        _hotkey = new HotkeyConfig();
+        HotkeyDisplayText = FormatHotkey(_hotkey);
     }
 
     public void LoadFrom(ClickProfile profile)
@@ -63,6 +96,18 @@ public partial class ProfileEditorViewModel : ObservableObject
         Repeat = profile.Timing.Repeat;
         RepeatCount = profile.Timing.RepeatCount;
         CapturedScreenSnapshot = profile.CapturedScreenSnapshot;
+
+        HumanizationEnabled = profile.Humanization.Enabled;
+        PositionJitterRadiusPx = (decimal)profile.Humanization.PositionJitterRadiusPx;
+        UseCurvedMovement = profile.Humanization.UseCurvedMovement;
+        MovementDurationMsMin = profile.Humanization.MovementDurationMsMin;
+        MovementDurationMsMax = profile.Humanization.MovementDurationMsMax;
+        CurveBowStrengthPercent = (decimal)(profile.Humanization.CurveBowStrength * 100);
+        OvershootChancePercent = (decimal)(profile.Humanization.OvershootChance * 100);
+
+        _hotkey = profile.StartStopHotkey;
+        HotkeyDisplayText = FormatHotkey(_hotkey);
+        HotkeyChanged?.Invoke(_hotkey);
 
         Steps.Clear();
         var order = profile.CustomOrder is { Count: > 0 }
@@ -82,6 +127,16 @@ public partial class ProfileEditorViewModel : ObservableObject
         Repeat = RepeatMode.Infinite;
         RepeatCount = 1;
         CapturedScreenSnapshot = null;
+        HumanizationEnabled = false;
+        PositionJitterRadiusPx = 4;
+        UseCurvedMovement = true;
+        MovementDurationMsMin = 120;
+        MovementDurationMsMax = 380;
+        CurveBowStrengthPercent = 25;
+        OvershootChancePercent = 8;
+        _hotkey = new HotkeyConfig();
+        HotkeyDisplayText = FormatHotkey(_hotkey);
+        HotkeyChanged?.Invoke(_hotkey);
         Steps.Clear();
         SelectedStep = null;
     }
@@ -95,18 +150,29 @@ public partial class ProfileEditorViewModel : ObservableObject
         CustomOrder = Steps.Select(s => s.Id).ToList(),
         Timing = new TimingConfig
         {
-            BaseIntervalMs = BaseIntervalMs,
-            JitterMs = JitterMs,
+            BaseIntervalMs = (int)BaseIntervalMs,
+            JitterMs = (int)JitterMs,
             Repeat = Repeat,
-            RepeatCount = RepeatCount
+            RepeatCount = (int)RepeatCount
         },
+        Humanization = new HumanizationConfig
+        {
+            Enabled = HumanizationEnabled,
+            PositionJitterRadiusPx = (double)PositionJitterRadiusPx,
+            UseCurvedMovement = UseCurvedMovement,
+            MovementDurationMsMin = (int)MovementDurationMsMin,
+            MovementDurationMsMax = (int)Math.Max(MovementDurationMsMin, MovementDurationMsMax),
+            CurveBowStrength = (double)(CurveBowStrengthPercent / 100),
+            OvershootChance = (double)(OvershootChancePercent / 100)
+        },
+        StartStopHotkey = _hotkey,
         CapturedScreenSnapshot = currentSnapshot ?? CapturedScreenSnapshot
     };
 
     [RelayCommand]
     private void AddPoint()
     {
-        if (IsCapturingPoint) return;
+        if (IsCapturingPoint || IsCapturingHotkey) return;
 
         IsCapturingPoint = true;
         _activeCapture = _globalListener.CaptureNextClick(point =>
@@ -133,6 +199,33 @@ public partial class ProfileEditorViewModel : ObservableObject
         _activeCapture?.Dispose();
         _activeCapture = null;
         IsCapturingPoint = false;
+    }
+
+    [RelayCommand]
+    private void SetHotkey()
+    {
+        if (IsCapturingHotkey || IsCapturingPoint) return;
+
+        IsCapturingHotkey = true;
+        _activeCapture = _globalListener.CaptureNextHotkey(hotkey =>
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                _hotkey = hotkey;
+                HotkeyDisplayText = FormatHotkey(hotkey);
+                HotkeyChanged?.Invoke(hotkey);
+                IsCapturingHotkey = false;
+                _activeCapture = null;
+            });
+        });
+    }
+
+    [RelayCommand]
+    private void CancelHotkeyCapture()
+    {
+        _activeCapture?.Dispose();
+        _activeCapture = null;
+        IsCapturingHotkey = false;
     }
 
     [RelayCommand]
@@ -168,5 +261,11 @@ public partial class ProfileEditorViewModel : ObservableObject
     private void RenumberSteps()
     {
         for (int i = 0; i < Steps.Count; i++) Steps[i].StepNumber = i + 1;
+    }
+
+    private static string FormatHotkey(HotkeyConfig hotkey)
+    {
+        var parts = hotkey.Modifiers.Select(m => m.ToString()).Append(hotkey.MainKey.ToString());
+        return string.Join("+", parts);
     }
 }

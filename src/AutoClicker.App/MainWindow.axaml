@@ -60,6 +60,41 @@
                                IsVisible="{Binding IsCapturingPoint}" FontStyle="Italic" />
                 </StackPanel>
 
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Globální zkratka start/stop:" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding HotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" />
+                    <Button Content="Nastavit" Command="{Binding SetHotkeyCommand}" IsEnabled="{Binding !IsCapturingHotkey}" />
+                    <Button Content="Zrušit" Command="{Binding CancelHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingHotkey}" />
+                    <TextBlock Text="Stiskni kombinaci kláves…" VerticalAlignment="Center"
+                               IsVisible="{Binding IsCapturingHotkey}" FontStyle="Italic" />
+                </StackPanel>
+
+                <Expander Header="Humanizace (anti-detekční mód)">
+                    <StackPanel Spacing="8" Margin="0,8,0,0">
+                        <CheckBox Content="Zapnout humanizaci" IsChecked="{Binding HumanizationEnabled}" />
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8"
+                              IsEnabled="{Binding HumanizationEnabled}">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Rozptyl pozice (px):" VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding PositionJitterRadiusPx}" Minimum="0" Maximum="200" />
+
+                            <CheckBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Content="Zakřivený pohyb kurzoru"
+                                      IsChecked="{Binding UseCurvedMovement}" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Pohyb min (ms):" VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding MovementDurationMsMin}" Minimum="10" Maximum="5000" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Pohyb max (ms):" VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding MovementDurationMsMax}" Minimum="10" Maximum="5000" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Prohnutí křivky (%):" VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding CurveBowStrengthPercent}" Minimum="0" Maximum="100" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="Šance na 'overshoot' (%):" VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="3" Value="{Binding OvershootChancePercent}" Minimum="0" Maximum="100" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
                 <Border Height="1" Background="Gray" Margin="0,4" />
             </StackPanel>
 

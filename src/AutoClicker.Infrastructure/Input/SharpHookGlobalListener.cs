@@ -12,6 +12,7 @@ public sealed class SharpHookGlobalListener : IGlobalInputListener, IDisposable
     private readonly HashSet<KeyCode> _pressedKeys = new();
     private readonly ConcurrentDictionary<object, (HotkeyConfig Config, bool Triggered)> _hotkeys = new();
     private Action<ScreenPoint>? _pendingCaptureCallback;
+    private Action<HotkeyConfig>? _pendingHotkeyCaptureCallback;
 
     public event EventHandler<GlobalHotkeyEventArgs>? HotkeyPressed;
 
@@ -38,9 +39,30 @@ public sealed class SharpHookGlobalListener : IGlobalInputListener, IDisposable
         return new CaptureCancellation(() => _pendingCaptureCallback = null);
     }
 
+    public IDisposable CaptureNextHotkey(Action<HotkeyConfig> onCaptured)
+    {
+        _pendingHotkeyCaptureCallback = onCaptured;
+        return new CaptureCancellation(() => _pendingHotkeyCaptureCallback = null);
+    }
+
     private void OnKeyPressed(object? sender, KeyboardHookEventArgs e)
     {
         lock (_pressedKeys) _pressedKeys.Add(e.Data.KeyCode);
+
+        if (_pendingHotkeyCaptureCallback is not null && TryMapMainKey(e.Data.KeyCode, out var mainKey))
+        {
+            HashSet<KeyCode> snapshot;
+            lock (_pressedKeys) snapshot = new HashSet<KeyCode>(_pressedKeys);
+
+            var modifiers = new List<HookKeyCode>();
+            if (snapshot.Contains(KeyCode.VcLeftControl) || snapshot.Contains(KeyCode.VcRightControl)) modifiers.Add(HookKeyCode.Ctrl);
+            if (snapshot.Contains(KeyCode.VcLeftAlt) || snapshot.Contains(KeyCode.VcRightAlt)) modifiers.Add(HookKeyCode.Alt);
+            if (snapshot.Contains(KeyCode.VcLeftShift) || snapshot.Contains(KeyCode.VcRightShift)) modifiers.Add(HookKeyCode.Shift);
+            if (snapshot.Contains(KeyCode.VcLeftMeta) || snapshot.Contains(KeyCode.VcRightMeta)) modifiers.Add(HookKeyCode.Meta);
+
+            var callback = Interlocked.Exchange(ref _pendingHotkeyCaptureCallback, null);
+            callback?.Invoke(new HotkeyConfig { Modifiers = modifiers, MainKey = mainKey });
+        }
 
         foreach (var (id, entry) in _hotkeys)
         {
@@ -141,6 +163,24 @@ public sealed class SharpHookGlobalListener : IGlobalInputListener, IDisposable
         HookKeyCode.Tab => KeyCode.VcTab,
         _ => throw new ArgumentOutOfRangeException(nameof(key))
     };
+
+    private static readonly HookKeyCode[] MainKeyCandidates = Enum.GetValues<HookKeyCode>()
+        .Where(k => k is not (HookKeyCode.Ctrl or HookKeyCode.Alt or HookKeyCode.Shift or HookKeyCode.Meta))
+        .ToArray();
+
+    private static bool TryMapMainKey(KeyCode code, out HookKeyCode mainKey)
+    {
+        foreach (var candidate in MainKeyCandidates)
+        {
+            if (ToSharpHook(candidate) == code)
+            {
+                mainKey = candidate;
+                return true;
+            }
+        }
+        mainKey = default;
+        return false;
+    }
 
     public void Dispose() => _hook.Dispose();
 

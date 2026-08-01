@@ -15,8 +15,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        var executor = new ClickSequenceExecutor(new SharpHookInputSimulator());
         var screenInfoProvider = new AvaloniaScreenInfoProvider(this);
+        var executor = new ClickSequenceExecutor(new SharpHookInputSimulator(), screenInfoProvider: screenInfoProvider);
         var viewModel = new MainWindowViewModel(
             new JsonProfileRepository(),
             executor,

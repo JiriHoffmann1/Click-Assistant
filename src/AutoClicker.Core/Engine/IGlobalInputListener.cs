@@ -17,6 +17,9 @@ public interface IGlobalInputListener
     /// <summary>Zaregistruje jednorázový callback na příští globální kliknutí myší (pro "Přidat bod").</summary>
     IDisposable CaptureNextClick(Action<ScreenPoint> onCaptured);
 
+    /// <summary>Zaregistruje jednorázový callback na příští stisknutou kombinaci kláves (pro nastavení hotkey).</summary>
+    IDisposable CaptureNextHotkey(Action<HotkeyConfig> onCaptured);
+
     void Start();
     void Stop();
 }

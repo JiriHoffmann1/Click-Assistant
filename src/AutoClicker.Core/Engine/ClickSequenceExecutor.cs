@@ -1,26 +1,36 @@
 using AutoClicker.Core.Engine.Jitter;
+using AutoClicker.Core.Engine.Movement;
 using AutoClicker.Core.Engine.PointOrderStrategies;
 using AutoClicker.Core.Models;
+using AutoClicker.Core.Screen;
 
 namespace AutoClicker.Core.Engine;
 
 /// <summary>
-/// Rovný pohyb kurzoru bez humanizace (ta přibývá ve Fázi 3), ale podporuje více bodů,
-/// volitelné pořadí a jitter intervalu.
+/// Klikací smyčka: podporuje více bodů, volitelné pořadí, jitter intervalu a volitelnou
+/// humanizaci (jitter pozice kliku + Bézierův pohyb kurzoru mezi body).
 /// </summary>
 public sealed class ClickSequenceExecutor
 {
     private readonly IInputSimulator _simulator;
+    private readonly IMovementPathGenerator _movementGenerator;
+    private readonly IScreenInfoProvider? _screenInfoProvider;
     private CancellationTokenSource? _cts;
 
     public event EventHandler<EngineStatusEventArgs>? StatusChanged;
     public event EventHandler<ClickPoint>? PointClicked;
+    public event EventHandler<ResolutionChangedEventArgs>? ResolutionChangedDuringRun;
 
     public bool IsRunning => _cts is { IsCancellationRequested: false };
 
-    public ClickSequenceExecutor(IInputSimulator simulator)
+    public ClickSequenceExecutor(
+        IInputSimulator simulator,
+        IMovementPathGenerator? movementGenerator = null,
+        IScreenInfoProvider? screenInfoProvider = null)
     {
         _simulator = simulator;
+        _movementGenerator = movementGenerator ?? new BezierMovementPathGenerator();
+        _screenInfoProvider = screenInfoProvider;
     }
 
     public Task StartAsync(ClickProfile profile)
@@ -41,6 +51,7 @@ public sealed class ClickSequenceExecutor
         var rng = new Random();
         int cyclesRun = 0;
         Guid? lastPointId = null;
+        ScreenPoint? lastCursorPos = profile.Points.Count > 0 ? profile.Points[0].Location : null;
 
         RaiseStatus(EngineStatus.Running);
         try
@@ -59,7 +70,7 @@ public sealed class ClickSequenceExecutor
                 foreach (var point in order)
                 {
                     token.ThrowIfCancellationRequested();
-                    await ExecuteSinglePointAsync(point, token);
+                    lastCursorPos = await ExecuteSinglePointAsync(point, profile.Humanization, lastCursorPos, rng, token);
                     PointClicked?.Invoke(this, point);
                     lastPointId = point.Id;
 
@@ -71,6 +82,8 @@ public sealed class ClickSequenceExecutor
                 cyclesRun++;
                 if (profile.Timing.Repeat == RepeatMode.Once) break;
                 if (profile.Timing.Repeat == RepeatMode.FixedCount && cyclesRun >= profile.Timing.RepeatCount) break;
+
+                if (CheckResolutionChanged(profile)) break;
             }
         }
         catch (OperationCanceledException)
@@ -83,9 +96,38 @@ public sealed class ClickSequenceExecutor
         }
     }
 
-    private async Task ExecuteSinglePointAsync(ClickPoint point, CancellationToken token)
+    private bool CheckResolutionChanged(ClickProfile profile)
     {
-        _simulator.MoveMouse(point.Location);
+        if (_screenInfoProvider is null || profile.CapturedScreenSnapshot is not { } captured) return false;
+
+        var current = _screenInfoProvider.GetCurrentSnapshot();
+        if (captured.IsCompatibleWith(current)) return false;
+
+        ResolutionChangedDuringRun?.Invoke(this, new ResolutionChangedEventArgs(captured, current));
+        return true;
+    }
+
+    private async Task<ScreenPoint> ExecuteSinglePointAsync(
+        ClickPoint point, HumanizationConfig humanization, ScreenPoint? lastCursorPos, Random rng, CancellationToken token)
+    {
+        var target = humanization.Enabled
+            ? PositionJitter.Apply(point.Location, humanization.PositionJitterRadiusPx, rng)
+            : point.Location;
+
+        if (humanization.Enabled && humanization.UseCurvedMovement && lastCursorPos is { } from)
+        {
+            var path = _movementGenerator.GeneratePath(from, target, humanization, rng);
+            foreach (var (pathPoint, stepDelayMs) in path)
+            {
+                token.ThrowIfCancellationRequested();
+                _simulator.MoveMouse(pathPoint);
+                await CancellableDelay(stepDelayMs, token);
+            }
+        }
+        else
+        {
+            _simulator.MoveMouse(target);
+        }
 
         for (int i = 0; i < point.ClickCount; i++)
         {
@@ -95,6 +137,8 @@ public sealed class ClickSequenceExecutor
             _simulator.MouseUp(point.Button);
             if (point.ClickCount > 1) await CancellableDelay(80, token);
         }
+
+        return target;
     }
 
     private static Task CancellableDelay(int ms, CancellationToken token) =>
