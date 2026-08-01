@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AutoClicker.Core\AutoClicker.Core.csproj" />
+    <ProjectReference Include="..\..\src\AutoClicker.Infrastructure\AutoClicker.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

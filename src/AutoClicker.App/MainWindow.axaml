@@ -3,34 +3,67 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AutoClicker.App.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="300"
+        xmlns:views="using:AutoClicker.App.Views"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="AutoClicker.App.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="AutoClicker"
-        Width="420" Height="300">
-    <Design.DataContext>
-        <vm:MainWindowViewModel />
-    </Design.DataContext>
+        Width="900" Height="600">
 
-    <StackPanel Margin="20" Spacing="12">
-        <TextBlock Text="AutoClicker – Fáze 1 (jeden bod)" FontWeight="Bold" FontSize="16" />
+    <Grid ColumnDefinitions="220,*" Margin="14">
+        <!-- Seznam profilů -->
+        <DockPanel Grid.Column="0" Margin="0,0,10,0">
+            <TextBlock DockPanel.Dock="Top" Text="Profily" FontWeight="Bold" Margin="0,0,0,8" />
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
+                <Button Content="Nový" Command="{Binding NewProfileCommand}" />
+                <Button Content="Smazat" Command="{Binding DeleteProfileCommand}" />
+            </StackPanel>
+            <ListBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
 
-        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="X:" VerticalAlignment="Center" />
-            <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding PointX}" Minimum="0" Maximum="10000" />
+        <!-- Editor profilu + ovládání -->
+        <DockPanel Grid.Column="1">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,12">
+                <Button Content="Uložit profil" Command="{Binding SaveProfileCommand}" />
+                <Button Content="Start" Command="{Binding StartCommand}" IsEnabled="{Binding !IsRunning}" />
+                <Button Content="Stop" Command="{Binding StopCommand}" IsEnabled="{Binding IsRunning}" />
+                <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+            </StackPanel>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Y:" VerticalAlignment="Center" />
-            <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding PointY}" Minimum="0" Maximum="10000" />
+            <StackPanel DockPanel.Dock="Top" Spacing="10" DataContext="{Binding Editor}" x:DataType="vm:ProfileEditorViewModel">
+                <TextBox Text="{Binding Name}" Watermark="Název profilu" FontSize="16" FontWeight="Bold" />
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Interval (ms):" VerticalAlignment="Center" />
-            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding IntervalMs}" Minimum="10" Maximum="600000" />
-        </Grid>
+                <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Pořadí:" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="{Binding OrderMode}" ItemsSource="{Binding OrderModeValues}" />
 
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Content="Start" Command="{Binding StartCommand}" IsEnabled="{Binding !IsRunning}" />
-            <Button Content="Stop" Command="{Binding StopCommand}" IsEnabled="{Binding IsRunning}" />
-        </StackPanel>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Opakování:" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="0" Grid.Column="3" SelectedItem="{Binding Repeat}" ItemsSource="{Binding RepeatModeValues}" />
 
-        <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" />
-    </StackPanel>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Interval (ms):" VerticalAlignment="Center" />
+                    <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding BaseIntervalMs}" Minimum="10" Maximum="600000" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Jitter (± ms):" VerticalAlignment="Center" />
+                    <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding JitterMs}" Minimum="0" Maximum="60000" />
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Přidat bod" Command="{Binding AddPointCommand}" IsEnabled="{Binding !IsCapturingPoint}" />
+                    <Button Content="Zrušit výběr bodu" Command="{Binding CancelCaptureCommand}" IsVisible="{Binding IsCapturingPoint}" />
+                    <TextBlock Text="Klikni kamkoliv na obrazovku pro zachycení bodu…" VerticalAlignment="Center"
+                               IsVisible="{Binding IsCapturingPoint}" FontStyle="Italic" />
+                </StackPanel>
+
+                <Border Height="1" Background="Gray" Margin="0,4" />
+            </StackPanel>
+
+            <views:SequenceTimelineView DataContext="{Binding Editor}" />
+        </DockPanel>
+    </Grid>
 </Window>

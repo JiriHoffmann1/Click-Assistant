@@ -1,11 +1,12 @@
+using AutoClicker.Core.Engine.Jitter;
 using AutoClicker.Core.Engine.PointOrderStrategies;
 using AutoClicker.Core.Models;
 
 namespace AutoClicker.Core.Engine;
 
 /// <summary>
-/// Fáze 1: rovný pohyb kurzoru bez humanizace, jen sekvenční pořadí. Rozšiřuje se
-/// v dalších fázích (jitter, Bézierův pohyb, Random/CustomOrder).
+/// Rovný pohyb kurzoru bez humanizace (ta přibývá ve Fázi 3), ale podporuje více bodů,
+/// volitelné pořadí a jitter intervalu.
 /// </summary>
 public sealed class ClickSequenceExecutor
 {
@@ -36,22 +37,34 @@ public sealed class ClickSequenceExecutor
 
     private async Task RunLoopAsync(ClickProfile profile, CancellationToken token)
     {
-        var orderStrategy = new SequentialOrderStrategy();
+        var orderStrategy = PointOrderStrategyFactory.Create(profile.OrderMode);
         var rng = new Random();
         int cyclesRun = 0;
+        Guid? lastPointId = null;
 
         RaiseStatus(EngineStatus.Running);
         try
         {
             while (!token.IsCancellationRequested)
             {
-                foreach (var point in orderStrategy.GetOrder(profile.Points, profile.CustomOrder, rng))
+                var order = orderStrategy.GetOrder(profile.Points, profile.CustomOrder, rng).ToList();
+
+                // U "bez okamžitého opakování" prohodit první bod, pokud navazuje na poslední bod minulého cyklu.
+                if (profile.OrderMode == SequenceOrderMode.RandomNoImmediateRepeat && order.Count > 1
+                    && lastPointId.HasValue && order[0].Id == lastPointId)
+                {
+                    (order[0], order[1]) = (order[1], order[0]);
+                }
+
+                foreach (var point in order)
                 {
                     token.ThrowIfCancellationRequested();
                     await ExecuteSinglePointAsync(point, token);
                     PointClicked?.Invoke(this, point);
+                    lastPointId = point.Id;
 
-                    var delay = point.DelayAfterMsOverride ?? profile.Timing.BaseIntervalMs;
+                    var baseDelay = point.DelayAfterMsOverride ?? profile.Timing.BaseIntervalMs;
+                    var delay = TimingJitter.Compute(baseDelay, profile.Timing.JitterMs, rng);
                     await CancellableDelay(delay, token);
                 }
 

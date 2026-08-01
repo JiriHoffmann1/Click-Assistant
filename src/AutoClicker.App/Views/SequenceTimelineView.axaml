@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AutoClicker.App.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="300"
+             x:Class="AutoClicker.App.Views.SequenceTimelineView"
+             x:DataType="vm:ProfileEditorViewModel"
+             x:Name="Root">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding Steps}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="10" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SequenceStepViewModel">
+                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Width="190">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="{Binding StepNumber, StringFormat='Krok {0}'}" FontWeight="Bold" />
+                            <TextBox Text="{Binding Name}" Watermark="Název bodu" />
+
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="6" RowSpacing="4">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="X:" VerticalAlignment="Center" />
+                                <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding X}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Y:" VerticalAlignment="Center" />
+                                <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Y}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="Počet kliků:" VerticalAlignment="Center" />
+                                <NumericUpDown Value="{Binding ClickCount}" Minimum="1" Maximum="10" Width="90" ShowButtonSpinner="False" />
+                            </StackPanel>
+
+                            <CheckBox Content="Vlastní prodleva po kliku" IsChecked="{Binding UseCustomDelay}" />
+                            <NumericUpDown Value="{Binding DelayAfterMs}" Minimum="10" Maximum="600000"
+                                            IsEnabled="{Binding UseCustomDelay}" ShowButtonSpinner="False" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                                <Button Content="↑" Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).MoveStepUpCommand}" CommandParameter="{Binding}" />
+                                <Button Content="↓" Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).MoveStepDownCommand}" CommandParameter="{Binding}" />
+                                <Button Content="✕" Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).RemoveStepCommand}" CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>
