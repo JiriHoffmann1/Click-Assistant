@@ -21,4 +21,8 @@
     <ProjectReference Include="..\AutoClicker.Core\AutoClicker.Core.csproj" />
     <ProjectReference Include="..\AutoClicker.Infrastructure\AutoClicker.Infrastructure.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
 </Project>

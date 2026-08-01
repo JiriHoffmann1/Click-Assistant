@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using Avalonia;
 using Avalonia.Threading;
 using AutoClicker.Core.Engine;
 using AutoClicker.Core.Models;
@@ -10,6 +12,9 @@ namespace AutoClicker.App.ViewModels;
 
 public partial class ProfileEditorViewModel : ObservableObject
 {
+    public const double MapWidth = 380;
+    public const double MapHeight = 200;
+
     private readonly IGlobalInputListener _globalListener;
     private readonly IScreenInfoProvider _screenInfoProvider;
     private IDisposable? _activeCapture;
@@ -70,6 +75,9 @@ public partial class ProfileEditorViewModel : ObservableObject
 
     public ObservableCollection<SequenceStepViewModel> Steps { get; } = new();
 
+    public ObservableCollection<MapMonitorRectViewModel> MapMonitorRects { get; } = new();
+    public ObservableCollection<Point> MapPolylinePoints { get; } = new();
+
     public ScreenSnapshot? CapturedScreenSnapshot { get; private set; }
 
     public IReadOnlyList<SequenceOrderMode> OrderModeValues { get; } = Enum.GetValues<SequenceOrderMode>();
@@ -109,11 +117,11 @@ public partial class ProfileEditorViewModel : ObservableObject
         HotkeyDisplayText = FormatHotkey(_hotkey);
         HotkeyChanged?.Invoke(_hotkey);
 
-        Steps.Clear();
+        ClearSteps();
         var order = profile.CustomOrder is { Count: > 0 }
             ? profile.CustomOrder.Select(id => profile.Points.FirstOrDefault(p => p.Id == id)).Where(p => p is not null).Select(p => p!)
             : profile.Points;
-        foreach (var point in order) Steps.Add(new SequenceStepViewModel(point));
+        foreach (var point in order) AddStep(new SequenceStepViewModel(point));
         RenumberSteps();
     }
 
@@ -137,8 +145,9 @@ public partial class ProfileEditorViewModel : ObservableObject
         _hotkey = new HotkeyConfig();
         HotkeyDisplayText = FormatHotkey(_hotkey);
         HotkeyChanged?.Invoke(_hotkey);
-        Steps.Clear();
+        ClearSteps();
         SelectedStep = null;
+        RecomputeMap();
     }
 
     public ClickProfile ToClickProfile(ScreenSnapshot? currentSnapshot = null) => new()
@@ -184,7 +193,7 @@ public partial class ProfileEditorViewModel : ObservableObject
                     Name = $"Bod {Steps.Count + 1}",
                     Location = point
                 });
-                Steps.Add(step);
+                AddStep(step);
                 RenumberSteps();
                 CapturedScreenSnapshot ??= _screenInfoProvider.GetCurrentSnapshot();
                 IsCapturingPoint = false;
@@ -233,9 +242,16 @@ public partial class ProfileEditorViewModel : ObservableObject
     {
         step ??= SelectedStep;
         if (step is null) return;
+        step.PropertyChanged -= OnStepPositionChanged;
         Steps.Remove(step);
         if (SelectedStep == step) SelectedStep = null;
         RenumberSteps();
+    }
+
+    [RelayCommand]
+    private void SelectStep(SequenceStepViewModel? step)
+    {
+        SelectedStep = step;
     }
 
     [RelayCommand]
@@ -261,6 +277,64 @@ public partial class ProfileEditorViewModel : ObservableObject
     private void RenumberSteps()
     {
         for (int i = 0; i < Steps.Count; i++) Steps[i].StepNumber = i + 1;
+        RecomputeMap();
+    }
+
+    private void AddStep(SequenceStepViewModel step)
+    {
+        step.PropertyChanged += OnStepPositionChanged;
+        Steps.Add(step);
+    }
+
+    private void ClearSteps()
+    {
+        foreach (var step in Steps) step.PropertyChanged -= OnStepPositionChanged;
+        Steps.Clear();
+    }
+
+    private void OnStepPositionChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(SequenceStepViewModel.X) or nameof(SequenceStepViewModel.Y)) RecomputeMap();
+    }
+
+    private void RecomputeMap()
+    {
+        var snapshot = CapturedScreenSnapshot ?? _screenInfoProvider.GetCurrentSnapshot();
+        MapMonitorRects.Clear();
+        MapPolylinePoints.Clear();
+
+        if (snapshot.Monitors.Count == 0) return;
+
+        int minX = snapshot.Monitors.Min(m => m.X);
+        int minY = snapshot.Monitors.Min(m => m.Y);
+        int maxX = snapshot.Monitors.Max(m => m.X + m.Width);
+        int maxY = snapshot.Monitors.Max(m => m.Y + m.Height);
+        double totalW = Math.Max(1, maxX - minX);
+        double totalH = Math.Max(1, maxY - minY);
+        double scale = Math.Min(MapWidth / totalW, MapHeight / totalH);
+        double offsetX = (MapWidth - totalW * scale) / 2;
+        double offsetY = (MapHeight - totalH * scale) / 2;
+
+        double ToMapX(double worldX) => offsetX + (worldX - minX) * scale;
+        double ToMapY(double worldY) => offsetY + (worldY - minY) * scale;
+
+        foreach (var monitor in snapshot.Monitors)
+        {
+            MapMonitorRects.Add(new MapMonitorRectViewModel
+            {
+                X = ToMapX(monitor.X),
+                Y = ToMapY(monitor.Y),
+                Width = monitor.Width * scale,
+                Height = monitor.Height * scale
+            });
+        }
+
+        foreach (var step in Steps)
+        {
+            step.MapX = ToMapX((double)step.X);
+            step.MapY = ToMapY((double)step.Y);
+            MapPolylinePoints.Add(new Point(step.MapX, step.MapY));
+        }
     }
 
     private static string FormatHotkey(HotkeyConfig hotkey)

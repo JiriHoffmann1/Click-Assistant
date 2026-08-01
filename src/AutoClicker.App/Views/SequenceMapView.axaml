@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AutoClicker.App.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="380" d:DesignHeight="200"
+             x:Class="AutoClicker.App.Views.SequenceMapView"
+             x:DataType="vm:ProfileEditorViewModel"
+             x:Name="Root">
+    <Border BorderBrush="Gray" BorderThickness="1" Background="#0A000000" Width="380" Height="200" ClipToBounds="True">
+        <Canvas Width="380" Height="200">
+            <ItemsControl ItemsSource="{Binding MapMonitorRects}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:MapMonitorRectViewModel">
+                        <Rectangle Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}"
+                                   Width="{Binding Width}" Height="{Binding Height}"
+                                   Stroke="Gray" StrokeThickness="1" Fill="Transparent" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Polyline Points="{Binding MapPolylinePoints}" Stroke="CornflowerBlue" StrokeThickness="1.5" />
+
+            <ItemsControl ItemsSource="{Binding Steps}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:SequenceStepViewModel">
+                        <Button Canvas.Left="{Binding MapX}" Canvas.Top="{Binding MapY}"
+                                Width="18" Height="18" Padding="0" CornerRadius="9"
+                                Content="{Binding StepNumber}" FontSize="9" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).SelectStepCommand}"
+                                CommandParameter="{Binding}"
+                                ToolTip.Tip="{Binding Name}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Canvas>
+    </Border>
+</UserControl>

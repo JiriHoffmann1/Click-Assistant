@@ -35,6 +35,13 @@ public partial class SequenceStepViewModel : ObservableObject
     [ObservableProperty]
     private bool _isSelected;
 
+    /// <summary>Pozice tečky v souřadnicích prostorové mapy (SequenceMapView), přepočítává ProfileEditorViewModel.</summary>
+    [ObservableProperty]
+    private double _mapX;
+
+    [ObservableProperty]
+    private double _mapY;
+
     public SequenceStepViewModel(ClickPoint point)
     {
         Id = point.Id;
