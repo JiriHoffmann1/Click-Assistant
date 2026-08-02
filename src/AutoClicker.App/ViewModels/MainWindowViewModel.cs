@@ -39,7 +39,8 @@ public partial class MainWindowViewModel : ObservableObject
         IProfileRepository profileRepository,
         ClickSequenceExecutor executor,
         IGlobalInputListener globalListener,
-        IScreenInfoProvider screenInfoProvider)
+        IScreenInfoProvider screenInfoProvider,
+        IScreenCaptureProvider screenCaptureProvider)
     {
         _profileRepository = profileRepository;
         _executor = executor;
@@ -49,7 +50,7 @@ public partial class MainWindowViewModel : ObservableObject
         _executor.ResolutionChangedDuringRun += OnResolutionChangedDuringRun;
         _globalListener.HotkeyPressed += OnGlobalHotkeyPressed;
 
-        Editor = new ProfileEditorViewModel(globalListener, screenInfoProvider);
+        Editor = new ProfileEditorViewModel(globalListener, screenInfoProvider, screenCaptureProvider);
         Editor.HotkeyChanged += hotkey => _globalListener.RegisterHotkey(hotkey, _hotkeySubscriberId);
     }
 

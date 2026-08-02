@@ -5,6 +5,7 @@ using Avalonia.Platform;
 using AutoClicker.App.Services;
 using AutoClicker.App.ViewModels;
 using AutoClicker.Core.Engine;
+using AutoClicker.Infrastructure.Capture;
 using AutoClicker.Infrastructure.Input;
 using AutoClicker.Infrastructure.Persistence;
 
@@ -29,7 +30,8 @@ public partial class MainWindow : Window
             new JsonProfileRepository(),
             executor,
             _globalListener,
-            screenInfoProvider)
+            screenInfoProvider,
+            new WindowsScreenCaptureProvider())
         {
             OwnerWindow = this
         };

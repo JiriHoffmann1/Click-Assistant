@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Avalonia;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using AutoClicker.Core.Engine;
 using AutoClicker.Core.Models;
@@ -14,9 +15,12 @@ public partial class ProfileEditorViewModel : ObservableObject
 {
     public const double MapWidth = 380;
     public const double MapHeight = 200;
+    public const int DetailCaptureWidth = 220;
+    public const int DetailCaptureHeight = 140;
 
     private readonly IGlobalInputListener _globalListener;
     private readonly IScreenInfoProvider _screenInfoProvider;
+    private readonly IScreenCaptureProvider _screenCaptureProvider;
     private IDisposable? _activeCapture;
     private HotkeyConfig _hotkey = new();
 
@@ -73,6 +77,12 @@ public partial class ProfileEditorViewModel : ObservableObject
     [ObservableProperty]
     private bool _isCapturingHotkey;
 
+    [ObservableProperty]
+    private bool _showRealScreenshot;
+
+    [ObservableProperty]
+    private Bitmap? _detailBitmap;
+
     public ObservableCollection<SequenceStepViewModel> Steps { get; } = new();
 
     public ObservableCollection<MapMonitorRectViewModel> MapMonitorRects { get; } = new();
@@ -86,16 +96,40 @@ public partial class ProfileEditorViewModel : ObservableObject
     /// <summary>Vyvoláno při načtení profilu i po zachycení nové kombinace, ať MainWindowViewModel může přeregistrovat globální hotkey.</summary>
     public event Action<HotkeyConfig>? HotkeyChanged;
 
-    public ProfileEditorViewModel(IGlobalInputListener globalListener, IScreenInfoProvider screenInfoProvider)
+    public ProfileEditorViewModel(IGlobalInputListener globalListener, IScreenInfoProvider screenInfoProvider, IScreenCaptureProvider screenCaptureProvider)
     {
         _globalListener = globalListener;
         _screenInfoProvider = screenInfoProvider;
+        _screenCaptureProvider = screenCaptureProvider;
         _hotkey = new HotkeyConfig();
         HotkeyDisplayText = FormatHotkey(_hotkey);
     }
 
+    partial void OnSelectedStepChanged(SequenceStepViewModel? value) => RefreshDetailCapture();
+
+    partial void OnShowRealScreenshotChanged(bool value) => RefreshDetailCapture();
+
+    private void RefreshDetailCapture()
+    {
+        DetailBitmap?.Dispose();
+        DetailBitmap = null;
+
+        if (!ShowRealScreenshot || SelectedStep is null) return;
+
+        var png = _screenCaptureProvider.CaptureRegion(
+            (int)SelectedStep.X - DetailCaptureWidth / 2,
+            (int)SelectedStep.Y - DetailCaptureHeight / 2,
+            DetailCaptureWidth,
+            DetailCaptureHeight);
+        if (png is null) return;
+
+        using var stream = new MemoryStream(png);
+        DetailBitmap = new Bitmap(stream);
+    }
+
     public void LoadFrom(ClickProfile profile)
     {
+        SelectedStep = null;
         ProfileId = profile.Id;
         Name = profile.Name;
         OrderMode = profile.OrderMode;
@@ -294,7 +328,10 @@ public partial class ProfileEditorViewModel : ObservableObject
 
     private void OnStepPositionChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(SequenceStepViewModel.X) or nameof(SequenceStepViewModel.Y)) RecomputeMap();
+        if (e.PropertyName is not (nameof(SequenceStepViewModel.X) or nameof(SequenceStepViewModel.Y))) return;
+
+        RecomputeMap();
+        if (ReferenceEquals(sender, SelectedStep)) RefreshDetailCapture();
     }
 
     private void RecomputeMap()
