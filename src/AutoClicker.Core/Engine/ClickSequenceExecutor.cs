@@ -67,6 +67,13 @@ public sealed class ClickSequenceExecutor
                     (order[0], order[1]) = (order[1], order[0]);
                 }
 
+                if (order.Count == 0)
+                {
+                    // Vlastní pořadí odkazuje jen na neexistující/smazané body - není co kliknout.
+                    // Bez tohoto čekání by nekonečné opakování bez těchto delay pointů vytížilo CPU na 100 %.
+                    await CancellableDelay(100, token);
+                }
+
                 foreach (var point in order)
                 {
                     token.ThrowIfCancellationRequested();

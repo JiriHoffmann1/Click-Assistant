@@ -51,6 +51,69 @@ public class JsonProfileRepositoryTests : IDisposable
         Assert.Empty(loaded);
     }
 
+    [Fact]
+    public async Task DeleteAsync_NonExistentProfile_DoesNotThrow()
+    {
+        var exception = await Record.ExceptionAsync(() => _repository.DeleteAsync(Guid.NewGuid()));
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task LoadAllAsync_OnEmptyDirectory_ReturnsEmptyList()
+    {
+        var loaded = await _repository.LoadAllAsync();
+
+        Assert.Empty(loaded);
+    }
+
+    [Fact]
+    public async Task SaveAsync_SameIdTwice_OverwritesRatherThanDuplicating()
+    {
+        var profile = new ClickProfile { Name = "V1" };
+        await _repository.SaveAsync(profile);
+
+        var updated = profile with { Name = "V2" };
+        await _repository.SaveAsync(updated);
+
+        var loaded = await _repository.LoadAllAsync();
+        var single = Assert.Single(loaded);
+        Assert.Equal("V2", single.Name);
+    }
+
+    [Fact]
+    public async Task LoadAllAsync_SkipsCorruptedJsonFile_AndStillLoadsValidOnes()
+    {
+        // Simuluje poškozený/ručně rozbitý soubor profilu (např. useknutý zápis po pádu appky).
+        Directory.CreateDirectory(_tempDir);
+        await File.WriteAllTextAsync(Path.Combine(_tempDir, "corrupted.json"), "{ not valid json ]]]");
+
+        var validProfile = new ClickProfile { Name = "V pořádku" };
+        await _repository.SaveAsync(validProfile);
+
+        var loaded = await _repository.LoadAllAsync();
+
+        var single = Assert.Single(loaded);
+        Assert.Equal("V pořádku", single.Name);
+    }
+
+    [Fact]
+    public async Task LoadAllAsync_EmptyJsonFile_IsSkippedWithoutThrowing()
+    {
+        Directory.CreateDirectory(_tempDir);
+        await File.WriteAllTextAsync(Path.Combine(_tempDir, "empty.json"), string.Empty);
+
+        var exception = await Record.ExceptionAsync(() => _repository.LoadAllAsync());
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void Constructor_CreatesProfilesDirectoryIfMissing()
+    {
+        Assert.True(Directory.Exists(_tempDir));
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_tempDir)) Directory.Delete(_tempDir, recursive: true);

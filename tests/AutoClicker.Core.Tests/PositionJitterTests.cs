@@ -38,4 +38,23 @@ public class PositionJitterTests
 
         Assert.True(results.Count > 5, "očekával jsem rozmanité posuny, ne pořád stejný bod");
     }
+
+    [Fact]
+    public void Apply_WithNegativeRadius_ReturnsExactCenter()
+    {
+        var center = new ScreenPoint(50, 50);
+        var result = PositionJitter.Apply(center, -10, new Random());
+        Assert.Equal(center, result);
+    }
+
+    [Fact]
+    public void Apply_CanProduceNegativeCoordinates_NearScreenOrigin()
+    {
+        var center = new ScreenPoint(2, 2);
+        var rng = new Random(4);
+
+        var results = Enumerable.Range(0, 200).Select(_ => PositionJitter.Apply(center, 10, rng)).ToList();
+
+        Assert.Contains(results, p => p.X < 0 || p.Y < 0);
+    }
 }

@@ -9,6 +9,7 @@ public sealed record ClickProfile
     public List<Guid>? CustomOrder { get; init; }
     public TimingConfig Timing { get; init; } = new();
     public HumanizationConfig Humanization { get; init; } = new();
-    public HotkeyConfig StartStopHotkey { get; init; } = new();
+    public HotkeyConfig StartHotkey { get; init; } = new();
+    public HotkeyConfig? StopHotkey { get; init; }
     public ScreenSnapshot? CapturedScreenSnapshot { get; init; }
 }

@@ -60,4 +60,90 @@ public class BezierMovementPathGeneratorTests
         var single = Assert.Single(path);
         Assert.Equal(point, single.Point);
     }
+
+    [Fact]
+    public void GeneratePath_WithGuaranteedOvershoot_StillEndsExactlyAtTarget()
+    {
+        var generator = new BezierMovementPathGenerator();
+        var start = new ScreenPoint(0, 0);
+        var end = new ScreenPoint(500, 300);
+
+        // overshootChance = 1 => vždy se přidá korekční "přestřelení" na konec dráhy.
+        var path = generator.GeneratePath(start, end, DefaultConfig(overshootChance: 1), new Random(3));
+
+        Assert.Equal(end, path[^1].Point);
+        // Přestřelení přidává dva extra kroky (overshoot bod + návrat na cíl) nad běžný počet kroků.
+        var withoutOvershoot = generator.GeneratePath(start, end, DefaultConfig(overshootChance: 0), new Random(3));
+        Assert.Equal(withoutOvershoot.Count + 2, path.Count);
+    }
+
+    [Fact]
+    public void GeneratePath_OvershootPoint_IsNotEqualToFinalTarget()
+    {
+        var generator = new BezierMovementPathGenerator();
+        var start = new ScreenPoint(0, 0);
+        var end = new ScreenPoint(500, 300);
+
+        var path = generator.GeneratePath(start, end, DefaultConfig(overshootChance: 1), new Random(3));
+
+        // Předposlední bod je "přestřelení" - musí se lišit od finálního cíle, jinak by korekce byla neviditelná.
+        var overshootPoint = path[^2].Point;
+        Assert.NotEqual(end, overshootPoint);
+    }
+
+    [Fact]
+    public void GeneratePath_WithInvertedDurationRange_DoesNotThrow()
+    {
+        // Obranná úprava: MovementDurationMsMin > MovementDurationMsMax může nastat u ručně
+        // upraveného/poškozeného JSON profilu na disku. Random.Next(min, max) by jinak vyhodil
+        // ArgumentOutOfRangeException a shodil běžící klikací smyčku.
+        var generator = new BezierMovementPathGenerator();
+        var config = new HumanizationConfig
+        {
+            Enabled = true,
+            UseCurvedMovement = true,
+            MovementDurationMsMin = 500,
+            MovementDurationMsMax = 100,
+            CurveBowStrength = 0.25,
+            OvershootChance = 0
+        };
+
+        var exception = Record.Exception(() =>
+            generator.GeneratePath(new ScreenPoint(0, 0), new ScreenPoint(300, 300), config, new Random(1)));
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void GeneratePath_WithNegativeDurationBounds_DoesNotThrow()
+    {
+        var generator = new BezierMovementPathGenerator();
+        var config = new HumanizationConfig
+        {
+            Enabled = true,
+            UseCurvedMovement = true,
+            MovementDurationMsMin = -100,
+            MovementDurationMsMax = -50,
+            CurveBowStrength = 0.25,
+            OvershootChance = 0
+        };
+
+        var exception = Record.Exception(() =>
+            generator.GeneratePath(new ScreenPoint(0, 0), new ScreenPoint(300, 300), config, new Random(1)));
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void GeneratePath_IsDeterministic_ForSameSeed()
+    {
+        var generator = new BezierMovementPathGenerator();
+        var start = new ScreenPoint(10, 10);
+        var end = new ScreenPoint(400, 250);
+
+        var path1 = generator.GeneratePath(start, end, DefaultConfig(), new Random(99));
+        var path2 = generator.GeneratePath(start, end, DefaultConfig(), new Random(99));
+
+        Assert.Equal(path1, path2);
+    }
 }

@@ -4,93 +4,127 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AutoClicker.App.ViewModels"
         xmlns:views="using:AutoClicker.App.Views"
+        xmlns:loc="using:AutoClicker.App.Localization"
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="AutoClicker.App.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="AutoClicker"
-        Width="900" Height="600">
+        Title="{loc:Tr app.title}"
+        Width="900" Height="600" MinWidth="900" MinHeight="560">
 
-    <Grid ColumnDefinitions="220,*" Margin="14">
+    <Grid ColumnDefinitions="Auto,*" Margin="14">
         <!-- Seznam profilů -->
-        <DockPanel Grid.Column="0" Margin="0,0,10,0">
-            <TextBlock DockPanel.Dock="Top" Text="Profily" FontWeight="Bold" Margin="0,0,0,8" />
+        <DockPanel Grid.Column="0" MinWidth="180" MaxWidth="320" Margin="0,0,10,0">
+            <TextBlock DockPanel.Dock="Top" Text="{loc:Tr profiles.header}" FontWeight="Bold" Margin="0,0,0,8" />
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
-                <Button Content="Nový" Command="{Binding NewProfileCommand}" />
-                <Button Content="Smazat" Command="{Binding DeleteProfileCommand}" />
+                <Button Content="{loc:Tr profiles.new}" Command="{Binding NewProfileCommand}" ToolTip.Tip="{loc:Tr profiles.new.tooltip}" />
+                <Button Content="{loc:Tr profiles.delete}" Command="{Binding DeleteProfileCommand}" ToolTip.Tip="{loc:Tr profiles.delete.tooltip}" />
             </StackPanel>
             <ListBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
 
         <!-- Editor profilu + ovládání -->
-        <DockPanel Grid.Column="1">
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="0,0,0,12">
-                <Button Content="Uložit profil" Command="{Binding SaveProfileCommand}" />
-                <Button Content="Start" Command="{Binding StartCommand}" IsEnabled="{Binding !IsRunning}" />
-                <Button Content="Stop" Command="{Binding StopCommand}" IsEnabled="{Binding IsRunning}" />
-                <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" VerticalAlignment="Center" />
-            </StackPanel>
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,12">
+                <Button Content="{loc:Tr toolbar.save}" Command="{Binding SaveProfileCommand}" ToolTip.Tip="{loc:Tr toolbar.save.tooltip}" Margin="0,0,10,6" />
+                <Button Content="{loc:Tr toolbar.start}" Command="{Binding StartCommand}" IsEnabled="{Binding CanStart}" ToolTip.Tip="{loc:Tr toolbar.start.tooltip}" Margin="0,0,10,6" />
+                <Button Content="{loc:Tr toolbar.stop}" Command="{Binding StopCommand}" IsEnabled="{Binding IsRunning}" ToolTip.Tip="{loc:Tr toolbar.stop.tooltip}" Margin="0,0,10,6" />
+                <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,6" />
+                <ComboBox ItemsSource="{Binding AvailableLanguages}" SelectedItem="{Binding SelectedLanguage}"
+                          ToolTip.Tip="{loc:Tr language.tooltip}" Margin="0,0,10,6">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="{Binding Flag}" FontSize="16" FontFamily="Segoe UI Emoji" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding NativeName}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </WrapPanel>
 
             <StackPanel DockPanel.Dock="Top" Spacing="10" DataContext="{Binding Editor}" x:DataType="vm:ProfileEditorViewModel">
-                <TextBox Text="{Binding Name}" Watermark="Název profilu" FontSize="16" FontWeight="Bold" />
+                <TextBox Text="{Binding Name}" Watermark="{loc:Tr editor.name.watermark}" ToolTip.Tip="{loc:Tr editor.name.tooltip}" FontSize="16" FontWeight="Bold" />
 
                 <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="8">
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Pořadí:" VerticalAlignment="Center" />
-                    <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="{Binding OrderMode}" ItemsSource="{Binding OrderModeValues}" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr editor.order.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.order.tooltip}" />
+                    <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="{Binding OrderMode}" ItemsSource="{Binding OrderModeValues}" ToolTip.Tip="{loc:Tr editor.order.tooltip}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Opakování:" VerticalAlignment="Center" />
-                    <ComboBox Grid.Row="0" Grid.Column="3" SelectedItem="{Binding Repeat}" ItemsSource="{Binding RepeatModeValues}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{loc:Tr editor.repeat.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.repeat.tooltip}" />
+                    <ComboBox Grid.Row="0" Grid.Column="3" SelectedItem="{Binding Repeat}" ItemsSource="{Binding RepeatModeValues}" ToolTip.Tip="{loc:Tr editor.repeat.tooltip}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Interval (ms):" VerticalAlignment="Center" />
-                    <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding BaseIntervalMs}" Minimum="10" Maximum="600000" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr editor.interval.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.interval.tooltip}" />
+                    <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding BaseIntervalMs}" Minimum="10" Maximum="600000" ToolTip.Tip="{loc:Tr editor.interval.tooltip}" />
 
-                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Jitter (± ms):" VerticalAlignment="Center" />
-                    <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding JitterMs}" Minimum="0" Maximum="60000" />
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{loc:Tr editor.jitter.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.jitter.tooltip}" />
+                    <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding JitterMs}" Minimum="0" Maximum="60000" ToolTip.Tip="{loc:Tr editor.jitter.tooltip}" />
                 </Grid>
 
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Button Content="Přidat bod" Command="{Binding AddPointCommand}" IsEnabled="{Binding !IsCapturingPoint}" />
-                    <Button Content="Zrušit výběr bodu" Command="{Binding CancelCaptureCommand}" IsVisible="{Binding IsCapturingPoint}" />
-                    <TextBlock Text="Klikni kamkoliv na obrazovku pro zachycení bodu…" VerticalAlignment="Center"
+                <WrapPanel Orientation="Horizontal">
+                    <Button Content="{loc:Tr editor.addPoint}" Command="{Binding AddPointCommand}" IsEnabled="{Binding !IsCapturingPoint}" ToolTip.Tip="{loc:Tr editor.addPoint.tooltip}" Margin="0,0,10,6" />
+                    <Button Content="{loc:Tr editor.cancelCapture}" Command="{Binding CancelCaptureCommand}" IsVisible="{Binding IsCapturingPoint}" Margin="0,0,10,6" />
+                    <TextBlock Text="{loc:Tr editor.capturingPoint.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
                                IsVisible="{Binding IsCapturingPoint}" FontStyle="Italic" />
-                </StackPanel>
+                </WrapPanel>
 
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="Globální zkratka start/stop:" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding HotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" />
-                    <Button Content="Nastavit" Command="{Binding SetHotkeyCommand}" IsEnabled="{Binding !IsCapturingHotkey}" />
-                    <Button Content="Zrušit" Command="{Binding CancelHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingHotkey}" />
-                    <TextBlock Text="Stiskni kombinaci kláves…" VerticalAlignment="Center"
+                <WrapPanel Orientation="Horizontal">
+                    <TextBlock Text="{loc:Tr hotkey.start.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr hotkey.start.tooltip}" Margin="0,0,10,6" />
+                    <TextBlock Text="{Binding HotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,6" />
+                    <Button Content="{loc:Tr hotkey.set}" Command="{Binding SetHotkeyCommand}" IsEnabled="{Binding !IsCapturingHotkey}" Margin="0,0,10,6" />
+                    <Button Content="{loc:Tr hotkey.cancel}" Command="{Binding CancelHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingHotkey}" Margin="0,0,10,6" />
+                    <TextBlock Text="{loc:Tr hotkey.capturing.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
                                IsVisible="{Binding IsCapturingHotkey}" FontStyle="Italic" />
-                </StackPanel>
+                </WrapPanel>
 
-                <Expander Header="Humanizace (anti-detekční mód)">
+                <WrapPanel Orientation="Horizontal">
+                    <TextBlock Text="{loc:Tr hotkey.stop.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr hotkey.stop.tooltip}" Margin="0,0,10,6" />
+                    <TextBlock Text="{Binding StopHotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,6" />
+                    <Button Content="{loc:Tr hotkey.set}" Command="{Binding SetStopHotkeyCommand}" IsEnabled="{Binding !IsCapturingStopHotkey}" Margin="0,0,10,6" />
+                    <Button Content="{loc:Tr hotkey.cancel}" Command="{Binding CancelStopHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingStopHotkey}" Margin="0,0,10,6" />
+                    <TextBlock Text="{loc:Tr hotkey.capturing.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
+                               IsVisible="{Binding IsCapturingStopHotkey}" FontStyle="Italic" />
+                </WrapPanel>
+
+                <Expander Header="{loc:Tr humanization.header}" ToolTip.Tip="{loc:Tr humanization.header.tooltip}">
                     <StackPanel Spacing="8" Margin="0,8,0,0">
-                        <CheckBox Content="Zapnout humanizaci" IsChecked="{Binding HumanizationEnabled}" />
+                        <CheckBox Content="{loc:Tr humanization.enabled}" IsChecked="{Binding HumanizationEnabled}" ToolTip.Tip="{loc:Tr humanization.enabled.tooltip}" />
                         <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8"
                               IsEnabled="{Binding HumanizationEnabled}">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Rozptyl pozice (px):" VerticalAlignment="Center" />
-                            <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding PositionJitterRadiusPx}" Minimum="0" Maximum="200" />
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr humanization.positionJitter.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr humanization.positionJitter.tooltip}" />
+                            <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding PositionJitterRadiusPx}" Minimum="0" Maximum="200" ToolTip.Tip="{loc:Tr humanization.positionJitter.tooltip}" />
 
-                            <CheckBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Content="Zakřivený pohyb kurzoru"
-                                      IsChecked="{Binding UseCurvedMovement}" VerticalAlignment="Center" />
+                            <CheckBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Content="{loc:Tr humanization.curvedMovement}"
+                                      IsChecked="{Binding UseCurvedMovement}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr humanization.curvedMovement.tooltip}" />
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Pohyb min (ms):" VerticalAlignment="Center" />
-                            <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding MovementDurationMsMin}" Minimum="10" Maximum="5000" />
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr humanization.durationMin.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr humanization.durationMin.tooltip}" />
+                            <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding MovementDurationMsMin}" Minimum="10" Maximum="5000" ToolTip.Tip="{loc:Tr humanization.durationMin.tooltip}" />
 
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Pohyb max (ms):" VerticalAlignment="Center" />
-                            <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding MovementDurationMsMax}" Minimum="10" Maximum="5000" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{loc:Tr humanization.durationMax.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr humanization.durationMax.tooltip}" />
+                            <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding MovementDurationMsMax}" Minimum="10" Maximum="5000" ToolTip.Tip="{loc:Tr humanization.durationMax.tooltip}" />
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Prohnutí křivky (%):" VerticalAlignment="Center" />
-                            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding CurveBowStrengthPercent}" Minimum="0" Maximum="100" />
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Tr humanization.curveBow.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr humanization.curveBow.tooltip}" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding CurveBowStrengthPercent}" Minimum="0" Maximum="100" ToolTip.Tip="{loc:Tr humanization.curveBow.tooltip}" />
 
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="Šance na 'overshoot' (%):" VerticalAlignment="Center" />
-                            <NumericUpDown Grid.Row="2" Grid.Column="3" Value="{Binding OvershootChancePercent}" Minimum="0" Maximum="100" />
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{loc:Tr humanization.overshoot.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr humanization.overshoot.tooltip}" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="3" Value="{Binding OvershootChancePercent}" Minimum="0" Maximum="100" ToolTip.Tip="{loc:Tr humanization.overshoot.tooltip}" />
                         </Grid>
                     </StackPanel>
                 </Expander>
@@ -102,5 +136,6 @@
 
             <views:SequenceTimelineView DataContext="{Binding Editor}" />
         </DockPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

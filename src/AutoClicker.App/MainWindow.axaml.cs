@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using AutoClicker.App.Localization;
 using AutoClicker.App.Services;
 using AutoClicker.App.ViewModels;
 using AutoClicker.Core.Engine;
@@ -19,6 +20,12 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        // Jazyk se musí načíst před InitializeComponent(), aby se XAML {loc:Tr ...} výrazy
+        // vyhodnotily hned se správným jazykem (přepnutí za běhu appka řeší restartem, ne živě).
+        var settingsRepository = new JsonAppSettingsRepository();
+        var appSettings = settingsRepository.LoadAsync().GetAwaiter().GetResult();
+        LocalizationManager.Instance.SetLanguage(appSettings.Language);
+
         InitializeComponent();
 
         var appIcon = new WindowIcon(AssetLoader.Open(new Uri("avares://AutoClicker.App/Assets/tray-icon.ico")));
@@ -31,7 +38,8 @@ public partial class MainWindow : Window
             executor,
             _globalListener,
             screenInfoProvider,
-            new WindowsScreenCaptureProvider())
+            new WindowsScreenCaptureProvider(),
+            settingsRepository)
         {
             OwnerWindow = this
         };

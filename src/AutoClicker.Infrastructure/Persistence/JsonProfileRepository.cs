@@ -31,9 +31,16 @@ public sealed class JsonProfileRepository : IProfileRepository
         var profiles = new List<ClickProfile>();
         foreach (var file in Directory.EnumerateFiles(_profilesDirectory, "*.json"))
         {
-            await using var stream = File.OpenRead(file);
-            var profile = await JsonSerializer.DeserializeAsync<ClickProfile>(stream, SerializerOptions);
-            if (profile is not null) profiles.Add(profile);
+            try
+            {
+                await using var stream = File.OpenRead(file);
+                var profile = await JsonSerializer.DeserializeAsync<ClickProfile>(stream, SerializerOptions);
+                if (profile is not null) profiles.Add(profile);
+            }
+            catch (JsonException)
+            {
+                // Poškozený nebo ručně upravený soubor profilu - přeskočit, ať nezhatí načtení ostatních profilů.
+            }
         }
         return profiles;
     }

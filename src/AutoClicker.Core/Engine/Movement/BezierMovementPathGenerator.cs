@@ -21,7 +21,9 @@ public sealed class BezierMovementPathGenerator : IMovementPathGenerator
         var (control1, control2) = BuildControlPoints(start, end, config.CurveBowStrength, rng);
 
         int steps = Math.Clamp((int)(distance / 6.0), 12, 48);
-        int durationMs = rng.Next(config.MovementDurationMsMin, config.MovementDurationMsMax + 1);
+        int durationMin = Math.Max(0, config.MovementDurationMsMin);
+        int durationMax = Math.Max(durationMin, config.MovementDurationMsMax);
+        int durationMs = rng.Next(durationMin, durationMax + 1);
 
         var result = new List<(ScreenPoint, int)>(steps);
         double prevEasedT = 0;

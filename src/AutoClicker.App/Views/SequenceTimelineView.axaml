@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AutoClicker.App.ViewModels"
+             xmlns:loc="using:AutoClicker.App.Localization"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="300"
              x:Class="AutoClicker.App.Views.SequenceTimelineView"
              x:DataType="vm:ProfileEditorViewModel"
@@ -18,29 +19,33 @@
                 <DataTemplate x:DataType="vm:SequenceStepViewModel">
                     <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Width="190">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="{Binding StepNumber, StringFormat='Krok {0}'}" FontWeight="Bold" />
-                            <TextBox Text="{Binding Name}" Watermark="Název bodu" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="{Binding StepNumber, Converter={x:Static loc:StepNumberConverter.Instance}}" FontWeight="Bold" VerticalAlignment="Center" />
+                                <Button Grid.Column="1" Content="{loc:Tr step.select}" FontSize="11" Padding="6,2" ToolTip.Tip="{loc:Tr step.select.tooltip}"
+                                        Command="{Binding #Root.DataContext.SelectStepCommand}" CommandParameter="{Binding}" />
+                            </Grid>
+                            <TextBox Text="{Binding Name}" Watermark="{loc:Tr step.name.watermark}" ToolTip.Tip="{loc:Tr step.name.tooltip}" />
 
-                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="6" RowSpacing="4">
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="X:" VerticalAlignment="Center" />
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="6" RowSpacing="4" ToolTip.Tip="{loc:Tr step.xy.tooltip}">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr step.x.label}" VerticalAlignment="Center" />
                                 <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding X}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Y:" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr step.y.label}" VerticalAlignment="Center" />
                                 <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Y}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
                             </Grid>
 
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock Text="Počet kliků:" VerticalAlignment="Center" />
-                                <NumericUpDown Value="{Binding ClickCount}" Minimum="1" Maximum="10" Width="90" ShowButtonSpinner="False" />
+                                <TextBlock Text="{loc:Tr step.clickCount.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" />
+                                <NumericUpDown Value="{Binding ClickCount}" Minimum="1" Maximum="10" Width="90" ShowButtonSpinner="False" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" />
                             </StackPanel>
 
-                            <CheckBox Content="Vlastní prodleva po kliku" IsChecked="{Binding UseCustomDelay}" />
+                            <CheckBox Content="{loc:Tr step.customDelay}" IsChecked="{Binding UseCustomDelay}" ToolTip.Tip="{loc:Tr step.customDelay.tooltip}" />
                             <NumericUpDown Value="{Binding DelayAfterMs}" Minimum="10" Maximum="600000"
-                                            IsEnabled="{Binding UseCustomDelay}" ShowButtonSpinner="False" />
+                                            IsEnabled="{Binding UseCustomDelay}" ShowButtonSpinner="False" ToolTip.Tip="{loc:Tr step.customDelay.tooltip}" />
 
                             <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
-                                <Button Content="↑" Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).MoveStepUpCommand}" CommandParameter="{Binding}" />
-                                <Button Content="↓" Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).MoveStepDownCommand}" CommandParameter="{Binding}" />
-                                <Button Content="✕" Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).RemoveStepCommand}" CommandParameter="{Binding}" />
+                                <Button Content="↑" Command="{Binding #Root.DataContext.MoveStepUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveUp.tooltip}" />
+                                <Button Content="↓" Command="{Binding #Root.DataContext.MoveStepDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveDown.tooltip}" />
+                                <Button Content="✕" Command="{Binding #Root.DataContext.RemoveStepCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.remove.tooltip}" />
                             </StackPanel>
                         </StackPanel>
                     </Border>

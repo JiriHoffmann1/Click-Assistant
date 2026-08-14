@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using AutoClicker.App.Localization;
 using AutoClicker.Core.Engine;
 using AutoClicker.Core.Models;
 using AutoClicker.Core.Screen;
@@ -23,11 +24,13 @@ public partial class ProfileEditorViewModel : ObservableObject
     private readonly IScreenCaptureProvider _screenCaptureProvider;
     private IDisposable? _activeCapture;
     private HotkeyConfig _hotkey = new();
+    private HotkeyConfig? _stopHotkey;
+    private DispatcherTimer? _captureDebounceTimer;
 
     public Guid ProfileId { get; private set; } = Guid.NewGuid();
 
     [ObservableProperty]
-    private string _name = "Nový profil";
+    private string _name = LocalizationManager.Instance["profile.defaultName"];
 
     [ObservableProperty]
     private SequenceOrderMode _orderMode = SequenceOrderMode.Sequential;
@@ -78,6 +81,15 @@ public partial class ProfileEditorViewModel : ObservableObject
     private bool _isCapturingHotkey;
 
     [ObservableProperty]
+    private string _stopHotkeyDisplayText = LocalizationManager.Instance["hotkey.notSet"];
+
+    [ObservableProperty]
+    private bool _isCapturingStopHotkey;
+
+    [ObservableProperty]
+    private bool _hasStopHotkey;
+
+    [ObservableProperty]
     private bool _showRealScreenshot;
 
     [ObservableProperty]
@@ -96,6 +108,9 @@ public partial class ProfileEditorViewModel : ObservableObject
     /// <summary>Vyvoláno při načtení profilu i po zachycení nové kombinace, ať MainWindowViewModel může přeregistrovat globální hotkey.</summary>
     public event Action<HotkeyConfig>? HotkeyChanged;
 
+    /// <summary>Vyvoláno při načtení profilu i po zachycení nové kombinace pro Stop klávesu (null = nenastaveno).</summary>
+    public event Action<HotkeyConfig?>? StopHotkeyChanged;
+
     public ProfileEditorViewModel(IGlobalInputListener globalListener, IScreenInfoProvider screenInfoProvider, IScreenCaptureProvider screenCaptureProvider)
     {
         _globalListener = globalListener;
@@ -105,9 +120,38 @@ public partial class ProfileEditorViewModel : ObservableObject
         HotkeyDisplayText = FormatHotkey(_hotkey);
     }
 
-    partial void OnSelectedStepChanged(SequenceStepViewModel? value) => RefreshDetailCapture();
+    partial void OnSelectedStepChanged(SequenceStepViewModel? value)
+    {
+        _captureDebounceTimer?.Stop();
+        RefreshDetailCapture();
+    }
 
-    partial void OnShowRealScreenshotChanged(bool value) => RefreshDetailCapture();
+    partial void OnShowRealScreenshotChanged(bool value)
+    {
+        _captureDebounceTimer?.Stop();
+        RefreshDetailCapture();
+    }
+
+    /// <summary>
+    /// Naplánuje obnovu náhledu s krátkým zpožděním místo okamžitého zachycení. X/Y v SequenceTimelineView
+    /// se aktualizují živě při psaní (NumericUpDown), takže bez debounce by každý stisk klávesy spustil
+    /// GDI CopyFromScreen + PNG enkódování na UI vlákně - znatelné zadrhávání při rychlém přepisování souřadnic.
+    /// </summary>
+    private void ScheduleDetailCaptureRefresh()
+    {
+        if (_captureDebounceTimer is null)
+        {
+            _captureDebounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+            _captureDebounceTimer.Tick += (_, _) =>
+            {
+                _captureDebounceTimer!.Stop();
+                RefreshDetailCapture();
+            };
+        }
+
+        _captureDebounceTimer.Stop();
+        _captureDebounceTimer.Start();
+    }
 
     private void RefreshDetailCapture()
     {
@@ -147,9 +191,14 @@ public partial class ProfileEditorViewModel : ObservableObject
         CurveBowStrengthPercent = (decimal)(profile.Humanization.CurveBowStrength * 100);
         OvershootChancePercent = (decimal)(profile.Humanization.OvershootChance * 100);
 
-        _hotkey = profile.StartStopHotkey;
+        _hotkey = profile.StartHotkey;
         HotkeyDisplayText = FormatHotkey(_hotkey);
         HotkeyChanged?.Invoke(_hotkey);
+
+        _stopHotkey = profile.StopHotkey;
+        HasStopHotkey = _stopHotkey is not null;
+        StopHotkeyDisplayText = _stopHotkey is { } stopHotkey ? FormatHotkey(stopHotkey) : LocalizationManager.Instance["hotkey.notSet"];
+        StopHotkeyChanged?.Invoke(_stopHotkey);
 
         ClearSteps();
         var order = profile.CustomOrder is { Count: > 0 }
@@ -162,7 +211,7 @@ public partial class ProfileEditorViewModel : ObservableObject
     public void ResetToNewProfile()
     {
         ProfileId = Guid.NewGuid();
-        Name = "Nový profil";
+        Name = LocalizationManager.Instance["profile.defaultName"];
         OrderMode = SequenceOrderMode.Sequential;
         BaseIntervalMs = 500;
         JitterMs = 50;
@@ -179,6 +228,10 @@ public partial class ProfileEditorViewModel : ObservableObject
         _hotkey = new HotkeyConfig();
         HotkeyDisplayText = FormatHotkey(_hotkey);
         HotkeyChanged?.Invoke(_hotkey);
+        _stopHotkey = null;
+        HasStopHotkey = false;
+        StopHotkeyDisplayText = LocalizationManager.Instance["hotkey.notSet"];
+        StopHotkeyChanged?.Invoke(null);
         ClearSteps();
         SelectedStep = null;
         RecomputeMap();
@@ -208,14 +261,15 @@ public partial class ProfileEditorViewModel : ObservableObject
             CurveBowStrength = (double)(CurveBowStrengthPercent / 100),
             OvershootChance = (double)(OvershootChancePercent / 100)
         },
-        StartStopHotkey = _hotkey,
+        StartHotkey = _hotkey,
+        StopHotkey = _stopHotkey,
         CapturedScreenSnapshot = currentSnapshot ?? CapturedScreenSnapshot
     };
 
     [RelayCommand]
     private void AddPoint()
     {
-        if (IsCapturingPoint || IsCapturingHotkey) return;
+        if (IsCapturingPoint || IsCapturingHotkey || IsCapturingStopHotkey) return;
 
         IsCapturingPoint = true;
         _activeCapture = _globalListener.CaptureNextClick(point =>
@@ -224,7 +278,7 @@ public partial class ProfileEditorViewModel : ObservableObject
             {
                 var step = new SequenceStepViewModel(new ClickPoint
                 {
-                    Name = $"Bod {Steps.Count + 1}",
+                    Name = string.Format(LocalizationManager.Instance["point.defaultNameFormat"], Steps.Count + 1),
                     Location = point
                 });
                 AddStep(step);
@@ -247,7 +301,7 @@ public partial class ProfileEditorViewModel : ObservableObject
     [RelayCommand]
     private void SetHotkey()
     {
-        if (IsCapturingHotkey || IsCapturingPoint) return;
+        if (IsCapturingHotkey || IsCapturingPoint || IsCapturingStopHotkey) return;
 
         IsCapturingHotkey = true;
         _activeCapture = _globalListener.CaptureNextHotkey(hotkey =>
@@ -269,6 +323,34 @@ public partial class ProfileEditorViewModel : ObservableObject
         _activeCapture?.Dispose();
         _activeCapture = null;
         IsCapturingHotkey = false;
+    }
+
+    [RelayCommand]
+    private void SetStopHotkey()
+    {
+        if (IsCapturingHotkey || IsCapturingPoint || IsCapturingStopHotkey) return;
+
+        IsCapturingStopHotkey = true;
+        _activeCapture = _globalListener.CaptureNextHotkey(hotkey =>
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                _stopHotkey = hotkey;
+                HasStopHotkey = true;
+                StopHotkeyDisplayText = FormatHotkey(hotkey);
+                StopHotkeyChanged?.Invoke(hotkey);
+                IsCapturingStopHotkey = false;
+                _activeCapture = null;
+            });
+        });
+    }
+
+    [RelayCommand]
+    private void CancelStopHotkeyCapture()
+    {
+        _activeCapture?.Dispose();
+        _activeCapture = null;
+        IsCapturingStopHotkey = false;
     }
 
     [RelayCommand]
@@ -331,7 +413,7 @@ public partial class ProfileEditorViewModel : ObservableObject
         if (e.PropertyName is not (nameof(SequenceStepViewModel.X) or nameof(SequenceStepViewModel.Y))) return;
 
         RecomputeMap();
-        if (ReferenceEquals(sender, SelectedStep)) RefreshDetailCapture();
+        if (ReferenceEquals(sender, SelectedStep)) ScheduleDetailCaptureRefresh();
     }
 
     private void RecomputeMap()

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AutoClicker.App.Localization;
 using AutoClicker.App.ViewModels;
 
 namespace AutoClicker.App.Views;
@@ -13,7 +14,7 @@ public partial class ResolutionMismatchDialog : Window
 
     public ResolutionMismatchDialog(int oldMonitorCount, int newMonitorCount) : this()
     {
-        DetailText.Text = $"Uložený stav: {oldMonitorCount} monitor(y). Aktuální stav: {newMonitorCount} monitor(y).";
+        DetailText.Text = string.Format(LocalizationManager.Instance["resolutionDialog.detail"], oldMonitorCount, newMonitorCount);
     }
 
     private void OnRescaleClick(object? sender, RoutedEventArgs e) => Close(ResolutionMismatchChoice.Rescale);

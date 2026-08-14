@@ -3,13 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AutoClicker.App.ViewModels"
+             xmlns:loc="using:AutoClicker.App.Localization"
              mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="230"
              x:Class="AutoClicker.App.Views.SequenceMapView"
              x:DataType="vm:ProfileEditorViewModel"
              x:Name="Root">
-    <StackPanel Orientation="Horizontal" Spacing="14">
-        <StackPanel Spacing="6">
-            <CheckBox Content="Zobrazit reálný obsah obrazovky" IsChecked="{Binding ShowRealScreenshot}" />
+    <WrapPanel Orientation="Horizontal">
+        <StackPanel Spacing="6" Margin="0,0,14,10">
+            <CheckBox Content="{loc:Tr map.showScreenshot}" IsChecked="{Binding ShowRealScreenshot}" ToolTip.Tip="{loc:Tr map.showScreenshot.tooltip}" />
 
             <Border BorderBrush="Gray" BorderThickness="1" Background="#0A000000" Width="380" Height="200" ClipToBounds="True">
                 <Canvas Width="380" Height="200">
@@ -41,7 +42,7 @@
                                 <Button Canvas.Left="{Binding MapX}" Canvas.Top="{Binding MapY}"
                                         Width="18" Height="18" Padding="0" CornerRadius="9"
                                         Content="{Binding StepNumber}" FontSize="9" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                        Command="{Binding #Root.((vm:ProfileEditorViewModel)DataContext).SelectStepCommand}"
+                                        Command="{Binding #Root.DataContext.SelectStepCommand}"
                                         CommandParameter="{Binding}"
                                         ToolTip.Tip="{Binding Name}" />
                             </DataTemplate>
@@ -52,12 +53,12 @@
         </StackPanel>
 
         <StackPanel Spacing="6" IsVisible="{Binding ShowRealScreenshot}">
-            <TextBlock Text="Detail vybraného bodu (2× přiblíženo)" FontSize="12" Opacity="0.8" />
+            <TextBlock Text="{loc:Tr map.detailTitle}" FontSize="12" Opacity="0.8" />
             <Border BorderBrush="Gray" BorderThickness="1" Width="440" Height="280" ClipToBounds="True">
                 <Panel>
                     <Image Source="{Binding DetailBitmap}" Width="440" Height="280" Stretch="Fill"
                            IsVisible="{Binding DetailBitmap, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                    <TextBlock Text="Vyber bod v mapě nebo časové ose"
+                    <TextBlock Text="{loc:Tr map.detailPlaceholder}"
                                IsVisible="{Binding DetailBitmap, Converter={x:Static ObjectConverters.IsNull}}"
                                HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.6" TextWrapping="Wrap" MaxWidth="300" />
                     <!-- Střed cílového bodu vyznačen křížkem uprostřed výřezu -->
@@ -68,5 +69,5 @@
                 </Panel>
             </Border>
         </StackPanel>
-    </StackPanel>
+    </WrapPanel>
 </UserControl>

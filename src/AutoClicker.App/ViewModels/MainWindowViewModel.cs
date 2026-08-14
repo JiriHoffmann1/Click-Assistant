@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using AutoClicker.App.Localization;
 using AutoClicker.App.Views;
 using AutoClicker.Core.Engine;
 using AutoClicker.Core.Models;
@@ -17,7 +18,9 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly ClickSequenceExecutor _executor;
     private readonly IGlobalInputListener _globalListener;
     private readonly IScreenInfoProvider _screenInfoProvider;
-    private readonly object _hotkeySubscriberId = new();
+    private readonly IAppSettingsRepository _appSettingsRepository;
+    private readonly object _startHotkeySubscriberId = new();
+    private readonly object _stopHotkeySubscriberId = new();
     private ClickProfile? _lastStartedProfile;
 
     public Window? OwnerWindow { get; set; }
@@ -26,39 +29,78 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ProfileEditorViewModel Editor { get; }
 
+    public IReadOnlyList<LocalizationManager.LanguageOption> AvailableLanguages => LocalizationManager.Instance.AvailableLanguages;
+
     [ObservableProperty]
     private ClickProfile? _selectedProfile;
 
     [ObservableProperty]
-    private string _statusText = "Nečinný";
+    private string _statusText = LocalizationManager.Instance["status.idle"];
 
     [ObservableProperty]
     private bool _isRunning;
+
+    [ObservableProperty]
+    private bool _canStart;
+
+    [ObservableProperty]
+    private LocalizationManager.LanguageOption _selectedLanguage;
 
     public MainWindowViewModel(
         IProfileRepository profileRepository,
         ClickSequenceExecutor executor,
         IGlobalInputListener globalListener,
         IScreenInfoProvider screenInfoProvider,
-        IScreenCaptureProvider screenCaptureProvider)
+        IScreenCaptureProvider screenCaptureProvider,
+        IAppSettingsRepository appSettingsRepository)
     {
         _profileRepository = profileRepository;
         _executor = executor;
         _globalListener = globalListener;
         _screenInfoProvider = screenInfoProvider;
+        _appSettingsRepository = appSettingsRepository;
         _executor.StatusChanged += OnStatusChanged;
         _executor.ResolutionChangedDuringRun += OnResolutionChangedDuringRun;
         _globalListener.HotkeyPressed += OnGlobalHotkeyPressed;
 
         Editor = new ProfileEditorViewModel(globalListener, screenInfoProvider, screenCaptureProvider);
-        Editor.HotkeyChanged += hotkey => _globalListener.RegisterHotkey(hotkey, _hotkeySubscriberId);
+        Editor.HotkeyChanged += hotkey => _globalListener.RegisterHotkey(hotkey, _startHotkeySubscriberId);
+        Editor.StopHotkeyChanged += hotkey =>
+        {
+            if (hotkey is { } config) _globalListener.RegisterHotkey(config, _stopHotkeySubscriberId);
+            else _globalListener.UnregisterHotkey(_stopHotkeySubscriberId);
+        };
+        Editor.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ProfileEditorViewModel.HasStopHotkey)) UpdateCanStart();
+        };
+        UpdateCanStart();
+
+        _selectedLanguage = AvailableLanguages.FirstOrDefault(l => l.Code == LocalizationManager.Instance.CurrentLanguage)
+                             ?? AvailableLanguages[0];
     }
+
+    partial void OnSelectedLanguageChanged(LocalizationManager.LanguageOption value)
+    {
+        if (value.Code == LocalizationManager.Instance.CurrentLanguage) return;
+        _ = _appSettingsRepository.SaveAsync(new AppSettings { Language = value.Code });
+        StatusText = LocalizationManager.Instance["language.restartNote"];
+    }
+
+    private void UpdateCanStart() => CanStart = !IsRunning && Editor.HasStopHotkey;
+
+    partial void OnIsRunningChanged(bool value) => UpdateCanStart();
 
     public async Task InitializeAsync()
     {
         var loaded = await _profileRepository.LoadAllAsync();
         Profiles.Clear();
         foreach (var profile in loaded) Profiles.Add(profile);
+
+        // Uživatel mohl začít definovat body ještě před dokončením tohoto načtení
+        // (LoadAllAsync běží asynchronně po zobrazení okna) - v tom případě rozdělanou
+        // práci v editoru nezahazovat výběrem/vytvořením jiného profilu.
+        if (Editor.Steps.Count > 0) return;
 
         if (Profiles.Count > 0) SelectedProfile = Profiles[0];
         else NewProfile();
@@ -87,7 +129,7 @@ public partial class MainWindowViewModel : ObservableObject
         else Profiles.Add(profile);
 
         SelectedProfile = profile;
-        StatusText = "Profil uložen";
+        StatusText = LocalizationManager.Instance["status.profileSaved"];
     }
 
     [RelayCommand]
@@ -108,6 +150,12 @@ public partial class MainWindowViewModel : ObservableObject
 
         var currentSnapshot = _screenInfoProvider.GetCurrentSnapshot();
         var profile = Editor.ToClickProfile(currentSnapshot);
+
+        if (profile.StopHotkey is null)
+        {
+            StatusText = LocalizationManager.Instance["status.needStopHotkey"];
+            return;
+        }
 
         if (profile.CapturedScreenSnapshot is { } captured && !captured.IsCompatibleWith(currentSnapshot))
         {
@@ -133,20 +181,21 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void OnGlobalHotkeyPressed(object? sender, GlobalHotkeyEventArgs e)
     {
-        if (!Equals(e.SubscriberId, _hotkeySubscriberId)) return;
-
-        Dispatcher.UIThread.Post(() =>
+        if (Equals(e.SubscriberId, _startHotkeySubscriberId))
         {
-            if (IsRunning) StopCommand.Execute(null);
-            else StartCommand.Execute(null);
-        });
+            Dispatcher.UIThread.Post(() => StartCommand.Execute(null));
+        }
+        else if (Equals(e.SubscriberId, _stopHotkeySubscriberId))
+        {
+            Dispatcher.UIThread.Post(() => StopCommand.Execute(null));
+        }
     }
 
     private void OnResolutionChangedDuringRun(object? sender, ResolutionChangedEventArgs e)
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            StatusText = "Zastaveno – změnilo se rozlišení obrazovky";
+            StatusText = LocalizationManager.Instance["status.stoppedResolutionChanged"];
 
             var choice = await ShowResolutionMismatchDialogAsync(e.Previous, e.Current);
             if (choice == ResolutionMismatchChoice.Cancel || _lastStartedProfile is null) return;
@@ -180,8 +229,9 @@ public partial class MainWindowViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>
         {
             IsRunning = e.Status == EngineStatus.Running;
-            if (e.Status == EngineStatus.Running) StatusText = "Běží";
-            else if (e.Status == EngineStatus.Stopped && StatusText != "Zastaveno – změnilo se rozlišení obrazovky") StatusText = "Zastaveno";
+            if (e.Status == EngineStatus.Running) StatusText = LocalizationManager.Instance["status.running"];
+            else if (e.Status == EngineStatus.Stopped && StatusText != LocalizationManager.Instance["status.stoppedResolutionChanged"])
+                StatusText = LocalizationManager.Instance["status.stopped"];
         });
     }
 }
