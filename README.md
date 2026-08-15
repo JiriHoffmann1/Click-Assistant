@@ -1,69 +1,72 @@
 # Click Assistant
 
-Desktopový autoclicker pro Windows (.NET 8 / Avalonia UI). Uživatel si na obrazovce nadefinuje sekvenci bodů
-(kliknutí myší, případně stisky kláves), appka je pak automaticky přehrává ve zvoleném pořadí a intervalu -
-volitelně s "humanizovaným" pohybem myši (zakřivené dráhy, náhodná odchylka polohy a časování), aby akce
-nepůsobila jako robotická.
+A Windows desktop autoclicker (.NET 8 / Avalonia UI). Define a sequence of points on screen (mouse clicks,
+optionally key presses), and the app plays them back automatically in the chosen order and interval -
+optionally with "humanized" mouse movement (curved paths, randomized position and timing) so the action
+doesn't look robotic.
 
-## Hlavní funkce
+## Main features
 
-- **Editor sekvence** - klikací body i klávesové kroky, pořadí sekvenční/náhodné, vlastní pořadí přetažením,
-  opakování N-krát nebo donekonečna, základní interval s náhodným jitterem.
-- **Humanizace pohybu** - zakřivené (Bézierovy) dráhy myši mezi body, náhodná odchylka cílové pozice, náhodné
-  trvání pohybu, šance na "přestřelení" cíle - vše volitelné a nastavitelné.
-- **Globální klávesové zkratky** - Start a Stop jsou dvě nezávislé zkratky, fungují i mimo okno appky.
-- **Mapa monitorů** - vizuální editor rozložení všech připojených monitorů; body i monitory lze přetahovat
-  myší, monitory nejde přetáhnout přes sebe ani mimo plochu mapy (kolize se řeší automatickým odsunutím
-  ostatních monitorů nebo přichycením na nejbližší volnou pozici).
-- **Živý náhled bodu** - u vybraného bodu lze zobrazit reálný screenshot okolí kliku, který se sám
-  aktualizuje, když se změní to, co je pod ním.
-- **Detekce změny rozlišení/monitorů** - při spuštění i za běhu appka porovná uložený snapshot obrazovky s
-  aktuálním stavem a při neshodě nabídne přepočet souřadnic profilu.
-- **Lokalizace** - kompletní UI v 39 jazycích (viz `src/ClickAssistant.App/Localization/Strings`), přepínání
-  za běhu bez restartu.
-- **Světlý/tmavý/automatický motiv.**
+- **Sequence editor** - click points and key-press steps, sequential/random order, custom order by
+  dragging, repeat N times or forever, base interval with random jitter.
+- **Movement humanization** - curved (Bézier) mouse paths between points, randomized target position,
+  randomized movement duration, a chance of "overshooting" the target - all optional and configurable.
+- **Global hotkeys** - Start and Stop are two independent hotkeys, and work even outside the app window.
+- **Monitor map** - a visual editor for the layout of all connected monitors; both points and monitors can
+  be dragged with the mouse, monitors can't be dragged through each other or off the map (collisions push
+  the other monitors aside or snap to the nearest free position).
+- **Live point preview** - the selected point can show a real screenshot of the area around the click,
+  which refreshes itself when whatever is under it changes.
+- **Resolution/monitor change detection** - on start and while running, the app compares the saved screen
+  snapshot against the current one and offers to rescale the profile's coordinates on a mismatch.
+- **Single instance** - launching the app again while it's already running just brings the existing window
+  to front (maximized) instead of opening a second copy.
+- **Localization** - the full UI is available in 40 languages (see
+  `src/ClickAssistant.App/Localization/Strings`), switchable at runtime without a restart.
+- **Light/dark/automatic theme.**
 
-## Požadavky
+## Requirements
 
-- Windows (zachytávání obrazovky i simulace vstupu jsou navázané na Windows API).
-- Pro build ze zdrojáků [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
+- Windows (screen capture and input simulation are tied to Windows APIs).
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) to build from source.
 
-## Spuštění ze zdrojáků
+## Run from source
 
 ```
 dotnet run --project src/ClickAssistant.App
 ```
 
-## Testy
+## Tests
 
-Automatizované testy pokrývají jen `ClickAssistant.Core` (čistou doménovou logiku bez UI/OS závislostí):
+Automated tests cover only `ClickAssistant.Core` (pure domain logic with no UI/OS dependencies):
 
 ```
 dotnet test tests/ClickAssistant.Core.Tests
 ```
 
-## Sestavení samostatného .exe
+## Build a standalone .exe
 
 ```
 ./publish-exe.ps1
 ```
 
-(nebo ekvivalentní `dotnet publish` příkaz uvnitř skriptu) vytvoří self-contained single-file
-`publish/ClickAssistant.App.exe`, který ke spuštění nepotřebuje nainstalovaný .NET.
+(or the equivalent `dotnet publish` command inside the script) produces a self-contained single-file
+`publish/ClickAssistant.App.exe` that doesn't need .NET installed to run.
 
-## Kde appka ukládá data
+## Where the app stores data
 
-Profily a nastavení se ukládají mimo repozitář, do `%AppData%/ClickAssistant/` (profily jednotlivě jako JSON
-v `profiles/`, nastavení appky v `settings.json`).
+Profiles and settings are stored outside the repository, in `%AppData%/ClickAssistant/` (each profile as
+its own JSON file under `profiles/`, app settings in `settings.json`).
 
-## Struktura projektu a architektura
+## Project structure and architecture
 
-- `src/ClickAssistant.Core` - čistá doménová logika (engine, modely, port rozhraní), bez závislostí na
+- `src/ClickAssistant.Core` - pure domain logic (engine, models, port interfaces), no dependency on
   Windows/UI.
-- `src/ClickAssistant.Infrastructure` - implementace portů nad SharpHook (globální vstup) a GDI (screenshoty).
+- `src/ClickAssistant.Infrastructure` - port implementations on top of SharpHook (global input) and GDI
+  (screenshots).
 - `src/ClickAssistant.App` - Avalonia UI (MVVM).
-- `tests/ClickAssistant.Core.Tests` - xUnit testy nad `Core`.
+- `tests/ClickAssistant.Core.Tests` - xUnit tests over `Core`.
 
-Podrobný popis architektury, klíčových tříd a "gotchas" (věcí, které nejsou vidět na první pohled) je v
-[`CLAUDE.md`](CLAUDE.md). `technicalExplanation.md` je navíc česky psaný výukový materiál k C#/.NET pro
-někoho, kdo umí PHP.
+A detailed description of the architecture, key classes, and non-obvious gotchas lives in
+[`CLAUDE.md`](CLAUDE.md). `technicalExplanation.md` is additionally a Czech-language C#/.NET learning
+document for someone coming from PHP.
