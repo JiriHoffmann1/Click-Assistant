@@ -5,6 +5,13 @@
   "language.tooltip": "Wähle die Sprache der Benutzeroberfläche. Die Änderung wird nach einem Neustart der Anwendung wirksam.",
   "language.restartNote": "Die Sprache ändert sich beim nächsten Start der Anwendung.",
 
+  "theme.auto": "Auto",
+  "theme.light": "Hell",
+  "theme.dark": "Dunkel",
+  "theme.tooltip": "Wähle das Farbthema der App: Auto folgt der Systemeinstellung, oder lege Hell/Dunkel fest.",
+  "editor.timingCard.header": "Zeitsteuerung",
+  "hotkeys.header": "Tastenkombinationen",
+
   "profiles.header": "Profile",
   "profiles.new": "Neu",
   "profiles.new.tooltip": "Erstellt ein neues, leeres Profil mit Standardeinstellungen.",

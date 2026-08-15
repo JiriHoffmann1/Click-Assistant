@@ -9,10 +9,12 @@
              x:DataType="vm:ProfileEditorViewModel"
              x:Name="Root">
     <WrapPanel Orientation="Horizontal">
-        <StackPanel Spacing="6" Margin="0,0,14,10">
+        <Border Classes="card" Margin="0,0,14,10">
+        <StackPanel Spacing="10">
             <CheckBox Content="{loc:Tr map.showScreenshot}" IsChecked="{Binding ShowRealScreenshot}" ToolTip.Tip="{loc:Tr map.showScreenshot.tooltip}" />
 
-            <Border BorderBrush="Gray" BorderThickness="1" Background="#0A000000" Width="380" Height="200" ClipToBounds="True">
+            <Border BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="8"
+                    Background="{DynamicResource ThemeSurface2Brush}" Width="380" Height="200" ClipToBounds="True">
                 <Canvas Width="380" Height="200">
                     <ItemsControl ItemsSource="{Binding MapMonitorRects}">
                         <ItemsControl.ItemsPanel>
@@ -24,12 +26,12 @@
                             <DataTemplate x:DataType="vm:MapMonitorRectViewModel">
                                 <Rectangle Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}"
                                            Width="{Binding Width}" Height="{Binding Height}"
-                                           Stroke="Gray" StrokeThickness="1" Fill="Transparent" />
+                                           Stroke="{DynamicResource ThemeBorderBrush}" StrokeThickness="1.5" Fill="Transparent" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Polyline Points="{Binding MapPolylinePoints}" Stroke="CornflowerBlue" StrokeThickness="1.5" />
+                    <Polyline Points="{Binding MapPolylinePoints}" Stroke="{DynamicResource ThemeAccentBrush}" StrokeThickness="1.5" Opacity="0.85" />
 
                     <ItemsControl ItemsSource="{Binding Steps}">
                         <ItemsControl.ItemsPanel>
@@ -41,6 +43,8 @@
                             <DataTemplate x:DataType="vm:SequenceStepViewModel">
                                 <Button Canvas.Left="{Binding MapX}" Canvas.Top="{Binding MapY}"
                                         Width="18" Height="18" Padding="0" CornerRadius="9"
+                                        Background="{DynamicResource ThemeAccentBrush}"
+                                        Foreground="{DynamicResource ThemeAccentContrastBrush}"
                                         Content="{Binding StepNumber}" FontSize="9" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                         Command="{Binding #Root.DataContext.SelectStepCommand}"
                                         CommandParameter="{Binding}"
@@ -51,16 +55,19 @@
                 </Canvas>
             </Border>
         </StackPanel>
+        </Border>
 
-        <StackPanel Spacing="6" IsVisible="{Binding ShowRealScreenshot}">
-            <TextBlock Text="{loc:Tr map.detailTitle}" FontSize="12" Opacity="0.8" />
-            <Border BorderBrush="Gray" BorderThickness="1" Width="440" Height="280" ClipToBounds="True">
+        <Border Classes="card" IsVisible="{Binding ShowRealScreenshot}">
+        <StackPanel Spacing="8">
+            <TextBlock Text="{loc:Tr map.detailTitle}" Classes="fieldLabel" />
+            <Border BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="8" Width="440" Height="280" ClipToBounds="True">
                 <Panel>
                     <Image Source="{Binding DetailBitmap}" Width="440" Height="280" Stretch="Fill"
                            IsVisible="{Binding DetailBitmap, Converter={x:Static ObjectConverters.IsNotNull}}" />
                     <TextBlock Text="{loc:Tr map.detailPlaceholder}"
                                IsVisible="{Binding DetailBitmap, Converter={x:Static ObjectConverters.IsNull}}"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.6" TextWrapping="Wrap" MaxWidth="300" />
+                               Foreground="{DynamicResource ThemeInkDimBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="300" />
                     <!-- Střed cílového bodu vyznačen křížkem uprostřed výřezu -->
                     <Line StartPoint="210,140" EndPoint="230,140" Stroke="Red" StrokeThickness="1.5"
                           IsVisible="{Binding DetailBitmap, Converter={x:Static ObjectConverters.IsNotNull}}" />
@@ -69,5 +76,6 @@
                 </Panel>
             </Border>
         </StackPanel>
+        </Border>
     </WrapPanel>
 </UserControl>

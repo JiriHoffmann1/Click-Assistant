@@ -5,6 +5,13 @@
   "language.tooltip": "Kullanıcı arayüzü dilini seçin. Değişiklik, uygulama yeniden başlatıldıktan sonra geçerli olur.",
   "language.restartNote": "Dil, uygulamayı bir sonraki başlatışınızda değişecek.",
 
+  "theme.auto": "Otomatik",
+  "theme.light": "Açık",
+  "theme.dark": "Koyu",
+  "theme.tooltip": "Uygulamanın renk temasını seçin: Otomatik sistem ayarını izler, ya da Açık/Koyu olarak sabitleyin.",
+  "editor.timingCard.header": "Zamanlama",
+  "hotkeys.header": "Kısayol tuşları",
+
   "profiles.header": "Profiller",
   "profiles.new": "Yeni",
   "profiles.new.tooltip": "Varsayılan ayarlarla yeni, boş bir profil oluşturur.",

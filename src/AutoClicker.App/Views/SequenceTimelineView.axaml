@@ -17,24 +17,29 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:SequenceStepViewModel">
-                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Width="190">
-                        <StackPanel Spacing="6">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Grid.Column="0" Text="{Binding StepNumber, Converter={x:Static loc:StepNumberConverter.Instance}}" FontWeight="Bold" VerticalAlignment="Center" />
-                                <Button Grid.Column="1" Content="{loc:Tr step.select}" FontSize="11" Padding="6,2" ToolTip.Tip="{loc:Tr step.select.tooltip}"
+                    <Border Classes="card" Width="196" Padding="12">
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0" Width="20" Height="20" CornerRadius="10"
+                                        Background="{DynamicResource ThemeAccentBrush}" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding StepNumber}" FontSize="10.5" FontWeight="Bold"
+                                               Foreground="{DynamicResource ThemeAccentContrastBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <Button Grid.Column="2" Content="{loc:Tr step.select}" Classes="ghost" FontSize="11" Padding="8,3" ToolTip.Tip="{loc:Tr step.select.tooltip}"
                                         Command="{Binding #Root.DataContext.SelectStepCommand}" CommandParameter="{Binding}" />
                             </Grid>
                             <TextBox Text="{Binding Name}" Watermark="{loc:Tr step.name.watermark}" ToolTip.Tip="{loc:Tr step.name.tooltip}" />
 
                             <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="6" RowSpacing="4" ToolTip.Tip="{loc:Tr step.xy.tooltip}">
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr step.x.label}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr step.x.label}" VerticalAlignment="Center" Classes="fieldLabel" />
                                 <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding X}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr step.y.label}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr step.y.label}" VerticalAlignment="Center" Classes="fieldLabel" />
                                 <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Y}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
                             </Grid>
 
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock Text="{loc:Tr step.clickCount.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" />
+                                <TextBlock Text="{loc:Tr step.clickCount.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" Classes="fieldLabel" />
                                 <NumericUpDown Value="{Binding ClickCount}" Minimum="1" Maximum="10" Width="90" ShowButtonSpinner="False" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" />
                             </StackPanel>
 
@@ -43,9 +48,9 @@
                                             IsEnabled="{Binding UseCustomDelay}" ShowButtonSpinner="False" ToolTip.Tip="{loc:Tr step.customDelay.tooltip}" />
 
                             <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
-                                <Button Content="↑" Command="{Binding #Root.DataContext.MoveStepUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveUp.tooltip}" />
-                                <Button Content="↓" Command="{Binding #Root.DataContext.MoveStepDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveDown.tooltip}" />
-                                <Button Content="✕" Command="{Binding #Root.DataContext.RemoveStepCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.remove.tooltip}" />
+                                <Button Content="↑" Classes="ghost" Padding="8,4" Command="{Binding #Root.DataContext.MoveStepUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveUp.tooltip}" />
+                                <Button Content="↓" Classes="ghost" Padding="8,4" Command="{Binding #Root.DataContext.MoveStepDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveDown.tooltip}" />
+                                <Button Content="✕" Classes="danger" Padding="8,4" Command="{Binding #Root.DataContext.RemoveStepCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.remove.tooltip}" />
                             </StackPanel>
                         </StackPanel>
                     </Border>

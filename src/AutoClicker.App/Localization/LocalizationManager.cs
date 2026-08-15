@@ -42,11 +42,11 @@ public sealed class LocalizationManager : INotifyPropertyChanged
 
     private Dictionary<string, string> _strings = new();
 
-    public string CurrentLanguage { get; private set; } = "cs";
+    public string CurrentLanguage { get; private set; } = "en";
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private LocalizationManager() => Load("cs");
+    private LocalizationManager() => Load("en");
 
     /// <summary>Vrátí přeložený text pro daný klíč, nebo klíč samotný, pokud překlad chybí (nikdy nespadne).</summary>
     public string this[string key] => _strings.TryGetValue(key, out var value) ? value : key;

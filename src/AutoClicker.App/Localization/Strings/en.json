@@ -5,6 +5,13 @@
   "language.tooltip": "Choose the user interface language. The change takes effect after restarting the application.",
   "language.restartNote": "The language will change the next time you start the application.",
 
+  "theme.auto": "Auto",
+  "theme.light": "Light",
+  "theme.dark": "Dark",
+  "theme.tooltip": "Choose the app's color theme: Auto follows your system setting, or pin Light/Dark.",
+  "editor.timingCard.header": "Timing",
+  "hotkeys.header": "Hotkeys",
+
   "profiles.header": "Profiles",
   "profiles.new": "New",
   "profiles.new.tooltip": "Creates a new, empty profile with default settings.",

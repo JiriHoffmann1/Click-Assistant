@@ -5,6 +5,13 @@
   "language.tooltip": "Pilih bahasa antarmuka pengguna. Perubahan akan berlaku setelah aplikasi dimulai ulang.",
   "language.restartNote": "Bahasa akan berubah saat aplikasi dijalankan berikutnya.",
 
+  "theme.auto": "Otomatis",
+  "theme.light": "Terang",
+  "theme.dark": "Gelap",
+  "theme.tooltip": "Pilih tema warna aplikasi: Otomatis mengikuti pengaturan sistem, atau kunci Terang/Gelap.",
+  "editor.timingCard.header": "Waktu",
+  "hotkeys.header": "Tombol pintas",
+
   "profiles.header": "Profil",
   "profiles.new": "Baru",
   "profiles.new.tooltip": "Membuat profil baru yang kosong dengan pengaturan default.",

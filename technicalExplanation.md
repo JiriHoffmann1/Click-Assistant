@@ -1134,7 +1134,7 @@ xUnit (obdoba PHPUnit) + NSubstitute (obdoba Mockery) jako mockovací knihovna. 
 vyžadují běžící Avalonia framework a nejsou v testovacím projektu pokryté (vyžadovalo by to headless Avalonia
 test rig, což je nad rámec současné konvence repa). UI/hook změny se ověřují ručním spuštěním appky.
 
-Aktuálně **92 testů**, rozdělených takto:
+Aktuálně **93 testů**, rozdělených takto:
 
 - `BezierMovementPathGeneratorTests.cs` – trajektorie vždy skončí přesně v cíli, počet kroků je v rozumných
   mezích, delaye nejsou záporné, přestřelení (`overshoot`) přidává přesně dva kroky navíc, a **regresní testy
@@ -1163,6 +1163,12 @@ Aktuálně **92 testů**, rozdělených takto:
   monitoru a nesouhlasného počtu monitorů mezi starým a novým snapshotem.
 - `ScreenSnapshotTests.cs` – `IsCompatibleWith` (shoda/neshoda počtu monitorů, pozice, rozlišení; scaling se
   záměrně nezapočítává).
+- `JsonAppSettingsRepositoryTests.cs` – round-trip jazyka i motivu (`AppSettings.Language`/`Theme`), výchozí
+  hodnoty při chybějícím/poškozeném souboru, přepis při druhém uložení, a **regresní test na sync-over-async
+  deadlock** (`LoadAsync_BlockingCallOnCapturedSynchronizationContext_DoesNotDeadlock`) – `MainWindow`
+  volá `LoadAsync().GetAwaiter().GetResult()` synchronně na UI vlákně ještě před `InitializeComponent()`
+  (viz B.3, B.17.3), takže repository musí interně používat `ConfigureAwait(false)`, jinak by pokračování
+  po `await` čekalo navěky na zablokovaný `SynchronizationContext`.
 - `PerformanceTests.cs` – **hrubé výkonnostní testy** (viz kapitola B.16), ne mikrobenchmarky: generování 5000
   Bézier trajektorií, shuffle 50 000 bodů, přepočet (`ProfileRescaler`) 5000bodového profilu a JSON round-trip
   5000bodového profilu musí doběhnout pod velkoryse nastavenou časovou mez (řádový strop, ne těsný), a klikací
@@ -1248,7 +1254,75 @@ podobnou regresi (znatelně zpomalenou horkou cestu) zachytil automaticky.
 
 ---
 
-## B.17 Shrnutí – kde hledat, když něco nefunguje
+## B.17 Motiv appky – Light/Dark/Auto
+
+Appka od Fáze 6 nabízí vlastní barevný motiv (ne výchozí modrou paletu Avalonia FluentTheme), ve dvou
+variantách (tmavá/světlá) a s trojicí voleb v horní liště: **Auto** (sleduje motiv OS), **Light**,
+**Dark**. Mechanismus stojí na vestavěném Avalonia theming systému, ne na ručním přebarvování.
+
+### B.17.1 `ThemeDictionaries` – paleta jako zdroje závislé na motivu
+
+`src/AutoClicker.App/Styles/AppTheme.axaml` definuje `ResourceDictionary.ThemeDictionaries` se dvěma
+pojmenovanými sadami štětců (`x:Key="Dark"` a `x:Key="Light"`) – `ThemeBackgroundBrush`,
+`ThemeSurfaceBrush`, `ThemeAccentBrush`, `ThemeGoodBrush` (stav "běží") atd. Obě sady používají
+**stejnou barevnou rodinu** (tlumený graphite/lavender), ne prostou inverzi černá↔bílá – světlý režim
+má tak pořád stejnou "identitu", jen na světlém podkladu.
+
+Avalonia při vyhodnocení `{DynamicResource ThemeAccentBrush}` (viz A.5/A.11 pro obecný koncept
+zdrojů/atributů) sama pozná, jaký `ThemeVariant` (`Light`/`Dark`) je aktuálně aktivní na daném vizuálním
+stromu (`ActualThemeVariant`), a vybere odpovídající slovník. `DynamicResource` (na rozdíl od
+`StaticResource`) navíc **znovu vyhodnotí vazbu při každé změně motivu** – proto stačí nastavit
+`RequestedThemeVariant` a celé okno se samo přebarví, žádný ruční C# kód pro jednotlivé prvky UI není
+potřeba.
+
+### B.17.2 `AppControls.axaml` – styl controls nad barvami
+
+`src/AutoClicker.App/Styles/AppControls.axaml` je `Styles` soubor (ne `ResourceDictionary` – v Avalonii
+`Styles` obsahuje `Style` selektory typu CSS, `ResourceDictionary` jen pojmenované hodnoty) s pravidly
+jako `Button.primary`, `Border.card`, `ComboBoxItem:selected` atd., která nastavují `Background`/
+`BorderBrush`/`Foreground`/`CornerRadius` přes `DynamicResource` na paletu z B.17.1. Funguje to, protože
+šablony vestavěných Avalonia controls (Button, ComboBox, NumericUpDown, ...) svoje vzhledové vlastnosti
+čtou přes `TemplateBinding` – nastavením `Background` na úrovni `Style` se tak barva propíše až do
+šablony, aniž by bylo nutné celou šablonu (ControlTemplate) přepisovat.
+
+Obě sady se připojují v `App.axaml`: `AppTheme.axaml` do `Application.Resources.MergedDictionaries`,
+`AppControls.axaml` do `Application.Styles` **za** `<FluentTheme />` (pořadí je důležité – v CSS-like
+cascade vyhrává poslední shodné pravidlo, takže naše přepsání musí být až po základním Fluent motivu).
+
+### B.17.3 Datový tok Auto/Light/Dark
+
+- `AppSettings.Theme` (`AutoClicker.Core/Models/AppSettings.cs`) – `"Auto"` / `"Light"` / `"Dark"`,
+  persistováno stejným mechanismem jako `Language` (`JsonAppSettingsRepository`, viz B.10 – stejný
+  soubor `%AppData%\AutoClicker\settings.json`).
+- Při startu (`MainWindow` konstruktor, řádky 24–36) appka namapuje uložený string na
+  `Avalonia.Styling.ThemeVariant` (`"Light"`→`ThemeVariant.Light`, `"Dark"`→`ThemeVariant.Dark`, jinak
+  `ThemeVariant.Default` – "sleduj OS") a nastaví `Application.Current.RequestedThemeVariant` ještě
+  **před** `InitializeComponent()`, ať je od prvního vykresleného snímku použitá správná paleta.
+- `MainWindowViewModel.SelectedTheme` (`[ObservableProperty]`) drží aktuálně vybranou volbu pro
+  ComboBox-like segmentovaný přepínač v horní liště (`ListBox Classes="segmented"`,
+  `MainWindow.axaml`). Při změně (`OnSelectedThemeChanged`) appka **živě** přenastaví
+  `RequestedThemeVariant` (na rozdíl od jazyka, který se mění až po restartu, viz B.2.2/A.11 – Avalonia
+  theming je nativně dynamické, appka pro to nepotřebuje žádný vlastní restart mechanismus) a uloží
+  volbu na disk.
+- **Pozor na past se sdíleným `AppSettings` recordem:** `AppSettings` má dvě pole (`Language`, `Theme`).
+  Kdyby `OnSelectedThemeChanged` uložil jen `new AppSettings { Theme = value.Code }`, `Language` by se
+  tiše přepsal na výchozí hodnotu (`record` bez explicitně nastaveného pole použije `init` default, ne
+  předchozí uloženou hodnotu – viz A.4). Obě změnové metody (`OnSelectedLanguageChanged` i
+  `OnSelectedThemeChanged`) proto vždy ukládají **oba** aktuální stavy najednou
+  (`Language = SelectedLanguage.Code, Theme = SelectedTheme.Code`), ne jen to pole, které se zrovna
+  změnilo.
+
+### B.17.4 Rozdíl oproti nativnímu HTML `<select>` (pro srovnání s dřívějším mockupem)
+
+Vizuální směr appky vznikl z HTML mockupu, kde platilo omezení, že nativní `<select>` v prohlížeči nejde
+skoro vůbec přestylovat (rozbalený seznam zůstává vzhledem OS, i když je zavřená krabička hezky
+načesaná). V Avalonii tohle omezení neplatí – `ComboBox` je plně šablonovatelný control, takže i
+rozbalený seznam (`ComboBoxItem`, viz `AppControls.axaml`) jde plně domotivovat vlastní paletou. Skutečná
+appka tak dosáhne vyššího vizuálního sjednocení, než jaké šlo předvést ve statickém HTML mockupu.
+
+---
+
+## B.18 Shrnutí – kde hledat, když něco nefunguje
 
 | Symptom | Kde hledat |
 |---|---|
@@ -1265,9 +1339,11 @@ podobnou regresi (znatelně zpomalenou horkou cestu) zachytil automaticky.
 | Okno při zmenšení "ořízne" spodek/pravou stranu | Zkontroluj `MinWidth`/`MinHeight` na `<Window>` a `ScrollViewer` kolem pravého panelu (`MainWindow.axaml`) – viz B.13.1 |
 | Vysoké vytížení CPU při běžícím klikání | Zkontroluj `CustomOrder` profilu – pokud odkazuje na neexistující body, běží obranná pojistka v `ClickSequenceExecutor` (B.15); pokud je vytížení i s platným pořadím, jde o jiný problém |
 | Okno "trhá"/zadrhává při ručním přepisování X/Y souřadnice bodu | Zkontroluj `ScheduleDetailCaptureRefresh`/`_captureDebounceTimer` v `ProfileEditorViewModel` – bez debounce by se `RefreshDetailCapture()` (GDI capture) spouštěl na každý stisk klávesy, viz B.9/B.16 |
+| Motiv appky se nepřepne / zůstane po restartu jiný, než byl nastaven | `AppSettings.Theme` v `%AppData%\AutoClicker\settings.json` – zkontroluj `OnSelectedThemeChanged`/`OnSelectedLanguageChanged` ukládají oba stavy najednou (viz B.17.3, past se sdíleným recordem) |
+| Nový/přestylovaný control (Button, ComboBox, ...) nesleduje motiv appky | Chybí `DynamicResource` na paletu z `AppTheme.axaml`, nebo `StaticResource` použitý omylem místo `DynamicResource` (ten se nepřepočítá při změně motivu) – viz B.17.1 |
 
 ---
 
 *Dokument vygenerován analýzou zdrojového kódu ke dni 2026-08-15. Pokrývá všechny `.cs` a `.axaml` soubory ve
-`src/` a `tests/` v tomto repozitáři, včetně responzivního UI (B.13.1), 92 testů (B.14), oprav robustnosti
-popsaných v B.15 a auditu výkonu/efektivity popsaného v B.16.*
+`src/` a `tests/` v tomto repozitáři, včetně responzivního UI (B.13.1), 93 testů (B.14), oprav robustnosti
+popsaných v B.15, auditu výkonu/efektivity popsaného v B.16 a vlastního Light/Dark/Auto motivu popsaného v B.17.*

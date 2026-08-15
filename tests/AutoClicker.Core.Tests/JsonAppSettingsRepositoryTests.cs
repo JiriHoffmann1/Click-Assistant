@@ -17,7 +17,8 @@ public class JsonAppSettingsRepositoryTests : IDisposable
 
         var settings = await repository.LoadAsync();
 
-        Assert.Equal("cs", settings.Language);
+        Assert.Equal("en", settings.Language);
+        Assert.Equal("Auto", settings.Theme);
     }
 
     [Fact]
@@ -25,10 +26,21 @@ public class JsonAppSettingsRepositoryTests : IDisposable
     {
         var repository = new JsonAppSettingsRepository(FilePath);
 
-        await repository.SaveAsync(new AppSettings { Language = "en" });
+        await repository.SaveAsync(new AppSettings { Language = "cs" });
         var loaded = await repository.LoadAsync();
 
-        Assert.Equal("en", loaded.Language);
+        Assert.Equal("cs", loaded.Language);
+    }
+
+    [Fact]
+    public async Task SaveAsync_ThenLoadAsync_RoundTripsTheme()
+    {
+        var repository = new JsonAppSettingsRepository(FilePath);
+
+        await repository.SaveAsync(new AppSettings { Theme = "Dark" });
+        var loaded = await repository.LoadAsync();
+
+        Assert.Equal("Dark", loaded.Theme);
     }
 
     [Fact]
@@ -52,7 +64,7 @@ public class JsonAppSettingsRepositoryTests : IDisposable
 
         var settings = await repository.LoadAsync();
 
-        Assert.Equal("cs", settings.Language);
+        Assert.Equal("en", settings.Language);
     }
 
     [Fact]

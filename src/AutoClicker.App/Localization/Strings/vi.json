@@ -5,6 +5,13 @@
   "language.tooltip": "Chọn ngôn ngữ giao diện người dùng. Thay đổi sẽ có hiệu lực sau khi khởi động lại ứng dụng.",
   "language.restartNote": "Ngôn ngữ sẽ thay đổi vào lần khởi động ứng dụng tiếp theo.",
 
+  "theme.auto": "Tự động",
+  "theme.light": "Sáng",
+  "theme.dark": "Tối",
+  "theme.tooltip": "Chọn giao diện màu của ứng dụng: Tự động theo cài đặt hệ thống, hoặc cố định Sáng/Tối.",
+  "editor.timingCard.header": "Thời gian",
+  "hotkeys.header": "Phím tắt",
+
   "profiles.header": "Hồ sơ",
   "profiles.new": "Mới",
   "profiles.new.tooltip": "Tạo một hồ sơ trống mới với cài đặt mặc định.",

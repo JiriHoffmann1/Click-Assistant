@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using AutoClicker.App.Localization;
 using AutoClicker.App.Views;
@@ -31,6 +33,13 @@ public partial class MainWindowViewModel : ObservableObject
 
     public IReadOnlyList<LocalizationManager.LanguageOption> AvailableLanguages => LocalizationManager.Instance.AvailableLanguages;
 
+    public IReadOnlyList<ThemeOption> ThemeOptions { get; } =
+    [
+        new("Auto", LocalizationManager.Instance["theme.auto"]),
+        new("Light", LocalizationManager.Instance["theme.light"]),
+        new("Dark", LocalizationManager.Instance["theme.dark"])
+    ];
+
     [ObservableProperty]
     private ClickProfile? _selectedProfile;
 
@@ -45,6 +54,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private LocalizationManager.LanguageOption _selectedLanguage;
+
+    [ObservableProperty]
+    private ThemeOption _selectedTheme;
 
     public MainWindowViewModel(
         IProfileRepository profileRepository,
@@ -78,13 +90,33 @@ public partial class MainWindowViewModel : ObservableObject
 
         _selectedLanguage = AvailableLanguages.FirstOrDefault(l => l.Code == LocalizationManager.Instance.CurrentLanguage)
                              ?? AvailableLanguages[0];
+        _selectedTheme = ThemeOptions.FirstOrDefault(t => t.Code == CurrentThemeCode()) ?? ThemeOptions[0];
+    }
+
+    private static string CurrentThemeCode()
+    {
+        var variant = Application.Current!.RequestedThemeVariant;
+        if (variant == ThemeVariant.Light) return "Light";
+        if (variant == ThemeVariant.Dark) return "Dark";
+        return "Auto";
     }
 
     partial void OnSelectedLanguageChanged(LocalizationManager.LanguageOption value)
     {
         if (value.Code == LocalizationManager.Instance.CurrentLanguage) return;
-        _ = _appSettingsRepository.SaveAsync(new AppSettings { Language = value.Code });
+        _ = _appSettingsRepository.SaveAsync(new AppSettings { Language = value.Code, Theme = SelectedTheme.Code });
         StatusText = LocalizationManager.Instance["language.restartNote"];
+    }
+
+    partial void OnSelectedThemeChanged(ThemeOption value)
+    {
+        Application.Current!.RequestedThemeVariant = value.Code switch
+        {
+            "Light" => ThemeVariant.Light,
+            "Dark" => ThemeVariant.Dark,
+            _ => ThemeVariant.Default
+        };
+        _ = _appSettingsRepository.SaveAsync(new AppSettings { Language = SelectedLanguage.Code, Theme = value.Code });
     }
 
     private void UpdateCanStart() => CanStart = !IsRunning && Editor.HasStopHotkey;

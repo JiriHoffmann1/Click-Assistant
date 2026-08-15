@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Avalonia.Styling;
 using AutoClicker.App.Localization;
 using AutoClicker.App.Services;
 using AutoClicker.App.ViewModels;
@@ -25,6 +26,14 @@ public partial class MainWindow : Window
         var settingsRepository = new JsonAppSettingsRepository();
         var appSettings = settingsRepository.LoadAsync().GetAwaiter().GetResult();
         LocalizationManager.Instance.SetLanguage(appSettings.Language);
+        // Unlike language, theme changes apply live later (MainWindowViewModel.OnSelectedThemeChanged) -
+        // this line only restores the saved choice at startup, before the first frame is painted.
+        Application.Current!.RequestedThemeVariant = appSettings.Theme switch
+        {
+            "Light" => ThemeVariant.Light,
+            "Dark" => ThemeVariant.Dark,
+            _ => ThemeVariant.Default
+        };
 
         InitializeComponent();
 

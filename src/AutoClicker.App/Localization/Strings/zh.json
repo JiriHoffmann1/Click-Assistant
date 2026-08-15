@@ -5,6 +5,13 @@
   "language.tooltip": "选择用户界面语言。更改将在重启应用程序后生效。",
   "language.restartNote": "语言将在下次启动应用程序时更改。",
 
+  "theme.auto": "自动",
+  "theme.light": "浅色",
+  "theme.dark": "深色",
+  "theme.tooltip": "选择应用的配色主题：自动跟随系统设置，或固定为浅色/深色。",
+  "editor.timingCard.header": "计时",
+  "hotkeys.header": "快捷键",
+
   "profiles.header": "配置文件",
   "profiles.new": "新建",
   "profiles.new.tooltip": "创建一个带有默认设置的新空配置文件。",

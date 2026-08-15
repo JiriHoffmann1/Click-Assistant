@@ -1,0 +1,45 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!--
+    Custom colour palette for the whole app, replacing FluentTheme's default blue palette.
+    Same family in both variants (muted graphite/lavender, not a straight invert) so Light
+    doesn't feel like a different app - see technicalExplanation.md for the design rationale.
+    Avalonia picks the matching dictionary below automatically based on ActualThemeVariant,
+    and every DynamicResource lookup re-resolves live when RequestedThemeVariant changes.
+  -->
+  <ResourceDictionary.ThemeDictionaries>
+
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="#15181F" />
+      <SolidColorBrush x:Key="ThemeSurfaceBrush" Color="#1B1F28" />
+      <SolidColorBrush x:Key="ThemeSurface2Brush" Color="#232732" />
+      <SolidColorBrush x:Key="ThemeBorderBrush" Color="#2D323E" />
+      <SolidColorBrush x:Key="ThemeInkBrush" Color="#CDD1DB" />
+      <SolidColorBrush x:Key="ThemeInkDimBrush" Color="#868C9B" />
+      <SolidColorBrush x:Key="ThemeAccentBrush" Color="#9385D9" />
+      <SolidColorBrush x:Key="ThemeAccentContrastBrush" Color="#1C1A2C" />
+      <SolidColorBrush x:Key="ThemeAccentInkBrush" Color="#E4E1F2" />
+      <SolidColorBrush x:Key="ThemeGoodBrush" Color="#6FBD93" />
+      <SolidColorBrush x:Key="ThemeBadBrush" Color="#D98A97" />
+      <SolidColorBrush x:Key="ThemeDangerBorderBrush" Color="#3A2E33" />
+    </ResourceDictionary>
+
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="#E2E4E9" />
+      <SolidColorBrush x:Key="ThemeSurfaceBrush" Color="#EFF0F4" />
+      <SolidColorBrush x:Key="ThemeSurface2Brush" Color="#DFE1E7" />
+      <SolidColorBrush x:Key="ThemeBorderBrush" Color="#D6D9E0" />
+      <SolidColorBrush x:Key="ThemeInkBrush" Color="#3B3E48" />
+      <SolidColorBrush x:Key="ThemeInkDimBrush" Color="#70747F" />
+      <SolidColorBrush x:Key="ThemeAccentBrush" Color="#8378C4" />
+      <SolidColorBrush x:Key="ThemeAccentContrastBrush" Color="#F7F6FB" />
+      <SolidColorBrush x:Key="ThemeAccentInkBrush" Color="#584C85" />
+      <SolidColorBrush x:Key="ThemeGoodBrush" Color="#4F9776" />
+      <SolidColorBrush x:Key="ThemeBadBrush" Color="#B0757F" />
+      <SolidColorBrush x:Key="ThemeDangerBorderBrush" Color="#E6DADD" />
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

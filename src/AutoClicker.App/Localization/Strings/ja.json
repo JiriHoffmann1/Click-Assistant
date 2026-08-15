@@ -5,6 +5,13 @@
   "language.tooltip": "ユーザーインターフェースの言語を選択します。変更はアプリケーションの再起動後に反映されます。",
   "language.restartNote": "言語は次回アプリケーションを起動したときに変更されます。",
 
+  "theme.auto": "自動",
+  "theme.light": "ライト",
+  "theme.dark": "ダーク",
+  "theme.tooltip": "アプリのカラーテーマを選択します。「自動」はシステム設定に従い、「ライト」/「ダーク」で固定できます。",
+  "editor.timingCard.header": "タイミング",
+  "hotkeys.header": "ホットキー",
+
   "profiles.header": "プロファイル",
   "profiles.new": "新規",
   "profiles.new.tooltip": "デフォルト設定の新しい空のプロファイルを作成します。",

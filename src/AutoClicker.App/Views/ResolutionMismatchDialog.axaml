@@ -3,17 +3,18 @@
         xmlns:loc="using:AutoClicker.App.Localization"
         x:Class="AutoClicker.App.Views.ResolutionMismatchDialog"
         Title="{loc:Tr resolutionDialog.title}"
+        Background="{DynamicResource ThemeBackgroundBrush}"
         Width="420" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False">
     <StackPanel Margin="20" Spacing="14">
-        <TextBlock TextWrapping="Wrap"
+        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource ThemeInkBrush}"
                     Text="{loc:Tr resolutionDialog.message}" />
-        <TextBlock x:Name="DetailText" TextWrapping="Wrap" FontSize="12" Opacity="0.8" />
+        <TextBlock x:Name="DetailText" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource ThemeInkDimBrush}" />
         <StackPanel Spacing="8">
-            <Button Content="{loc:Tr resolutionDialog.rescale}" HorizontalAlignment="Stretch" Click="OnRescaleClick" />
-            <Button Content="{loc:Tr resolutionDialog.continue}" HorizontalAlignment="Stretch" Click="OnContinueClick" />
-            <Button Content="{loc:Tr resolutionDialog.cancel}" HorizontalAlignment="Stretch" Click="OnCancelClick" />
+            <Button Content="{loc:Tr resolutionDialog.rescale}" Classes="primary" HorizontalAlignment="Stretch" Click="OnRescaleClick" />
+            <Button Content="{loc:Tr resolutionDialog.continue}" Classes="ghost" HorizontalAlignment="Stretch" Click="OnContinueClick" />
+            <Button Content="{loc:Tr resolutionDialog.cancel}" Classes="danger" HorizontalAlignment="Stretch" Click="OnCancelClick" />
         </StackPanel>
     </StackPanel>
 </Window>

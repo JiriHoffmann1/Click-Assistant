@@ -5,6 +5,13 @@
   "language.tooltip": "Chagua lugha ya kiolesura cha mtumiaji. Mabadiliko yataanza kutumika baada ya kuanzisha upya programu.",
   "language.restartNote": "Lugha itabadilika utakapoanzisha programu tena.",
 
+  "theme.auto": "Kiotomatiki",
+  "theme.light": "Angavu",
+  "theme.dark": "Giza",
+  "theme.tooltip": "Chagua mandhari ya rangi ya programu: Kiotomatiki hufuata mpangilio wa mfumo, au weka Angavu/Giza.",
+  "editor.timingCard.header": "Muda",
+  "hotkeys.header": "Vitufe vya mkato",
+
   "profiles.header": "Wasifu",
   "profiles.new": "Mpya",
   "profiles.new.tooltip": "Huunda wasifu mpya tupu wenye mipangilio chaguomsingi.",

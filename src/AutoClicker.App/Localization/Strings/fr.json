@@ -5,6 +5,13 @@
   "language.tooltip": "Choisissez la langue de l'interface utilisateur. Le changement prendra effet après le redémarrage de l'application.",
   "language.restartNote": "La langue changera au prochain démarrage de l'application.",
 
+  "theme.auto": "Auto",
+  "theme.light": "Clair",
+  "theme.dark": "Sombre",
+  "theme.tooltip": "Choisissez le thème de couleur de l'application : Auto suit le réglage du système, ou fixez Clair/Sombre.",
+  "editor.timingCard.header": "Cadence",
+  "hotkeys.header": "Raccourcis clavier",
+
   "profiles.header": "Profils",
   "profiles.new": "Nouveau",
   "profiles.new.tooltip": "Crée un nouveau profil vide avec les paramètres par défaut.",

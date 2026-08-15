@@ -5,6 +5,13 @@
   "language.tooltip": "Vyber jazyk uživatelského rozhraní. Změna se projeví po restartu aplikace.",
   "language.restartNote": "Jazyk se změní po příštím spuštění aplikace.",
 
+  "theme.auto": "Auto",
+  "theme.light": "Světlý",
+  "theme.dark": "Tmavý",
+  "theme.tooltip": "Vyber barevný motiv appky: Auto sleduje nastavení systému, nebo pevně nastav Světlý/Tmavý.",
+  "editor.timingCard.header": "Časování",
+  "hotkeys.header": "Klávesové zkratky",
+
   "profiles.header": "Profily",
   "profiles.new": "Nový",
   "profiles.new.tooltip": "Založí nový, prázdný profil s výchozím nastavením.",
