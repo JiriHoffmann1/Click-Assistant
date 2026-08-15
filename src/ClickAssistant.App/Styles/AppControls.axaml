@@ -1,0 +1,251 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!--
+    Control restyle on top of FluentTheme, driven entirely by the DynamicResource palette in
+    AppTheme.axaml so every control here follows Light/Dark/Auto automatically. FluentTheme's
+    built-in control templates bind Background/BorderBrush/Foreground/CornerRadius from
+    TemplateBinding, so overriding those properties at the Style level reskins reliably without
+    needing to replace whole ControlTemplates.
+  -->
+
+  <!-- ===================== Buttons ===================== -->
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="14,8" />
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="Button:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeBorderBrush}" />
+  </Style>
+  <Style Selector="Button:disabled">
+    <Setter Property="Opacity" Value="0.5" />
+  </Style>
+
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeAccentContrastBrush}" />
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+    <Setter Property="Opacity" Value="0.88" />
+  </Style>
+
+  <Style Selector="Button.danger">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeDangerBorderBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeBadBrush}" />
+  </Style>
+
+  <Style Selector="Button.ghost">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+  </Style>
+
+  <!-- ===================== Text input ===================== -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+    <Setter Property="CaretBrush" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+  </Style>
+
+  <!-- ===================== NumericUpDown ===================== -->
+  <Style Selector="NumericUpDown">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="4" />
+  </Style>
+
+  <!-- ===================== ComboBox ===================== -->
+  <Style Selector="ComboBox">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+  <Style Selector="ComboBoxItem">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+    <Setter Property="CornerRadius" Value="6" />
+    <!-- Matches ComboBox's own content Padding above, so the popup's item text lines up under the
+         text shown in the closed box instead of starting at a different left offset. -->
+    <Setter Property="Padding" Value="10,8" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+  </Style>
+  <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+  </Style>
+  <Style Selector="ComboBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="TextBlock.Foreground" Value="{DynamicResource ThemeAccentContrastBrush}" />
+  </Style>
+  <!-- Best-effort: FluentTheme's own resource key for the ComboBox popup surface. If the exact
+       key differs across Avalonia point releases, the popup still falls back to Fluent's own
+       theme-appropriate (dark-in-dark / light-in-light) default - never unreadable, just not
+       pixel-matched to the rest of the app. -->
+  <Style Selector="ComboBox">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+  </Style>
+
+  <!-- ===================== CheckBox / ToggleSwitch ===================== -->
+  <Style Selector="CheckBox">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+  </Style>
+  <Style Selector="CheckBox /template/ Border#NormalRectangle">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+  </Style>
+  <Style Selector="CheckBox:checked /template/ Border#NormalRectangle">
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+  </Style>
+
+  <Style Selector="ToggleSwitch">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+  </Style>
+  <Style Selector="ToggleSwitch /template/ Border#OuterBorder">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+  </Style>
+  <Style Selector="ToggleSwitch:checked /template/ Border#OuterBorder">
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+  </Style>
+
+  <!-- ===================== Expander (Humanization card) ===================== -->
+  <Style Selector="Expander">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+  </Style>
+  <Style Selector="Expander /template/ ToggleButton#PART_toggle">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="Padding" Value="16,12" />
+  </Style>
+  <Style Selector="Expander /template/ Border#ExpanderContent">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}" />
+    <Setter Property="Padding" Value="16,0,16,14" />
+  </Style>
+
+  <!-- ===================== Profile list / segmented theme picker ===================== -->
+  <Style Selector="ListBox">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ListBoxItem">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkDimBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="10,9" />
+  </Style>
+  <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+  </Style>
+  <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+  </Style>
+  <Style Selector="ListBoxItem:selected TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkBrush}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <!-- Segmented Auto/Light/Dark theme picker: a ListBox rendered as a row of pill buttons. -->
+  <Style Selector="ListBox.segmented">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate>
+        <StackPanel Orientation="Horizontal" Spacing="2" />
+      </ItemsPanelTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ListBox.segmented ListBoxItem">
+    <Setter Property="Padding" Value="10,5" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkDimBrush}" />
+  </Style>
+  <Style Selector="ListBox.segmented ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+  </Style>
+  <Style Selector="ListBox.segmented ListBoxItem:selected TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeAccentContrastBrush}" />
+  </Style>
+
+  <!-- ===================== Cards ===================== -->
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="16,14" />
+  </Style>
+  <Style Selector="Border.card.selected">
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="BorderThickness" Value="2" />
+  </Style>
+  <Style Selector="TextBlock.cardTitle">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkDimBrush}" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="LetterSpacing" Value="1" />
+    <Setter Property="Margin" Value="0,0,0,10" />
+  </Style>
+  <Style Selector="TextBlock.fieldLabel">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkDimBrush}" />
+    <Setter Property="FontSize" Value="10.5" />
+    <Setter Property="FontWeight" Value="Bold" />
+  </Style>
+
+  <!-- Status pill (Idle/Running readout next to Start/Stop) -->
+  <Style Selector="Border.statusPill">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="Padding" Value="12,6" />
+  </Style>
+  <Style Selector="Ellipse.statusDot">
+    <Setter Property="Width" Value="7" />
+    <Setter Property="Height" Value="7" />
+    <Setter Property="Fill" Value="{DynamicResource ThemeInkDimBrush}" />
+  </Style>
+  <Style Selector="Ellipse.statusDot.running">
+    <Setter Property="Fill" Value="{DynamicResource ThemeGoodBrush}" />
+  </Style>
+  <Style Selector="TextBlock.statusText">
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeInkDimBrush}" />
+  </Style>
+  <Style Selector="TextBlock.statusText.running">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeGoodBrush}" />
+  </Style>
+
+  <!-- Monitor rect in the sequence map: highlighted when the user has focused it via click. -->
+  <Style Selector="Rectangle.monitorRect.focused">
+    <Setter Property="Stroke" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="StrokeThickness" Value="2.5" />
+  </Style>
+
+</Styles>

@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ClickAssistant.App.ViewModels"
+             xmlns:loc="using:ClickAssistant.App.Localization"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="300"
+             x:Class="ClickAssistant.App.Views.SequenceTimelineView"
+             x:DataType="vm:ProfileEditorViewModel"
+             x:Name="Root">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding Steps}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="10" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SequenceStepViewModel">
+                    <Border Classes="card" Classes.selected="{Binding IsSelected}" Width="196" Padding="12"
+                            Tapped="Card_OnTapped" ToolTip.Tip="{loc:Tr step.select.tooltip}">
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0" Width="20" Height="20" CornerRadius="10"
+                                        Background="{DynamicResource ThemeAccentBrush}" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding StepNumber}" FontSize="10.5" FontWeight="Bold"
+                                               Foreground="{DynamicResource ThemeAccentContrastBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </Grid>
+                            <TextBox Text="{Binding Name}" Watermark="{loc:Tr step.name.watermark}" ToolTip.Tip="{loc:Tr step.name.tooltip}" />
+
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="6" RowSpacing="4" ToolTip.Tip="{loc:Tr step.xy.tooltip}">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr step.x.label}" VerticalAlignment="Center" Classes="fieldLabel" />
+                                <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding X}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr step.y.label}" VerticalAlignment="Center" Classes="fieldLabel" />
+                                <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Y}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="{loc:Tr step.clickCount.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" Classes="fieldLabel" />
+                                <NumericUpDown Value="{Binding ClickCount}" Minimum="1" Maximum="10" Width="90" ShowButtonSpinner="False" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" />
+                            </StackPanel>
+
+                            <CheckBox Content="{loc:Tr step.customDelay}" IsChecked="{Binding UseCustomDelay}" ToolTip.Tip="{loc:Tr step.customDelay.tooltip}" />
+                            <NumericUpDown Value="{Binding DelayAfterMs}" Minimum="10" Maximum="600000"
+                                            IsEnabled="{Binding UseCustomDelay}" ShowButtonSpinner="False" ToolTip.Tip="{loc:Tr step.customDelay.tooltip}" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                                <Button Content="↑" Classes="ghost" Padding="8,4" Command="{Binding #Root.DataContext.MoveStepUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveUp.tooltip}" />
+                                <Button Content="↓" Classes="ghost" Padding="8,4" Command="{Binding #Root.DataContext.MoveStepDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.moveDown.tooltip}" />
+                                <Button Content="✕" Classes="danger" Padding="8,4" Command="{Binding #Root.DataContext.RemoveStepCommand}" CommandParameter="{Binding}" ToolTip.Tip="{loc:Tr step.remove.tooltip}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

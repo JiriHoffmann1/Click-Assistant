@@ -1,4 +1,4 @@
-# AutoClicker – C# lekce a technická dokumentace pro PHP vývojáře
+# ClickAssistant – C# lekce a technická dokumentace pro PHP vývojáře
 
 Tento dokument má dvě propojené role najednou:
 
@@ -49,7 +49,7 @@ otázky prostě nikdy nevyvstanou, protože proces stejně za pár desítek mili
 
 ```csharp
 int count = 5;                  // explicitní typ
-var name = "AutoClicker";        // 'var' = odvození typu při kompilaci (NENÍ to totéž co PHP dynamický typ!)
+var name = "ClickAssistant";        // 'var' = odvození typu při kompilaci (NENÍ to totéž co PHP dynamický typ!)
 string status = "Nečinný";
 ```
 
@@ -77,7 +77,7 @@ Tohle v PHP nemá přímou obdobu a je to důležité pro pochopení `record str
   Skoro každá třída v appce (`ClickSequenceExecutor`, `MainWindowViewModel`, ...) je `class`.
 - **Hodnotový typ** (`struct`) – proměnná drží přímo data, ne odkaz. Přiřazení `b = a` **zkopíruje hodnotu**.
   V appce to je `ScreenPoint` (`readonly record struct ScreenPoint(int X, int Y)`,
-  `src/AutoClicker.Core/Models/ScreenPoint.cs`) a `MonitorBounds` – malé, často vytvářené dvojice čísel, kde
+  `src/ClickAssistant.Core/Models/ScreenPoint.cs`) a `MonitorBounds` – malé, často vytvářené dvojice čísel, kde
   kopírování je levnější než alokace objektu na haldě. Tohle PHP vůbec neřeší (skalární typy PHP se sice chovají
   hodnotově, ale nemáš možnost si vytvořit vlastní "malý objekt, co se chová jako číslo").
 
@@ -111,7 +111,7 @@ final class ClickSequenceExecutor
 Skoro 1:1 mapování slovo za slovem: `sealed` = `final` (nejde dědit), `private readonly` existuje v PHP 8.1+ taky
 (`readonly` vlastnost). Rozdíly, na které narazíš:
 - **Konstruktor bez `function`**: jméno třídy = konstruktor, žádné `__construct`.
-- **`interface`** funguje stejně jako v PHP – `IInputSimulator` (`src/AutoClicker.Core/Engine/IInputSimulator.cs`)
+- **`interface`** funguje stejně jako v PHP – `IInputSimulator` (`src/ClickAssistant.Core/Engine/IInputSimulator.cs`)
   je čistě signatura metod, žádná implementace. Konvence v C# je prefix `I` (`IInputSimulator`,
   `IProfileRepository`), v PHP bys spíš viděl suffix `Interface`.
 - **Žádné `implements` klíčové slovo** – dědičnost i implementace rozhraní se píšou stejně, za dvojtečkou:
@@ -121,7 +121,7 @@ Skoro 1:1 mapování slovo za slovem: `sealed` = `final` (nejde dědit), `privat
 
 ### Přístupové modifikátory
 `public`, `private`, `protected` fungují stejně jako PHP. Navíc C# má `internal` (viditelné jen uvnitř stejného
-projektu/`.dll` – nemá PHP obdobu, nejblíž je "neexportovaný ze package" v jiných jazycích) – v AutoClickeru se
+projektu/`.dll` – nemá PHP obdobu, nejblíž je "neexportovaný ze package" v jiných jazycích) – v ClickAssistantu se
 moc nepoužívá, projekty spolu komunikují přes `public` rozhraní.
 
 ---
@@ -430,7 +430,7 @@ syntaxi i koncept: `#[Attribute]`. Rozdíl je v tom, co se s atributem děje:
 
 - V PHP se atributy typicky čtou **za běhu přes reflection** (např. Symfony routing `#[Route(...)]` – framework
   za běhu prochází třídy a reaguje na atributy).
-- V AutoClickeru (knihovna **CommunityToolkit.Mvvm**) se `[ObservableProperty]` zpracovává **při kompilaci**
+- V ClickAssistantu (knihovna **CommunityToolkit.Mvvm**) se `[ObservableProperty]` zpracovává **při kompilaci**
   pomocí tzv. **source generátoru** – nástroj, který za tebe vygeneruje další C# kód ještě před buildem. Z
   privátního pole `_statusText` vygenerátor vyrobí veřejnou vlastnost:
   ```csharp
@@ -479,18 +479,18 @@ téhle konfigurace by `System.Text.Json` defaultně serializoval čísla, což b
 ## A.13 `namespace`/`using` vs. PHP `namespace`/`use`
 
 ```csharp
-namespace AutoClicker.Core.Engine;   // C# 10+ "file-scoped" namespace – platí pro celý zbytek souboru
+namespace ClickAssistant.Core.Engine;   // C# 10+ "file-scoped" namespace – platí pro celý zbytek souboru
 
-using AutoClicker.Core.Models;        // import jiného namespace
+using ClickAssistant.Core.Models;        // import jiného namespace
 ```
 Prakticky identické s PHP:
 ```php
-namespace AutoClicker\Core\Engine;
-use AutoClicker\Core\Models\ClickPoint;
+namespace ClickAssistant\Core\Engine;
+use ClickAssistant\Core\Models\ClickPoint;
 ```
 Zásadní rozdíl: **C# nepotřebuje autoload**. V PHP `use` řeší i to, odkud se soubor s třídou vůbec načte
 (Composer PSR-4 mapování namespace → cesta k souboru). V C# se celý projekt kompiluje najednou – `using` jen
-zpřístupní kratší jména typů (`ClickPoint` místo `AutoClicker.Core.Models.ClickPoint`), nijak neřeší "odkud se
+zpřístupní kratší jména typů (`ClickPoint` místo `ClickAssistant.Core.Models.ClickPoint`), nijak neřeší "odkud se
 to nahraje", protože všechno je už dávno v jedné zkompilované `.dll`.
 
 ---
@@ -555,33 +555,33 @@ pravděpodobně extension method (skoro vždy z `System.Linq`).
 ---
 ---
 
-# ČÁST B – Architektura a hlavní třídy AutoClickeru
+# ČÁST B – Architektura a hlavní třídy ClickAssistantu
 
 ## B.1 Architektura – 4 projekty a proč jsou oddělené
 
-Řešení (`AutoClicker.sln`, obdoba `composer.json` + workspace na úrovni celého repa) obsahuje čtyři C# projekty
+Řešení (`ClickAssistant.sln`, obdoba `composer.json` + workspace na úrovni celého repa) obsahuje čtyři C# projekty
 (`.csproj` = obdoba `composer.json` pro jeden balíček/modul):
 
 ```
-src/AutoClicker.Core           – čistá doména a business logika, ŽÁDNÉ závislosti na Windows/Avalonii
-src/AutoClicker.Infrastructure – konkrétní implementace (SharpHook, GDI, JSON soubory na disku)
-src/AutoClicker.App            – Avalonia UI (ViewModels + Views), skládá vše dohromady
-tests/AutoClicker.Core.Tests   – xUnit testy (obdoba PHPUnit), 82 testů
+src/ClickAssistant.Core           – čistá doména a business logika, ŽÁDNÉ závislosti na Windows/Avalonii
+src/ClickAssistant.Infrastructure – konkrétní implementace (SharpHook, GDI, JSON soubory na disku)
+src/ClickAssistant.App            – Avalonia UI (ViewModels + Views), skládá vše dohromady
+tests/ClickAssistant.Core.Tests   – xUnit testy (obdoba PHPUnit), 82 testů
 ```
 
 Závislosti (`ProjectReference` v `.csproj`, obdoba `require` v `composer.json`) jdou jen jedním směrem:
 
 ```
-AutoClicker.App  ──▶  AutoClicker.Infrastructure  ──▶  AutoClicker.Core
-       └──────────────────────▶  AutoClicker.Core
+ClickAssistant.App  ──▶  ClickAssistant.Infrastructure  ──▶  ClickAssistant.Core
+       └──────────────────────▶  ClickAssistant.Core
 ```
 
-`AutoClicker.Core.csproj` nemá žádný `PackageReference` – je to čisté C#, žádný framework. To je záměr: Core
+`ClickAssistant.Core.csproj` nemá žádný `PackageReference` – je to čisté C#, žádný framework. To je záměr: Core
 definuje **rozhraní** (viz A.2) jako `IInputSimulator`, `IGlobalInputListener`, `IScreenCaptureProvider`,
 `IScreenInfoProvider`, `IProfileRepository` a k nim algoritmy, které fungují čistě na datech (Bézier křivka,
 jitter, řazení bodů). Nic z toho neví, že běží na Windows, ani že existuje SharpHook knihovna.
 
-`AutoClicker.Infrastructure` je vrstva, která tato rozhraní **implementuje** konkrétními technologiemi:
+`ClickAssistant.Infrastructure` je vrstva, která tato rozhraní **implementuje** konkrétními technologiemi:
 - `SharpHookGlobalListener` / `SharpHookInputSimulator` – knihovna SharpHook (nízkoúrovňové OS hooky na klávesnici/myši)
 - `WindowsScreenCaptureProvider` – `System.Drawing` (GDI, jen Windows)
 - `JsonProfileRepository` – ukládání profilů jako JSON soubory na disk
@@ -591,16 +591,16 @@ definují `interface` pro `MailerInterface` a pak mají `SmtpMailer`, `SesMailer
 tady **není žádný DI kontejner** (žádný Laravel `app()->make()` nebo Symfony service container) – `.csproj` sice
 referencuje `Microsoft.Extensions.DependencyInjection`, ale nikde se nepoužívá. Místo toho se všechny objekty ručně
 sestaví (`new ...`) na jednom místě – v konstruktoru `MainWindow`
-(`src/AutoClicker.App/MainWindow.axaml.cs`, řádky 20–47). Tomu se říká
+(`src/ClickAssistant.App/MainWindow.axaml.cs`, řádky 20–47). Tomu se říká
 **composition root** – jediné místo v celé appce, kde se rozhoduje "která konkrétní implementace se použije".
 Pokud budeš hledat, odkud se bere např. `SharpHookInputSimulator` nebo `WindowsScreenCaptureProvider`, hledej
 právě tady, ne v nějakém `Startup.cs` nebo konfiguračním XML.
 
-`AutoClicker.App` je UI vrstva (Avalonia = cross-platformní GUI framework, takové Electron/Qt pro .NET). Obsahuje
+`ClickAssistant.App` je UI vrstva (Avalonia = cross-platformní GUI framework, takové Electron/Qt pro .NET). Obsahuje
 `ViewModels/` (logika stavu obrazovky) a `Views/` (`.axaml` soubory = deklarativní XML popis UI, obdoba
 Blade/Twig šablon, jen v XML místo v `{{ }}` syntaxi).
 
-**Proč takhle rozdělené?** Hlavní důvod je testovatelnost a přenositelnost: `AutoClicker.Core.Tests` testuje
+**Proč takhle rozdělené?** Hlavní důvod je testovatelnost a přenositelnost: `ClickAssistant.Core.Tests` testuje
 engine (`ClickSequenceExecutor`) přes mock `IInputSimulator` (knihovna NSubstitute, obdoba PHP Mockery/Prophecy) –
 testy vůbec nepotřebují Windows, skutečnou myš ani Avalonia okno. Kdyby chtěl někdo appku portovat na
 Linux/macOS, stačí nahradit jen `Infrastructure` vrstvu (a `WindowsScreenCaptureProvider`, který je explicitně
@@ -616,12 +616,12 @@ Avalonia používá **MVVM** (Model-View-ViewModel). Zjednodušená analogie na 
 |---|---|
 | **View** (`.axaml`) | Blade/Twig šablona – deklarativně popisuje, co se zobrazí a na co je napojené |
 | **ViewModel** (`.cs` s `ObservableObject`) | Něco mezi Controllerem a "reaktivním" JS stavem (Vue/Alpine `data()`) – drží stav obrazovky a příkazy |
-| **Model** (`AutoClicker.Core.Models`) | Doménové objekty/DTO, jako Eloquent modely bez ORM chování |
+| **Model** (`ClickAssistant.Core.Models`) | Doménové objekty/DTO, jako Eloquent modely bez ORM chování |
 | **Binding** (`{Binding X}`) | Obousměrné propojení: `<input>` v šabloně + JS listener, co drží hodnotu v syncu – ale řeší to framework, ne ty ručně |
 
 ### B.2.1 Jak vypadá jeden `.axaml` soubor
 
-Např. `src/AutoClicker.App/MainWindow.axaml` je XML soubor popisující okno.
+Např. `src/ClickAssistant.App/MainWindow.axaml` je XML soubor popisující okno.
 Ke každému `.axaml` existuje "code-behind" soubor `.axaml.cs` (`MainWindow.axaml.cs`) – to je **částečná třída**
 (`partial class`, C# umožňuje rozdělit jednu třídu do víc souborů, viz A.2). Jedna polovina
 (`InitializeComponent()`) se vygeneruje automaticky ze XML při buildu, druhá polovina je ruční C# kód. To je
@@ -640,7 +640,7 @@ ne tichá chyba za běhu jako v běžném Twig `{{ $typo }}`).
 
 Všechny ViewModely (`MainWindowViewModel`, `ProfileEditorViewModel`, `SequenceStepViewModel`,
 `MapMonitorRectViewModel`) dědí z `ObservableObject` (knihovna **CommunityToolkit.Mvvm**, viz
-`AutoClicker.App.csproj`, `PackageReference Include="CommunityToolkit.Mvvm"`). Mechanismus `[ObservableProperty]`
+`ClickAssistant.App.csproj`, `PackageReference Include="CommunityToolkit.Mvvm"`). Mechanismus `[ObservableProperty]`
 a `[RelayCommand]` je vysvětlený jazykově v kapitole A.11 (atributy + source generátory) – tady jen konkrétní
 použití:
 
@@ -704,7 +704,7 @@ běžet na pozadí).
 
 ---
 
-## B.4 Doménové modely (`AutoClicker.Core/Models`)
+## B.4 Doménové modely (`ClickAssistant.Core/Models`)
 
 Skoro všechny modely jsou `record` (viz A.4) – `ClickProfile`, `ClickPoint`, `TimingConfig`, `HumanizationConfig`,
 `HotkeyConfig`, `ScreenSnapshot`. Immutabilita se využívá přes vzor `with` (`ProfileRescaler.cs`, A.4).
@@ -726,7 +726,7 @@ Klíčové modely:
 
 ## B.5 Klikací engine – `ClickSequenceExecutor`
 
-Soubor: `src/AutoClicker.Core/Engine/ClickSequenceExecutor.cs`. Toto je srdce appky – smyčka, která prochází
+Soubor: `src/ClickAssistant.Core/Engine/ClickSequenceExecutor.cs`. Toto je srdce appky – smyčka, která prochází
 body profilu a kliká. Jazykové základy (`async`/`await`, `Task`, `CancellationToken`) jsou vysvětlené v A.9 –
 tady konkrétní aplikace na tuhle třídu.
 
@@ -797,7 +797,7 @@ první místo, kam se podívat – chybějící `Dispatcher.UIThread.Post`.
 
 ## B.6 Pořadí bodů – Strategy pattern (`PointOrderStrategies`)
 
-`src/AutoClicker.Core/Engine/PointOrderStrategies/`. Klasický **Strategy pattern** (v PHP bys měl `interface
+`src/ClickAssistant.Core/Engine/PointOrderStrategies/`. Klasický **Strategy pattern** (v PHP bys měl `interface
 PointOrderStrategy` a několik tříd, co ho implementují – tady přesně totéž): `IPointOrderStrategy.GetOrder(points,
 customOrder, rng)`.
 
@@ -870,8 +870,8 @@ Appka si při přidání prvního bodu do profilu zapamatuje aktuální konfigur
 (`CapturedScreenSnapshot ??= _screenInfoProvider.GetCurrentSnapshot();`). Uloží se to spolu s
 profilem (`ClickProfile.CapturedScreenSnapshot`).
 
-- **`IScreenInfoProvider.GetCurrentSnapshot()`** – v `AutoClicker.Core` jen rozhraní, implementace je v `App`
-  vrstvě: `AvaloniaScreenInfoProvider` (`src/AutoClicker.App/Services/AvaloniaScreenInfoProvider.cs`) – čte
+- **`IScreenInfoProvider.GetCurrentSnapshot()`** – v `ClickAssistant.Core` jen rozhraní, implementace je v `App`
+  vrstvě: `AvaloniaScreenInfoProvider` (`src/ClickAssistant.App/Services/AvaloniaScreenInfoProvider.cs`) – čte
   `window.Screens.All` z Avalonia API (pozice, rozměry a scaling každého monitoru). Všimni si, že implementace
   je v `App`, ne v `Infrastructure` – protože potřebuje přístup ke konkrétnímu `Window` instance, ne k OS API
   přímo.
@@ -882,7 +882,7 @@ profilem (`ClickProfile.CapturedScreenSnapshot`).
   2. **Za běhu**, mezi cykly (`ClickSequenceExecutor.CheckResolutionChanged`, volané po každém dokončeném
      cyklu) – pokud uživatel za běhu appky přepojí monitor / změní rozlišení, smyčka se sama zastaví a appka
      se zeptá znovu (`MainWindowViewModel.OnResolutionChangedDuringRun`).
-- **`ProfileRescaler.Rescale`** (`src/AutoClicker.Core/Screen/ProfileRescaler.cs`) – přepočítá pozice bodů
+- **`ProfileRescaler.Rescale`** (`src/ClickAssistant.Core/Screen/ProfileRescaler.cs`) – přepočítá pozice bodů
   poměrem: najde, na kterém monitoru bod původně byl, spočítá relativní pozici (0–1) v rámci toho monitoru, a
   aplikuje ji na odpovídající monitor v novém rozlišení. Pokud počet monitorů nesedí, spadne na první dostupný
   (`monitorIndex < to.Monitors.Count ? ... : to.Monitors[0]`). Prázdný seznam monitorů na kterékoliv straně
@@ -896,12 +896,12 @@ dialog `ResolutionMismatchDialog.axaml` vrací tuto hodnotu jako výsledek modá
 
 ## B.9 Zachytávání screenshotů – `IScreenCaptureProvider`
 
-`src/AutoClicker.Core/Screen/IScreenCaptureProvider.cs` – jednoduché rozhraní, jedna metoda
+`src/ClickAssistant.Core/Screen/IScreenCaptureProvider.cs` – jednoduché rozhraní, jedna metoda
 `CaptureRegion(x, y, width, height)` vracející PNG bajty (nebo `null`, pokud capture není na dané platformě
 podporovaný).
 
 Implementace `WindowsScreenCaptureProvider`
-(`src/AutoClicker.Infrastructure/Capture/WindowsScreenCaptureProvider.cs`)
+(`src/ClickAssistant.Infrastructure/Capture/WindowsScreenCaptureProvider.cs`)
 používá `System.Drawing.Graphics.CopyFromScreen` – to je **GDI API, které existuje jen na Windows** (proto
 `OperatingSystem.IsWindows()` kontrola na začátku a `[SupportedOSPlatform("windows")]` atribut). Na
 Linuxu/macOS by tahle třída vždy vrátila `null` – appka to ošetřuje graficky (viz `ProfileEditorViewModel.
@@ -938,9 +938,9 @@ v PHP vzor "explicitně zavolej `fclose($handle)`", ne spoléhat na to, že to u
 
 ## B.10 JSON persistence profilů – `JsonProfileRepository`
 
-`src/AutoClicker.Infrastructure/Persistence/JsonProfileRepository.cs`.
+`src/ClickAssistant.Infrastructure/Persistence/JsonProfileRepository.cs`.
 Implementuje `IProfileRepository` (Core rozhraní). Každý profil je samostatný `.json` soubor pojmenovaný podle
-GUID (`{profileId}.json`), uložený v `%AppData%\AutoClicker\profiles\` (`Environment.SpecialFolder.
+GUID (`{profileId}.json`), uložený v `%AppData%\ClickAssistant\profiles\` (`Environment.SpecialFolder.
 ApplicationData`, konstruktor bez parametrů). Test (`JsonProfileRepositoryTests.cs`) používá druhý
 konstruktor s explicitní cestou (`temp` adresář), aby netestoval proti skutečné `%AppData%` složce uživatele.
 Jméno souboru se odvozuje **výhradně z GUID**, nikdy z uživatelem zadaného názvu profilu – takže ani exotický
@@ -982,7 +982,7 @@ ne jako číslo, viz A.12) a `WriteIndented = true` (hezky formátovaný JSON, �
 
 ## B.11 Globální hooky a hotkeys – `SharpHookGlobalListener`
 
-`src/AutoClicker.Infrastructure/Input/SharpHookGlobalListener.cs`. Toto je
+`src/ClickAssistant.Infrastructure/Input/SharpHookGlobalListener.cs`. Toto je
 nejcitlivější a nejsložitější kus na pochopení, protože pracuje s **globálními OS hooky** – naslouchá stisku
 kláves/kliknutí myši **kdekoliv v systému**, ne jen v okně appky (proto appka funguje i "na pozadí").
 
@@ -1036,7 +1036,7 @@ _globalListener.Stop();`).
 
 Tohle jsou dva hlavní ViewModely appky a jejich propojení je klíčové pro pochopení celého UI toku.
 
-- **`MainWindowViewModel`** (`src/AutoClicker.App/ViewModels/MainWindowViewModel.cs`) – "vrchní" ViewModel:
+- **`MainWindowViewModel`** (`src/ClickAssistant.App/ViewModels/MainWindowViewModel.cs`) – "vrchní" ViewModel:
   seznam profilů (`Profiles`), vybraný profil (`SelectedProfile`), stav enginu (`IsRunning`, `StatusText`,
   `CanStart`), příkazy Nový/Uložit/Smazat/Start/Stop. Vlastní instanci `ClickSequenceExecutor` a
   `IProfileRepository`.
@@ -1080,7 +1080,7 @@ automaticky "computed properties" jako v Vue, musí se ručně přepočítávat 
 
 - **`MainWindow.axaml`** – hlavní okno: seznam profilů vlevo, editor profilu + ovládací tlačítka vpravo.
   Vnořuje `SequenceMapView` a `SequenceTimelineView` (viz níže).
-- **`SequenceMapView.axaml`/`.axaml.cs`** (`src/AutoClicker.App/Views/SequenceMapView.axaml`) – "prostorová
+- **`SequenceMapView.axaml`/`.axaml.cs`** (`src/ClickAssistant.App/Views/SequenceMapView.axaml`) – "prostorová
   mapa": zmenšený plánek monitorů (`MapMonitorRects`) s tečkami jednotlivých kroků (`Steps`, pozicované přes
   `MapX`/`MapY`, přepočítané v `ProfileEditorViewModel.RecomputeMap()`) a spojnicí (`Polyline` z
   `MapPolylinePoints`) ukazující pořadí kliků. Vedle toho panel s detailním přiblíženým screenshotem vybraného
@@ -1127,10 +1127,10 @@ dosah:
 
 ---
 
-## B.14 Testy (`tests/AutoClicker.Core.Tests`)
+## B.14 Testy (`tests/ClickAssistant.Core.Tests`)
 
 xUnit (obdoba PHPUnit) + NSubstitute (obdoba Mockery) jako mockovací knihovna. Testuje se výhradně
-`AutoClicker.Core` (+ `JsonProfileRepository` z Infrastructure) – **žádné UI testy**, protože ViewModely a Views
+`ClickAssistant.Core` (+ `JsonProfileRepository` z Infrastructure) – **žádné UI testy**, protože ViewModely a Views
 vyžadují běžící Avalonia framework a nejsou v testovacím projektu pokryté (vyžadovalo by to headless Avalonia
 test rig, což je nad rámec současné konvence repa). UI/hook změny se ověřují ručním spuštěním appky.
 
@@ -1179,7 +1179,7 @@ Aktuálně **93 testů**, rozdělených takto:
 Pokud budeš přidávat/měnit chování v `ClickSequenceExecutor`, `BezierMovementPathGenerator`, `PositionJitter`,
 `TimingJitter`, `ProfileRescaler` nebo strategiích řazení, tyhle testy jsou nejrychlejší způsob, jak si ověřit,
 že jsi nic nerozbil, bez nutnosti appku ručně spouštět a klikat. Spouští se přes `dotnet test
-tests/AutoClicker.Core.Tests` (viz `CLAUDE.md` v kořeni repa pro přesné příkazy).
+tests/ClickAssistant.Core.Tests` (viz `CLAUDE.md` v kořeni repa pro přesné příkazy).
 
 ---
 
@@ -1187,7 +1187,7 @@ tests/AutoClicker.Core.Tests` (viz `CLAUDE.md` v kořeni repa pro přesné pří
 
 Appka nemá žádnou síťovou komunikaci (žádný `HttpClient`, žádné volání na internet), neběží se zvýšenými
 oprávněními (`app.manifest` nežádá o administrátorská práva), a jediná perzistence je JSON na disku pod
-`%AppData%\AutoClicker\profiles\` s jmény souborů odvozenými čistě z GUID (žádná cesta k path traversal ani
+`%AppData%\ClickAssistant\profiles\` s jmény souborů odvozenými čistě z GUID (žádná cesta k path traversal ani
 kolizi z uživatelského vstupu). Globální klávesnicový/myšový hook (kapitola B.11) je nutný pro funkci globálních
 zkratek, ale nikde neloguje ani nikam neposílá zmáčknuté klávesy – jen je v paměti porovnává s nastavenou
 kombinací a zahazuje.
@@ -1208,11 +1208,11 @@ Při auditu byly nalezeny a opravené tři reálné, reprodukovatelné chyby rob
    čekání (busy-loop) při `RepeatMode.Infinite`.
 
 Všechny tři jsou pokryté regresním testem (kapitola B.14), takže se nemůžou tiše vrátit při budoucích úpravách.
-NuGet závislosti appky (`AutoClicker.App` a jeho tranzitivní závislosti – SharpHook, Avalonia,
+NuGet závislosti appky (`ClickAssistant.App` a jeho tranzitivní závislosti – SharpHook, Avalonia,
 CommunityToolkit.Mvvm) byly zkontrolované přes `dotnet list package --vulnerable` bez nálezu. (Testovací projekt
 hlásí starou tranzitivní `System.Net.Http`/`System.Text.RegularExpressions 4.3.0` přes balíček `xunit` – jde o
 neškodnou referenční závislost z `netstandard1.1` éry, kterou runtime na .NET 8 nepoužije a která se nikdy
-nedostane do vydávaného `AutoClicker.App.exe`.)
+nedostane do vydávaného `ClickAssistant.App.exe`.)
 
 ---
 
@@ -1262,7 +1262,7 @@ variantách (tmavá/světlá) a s trojicí voleb v horní liště: **Auto** (sle
 
 ### B.17.1 `ThemeDictionaries` – paleta jako zdroje závislé na motivu
 
-`src/AutoClicker.App/Styles/AppTheme.axaml` definuje `ResourceDictionary.ThemeDictionaries` se dvěma
+`src/ClickAssistant.App/Styles/AppTheme.axaml` definuje `ResourceDictionary.ThemeDictionaries` se dvěma
 pojmenovanými sadami štětců (`x:Key="Dark"` a `x:Key="Light"`) – `ThemeBackgroundBrush`,
 `ThemeSurfaceBrush`, `ThemeAccentBrush`, `ThemeGoodBrush` (stav "běží") atd. Obě sady používají
 **stejnou barevnou rodinu** (tlumený graphite/lavender), ne prostou inverzi černá↔bílá – světlý režim
@@ -1277,7 +1277,7 @@ potřeba.
 
 ### B.17.2 `AppControls.axaml` – styl controls nad barvami
 
-`src/AutoClicker.App/Styles/AppControls.axaml` je `Styles` soubor (ne `ResourceDictionary` – v Avalonii
+`src/ClickAssistant.App/Styles/AppControls.axaml` je `Styles` soubor (ne `ResourceDictionary` – v Avalonii
 `Styles` obsahuje `Style` selektory typu CSS, `ResourceDictionary` jen pojmenované hodnoty) s pravidly
 jako `Button.primary`, `Border.card`, `ComboBoxItem:selected` atd., která nastavují `Background`/
 `BorderBrush`/`Foreground`/`CornerRadius` přes `DynamicResource` na paletu z B.17.1. Funguje to, protože
@@ -1291,9 +1291,9 @@ cascade vyhrává poslední shodné pravidlo, takže naše přepsání musí bý
 
 ### B.17.3 Datový tok Auto/Light/Dark
 
-- `AppSettings.Theme` (`AutoClicker.Core/Models/AppSettings.cs`) – `"Auto"` / `"Light"` / `"Dark"`,
+- `AppSettings.Theme` (`ClickAssistant.Core/Models/AppSettings.cs`) – `"Auto"` / `"Light"` / `"Dark"`,
   persistováno stejným mechanismem jako `Language` (`JsonAppSettingsRepository`, viz B.10 – stejný
-  soubor `%AppData%\AutoClicker\settings.json`).
+  soubor `%AppData%\ClickAssistant\settings.json`).
 - Při startu (`MainWindow` konstruktor, řádky 24–36) appka namapuje uložený string na
   `Avalonia.Styling.ThemeVariant` (`"Light"`→`ThemeVariant.Light`, `"Dark"`→`ThemeVariant.Dark`, jinak
   `ThemeVariant.Default` – "sleduj OS") a nastaví `Application.Current.RequestedThemeVariant` ještě
@@ -1332,14 +1332,14 @@ appka tak dosáhne vyššího vizuálního sjednocení, než jaké šlo předvé
 | Globální hotkey nereaguje | `SharpHookGlobalListener` – zkontroluj `RegisterHotkey`/`_pressedKeys`, zda `_hook.RunAsync()` proběhl (`Start()` volaný v `MainWindow` konstruktoru) |
 | Nejde nastavit/zachytit hotkey nebo bod | `_activeCapture` v `ProfileEditorViewModel` – capture je jednorázový a musí se explicitně zrušit (`CancelCaptureCommand`) před dalším pokusem |
 | Náhled screenshotu se nezobrazuje | `WindowsScreenCaptureProvider` je Windows-only, na jiné platformě vrací vždy `null` – to je očekávané, ne chyba |
-| Profil se neuloží / zmizí | `JsonProfileRepository` – zkontroluj `%AppData%\AutoClicker\profiles\`, atomický zápis přes `.tmp` soubor |
-| Appka po startu opakovaně padá | Poškozený `.json` v `%AppData%\AutoClicker\profiles\` – od opravy v B.15 se má jen přeskočit, ne appku shodit; pokud přesto padá, zkontroluj, jestli je to skutečně `JsonException` a ne jiný typ chyby |
+| Profil se neuloží / zmizí | `JsonProfileRepository` – zkontroluj `%AppData%\ClickAssistant\profiles\`, atomický zápis přes `.tmp` soubor |
+| Appka po startu opakovaně padá | Poškozený `.json` v `%AppData%\ClickAssistant\profiles\` – od opravy v B.15 se má jen přeskočit, ne appku shodit; pokud přesto padá, zkontroluj, jestli je to skutečně `JsonException` a ne jiný typ chyby |
 | Appka nejde zavřít křížkem | Záměr – `MainWindow.OnWindowClosing` schovává okno místo zavření, appka žije v tray ikoně |
 | Stop nefunguje okamžitě | Očekávané – `CancellationToken` je kooperativní, aktuální krok (pohyb/klik) se dokončí |
 | Okno při zmenšení "ořízne" spodek/pravou stranu | Zkontroluj `MinWidth`/`MinHeight` na `<Window>` a `ScrollViewer` kolem pravého panelu (`MainWindow.axaml`) – viz B.13.1 |
 | Vysoké vytížení CPU při běžícím klikání | Zkontroluj `CustomOrder` profilu – pokud odkazuje na neexistující body, běží obranná pojistka v `ClickSequenceExecutor` (B.15); pokud je vytížení i s platným pořadím, jde o jiný problém |
 | Okno "trhá"/zadrhává při ručním přepisování X/Y souřadnice bodu | Zkontroluj `ScheduleDetailCaptureRefresh`/`_captureDebounceTimer` v `ProfileEditorViewModel` – bez debounce by se `RefreshDetailCapture()` (GDI capture) spouštěl na každý stisk klávesy, viz B.9/B.16 |
-| Motiv appky se nepřepne / zůstane po restartu jiný, než byl nastaven | `AppSettings.Theme` v `%AppData%\AutoClicker\settings.json` – zkontroluj `OnSelectedThemeChanged`/`OnSelectedLanguageChanged` ukládají oba stavy najednou (viz B.17.3, past se sdíleným recordem) |
+| Motiv appky se nepřepne / zůstane po restartu jiný, než byl nastaven | `AppSettings.Theme` v `%AppData%\ClickAssistant\settings.json` – zkontroluj `OnSelectedThemeChanged`/`OnSelectedLanguageChanged` ukládají oba stavy najednou (viz B.17.3, past se sdíleným recordem) |
 | Nový/přestylovaný control (Button, ComboBox, ...) nesleduje motiv appky | Chybí `DynamicResource` na paletu z `AppTheme.axaml`, nebo `StaticResource` použitý omylem místo `DynamicResource` (ten se nepřepočítá při změně motivu) – viz B.17.1 |
 
 ---

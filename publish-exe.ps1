@@ -2,7 +2,7 @@ param(
     [string]$Runtime = "win-x64"
 )
 
-dotnet publish src/AutoClicker.App/AutoClicker.App.csproj `
+dotnet publish src/ClickAssistant.App/ClickAssistant.App.csproj `
     -c Release `
     -r $Runtime `
     --self-contained true `
@@ -10,4 +10,4 @@ dotnet publish src/AutoClicker.App/AutoClicker.App.csproj `
     -p:IncludeNativeLibrariesForSelfExtract=true `
     -o publish
 
-Write-Host "Hotovo: publish\AutoClicker.App.exe"
+Write-Host "Hotovo: publish\ClickAssistant.App.exe"

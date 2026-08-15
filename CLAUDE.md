@@ -6,42 +6,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Build the whole solution:
 ```
-dotnet build AutoClicker.sln -c Debug
+dotnet build ClickAssistant.sln -c Debug
 ```
 
 Run all tests:
 ```
-dotnet test tests/AutoClicker.Core.Tests
+dotnet test tests/ClickAssistant.Core.Tests
 ```
 
 Run a single test (xUnit, filter by fully qualified name or a substring of it):
 ```
-dotnet test tests/AutoClicker.Core.Tests --filter "FullyQualifiedName~ClickSequenceExecutorTests"
-dotnet test tests/AutoClicker.Core.Tests --filter "FullyQualifiedName~ClickSequenceExecutorTests.SpecificTestMethodName"
+dotnet test tests/ClickAssistant.Core.Tests --filter "FullyQualifiedName~ClickSequenceExecutorTests"
+dotnet test tests/ClickAssistant.Core.Tests --filter "FullyQualifiedName~ClickSequenceExecutorTests.SpecificTestMethodName"
 ```
 
 Run the desktop app from source:
 ```
-dotnet run --project src/AutoClicker.App
+dotnet run --project src/ClickAssistant.App
 ```
 
 Publish a self-contained single-file Windows executable (also available as `./publish-exe.ps1`):
 ```
-dotnet publish src/AutoClicker.App/AutoClicker.App.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+dotnet publish src/ClickAssistant.App/ClickAssistant.App.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
 ```
 
-Only `AutoClicker.Core.Tests` has tests; `AutoClicker.App`/`Infrastructure` have no automated tests, so UI/hook changes need manual verification by running the app.
+Only `ClickAssistant.Core.Tests` has tests; `ClickAssistant.App`/`Infrastructure` have no automated tests, so UI/hook changes need manual verification by running the app.
 
 ## Architecture
 
 Four projects, dependencies flow one way only (`App` → `Infrastructure` → `Core`, and `App` → `Core` directly):
 
-- **`src/AutoClicker.Core`** — pure domain logic, zero external package references. Defines the ports (`IInputSimulator`, `IGlobalInputListener`, `IScreenCaptureProvider`, `IScreenInfoProvider`, `IProfileRepository`) and the engine that only depends on those interfaces: `ClickSequenceExecutor`, `BezierMovementPathGenerator`, point-order strategies, timing/position jitter, `ProfileRescaler`. Models are records (`ClickPoint`, `ClickProfile`, `TimingConfig`, `HumanizationConfig`, `ScreenSnapshot`, `HotkeyConfig`).
-- **`src/AutoClicker.Infrastructure`** — the only project allowed to depend on SharpHook/GDI. Implements the Core ports: `SharpHookGlobalListener` + `SharpHookInputSimulator` (global keyboard/mouse hooks and synthetic input via SharpHook), `WindowsScreenCaptureProvider` (GDI `CopyFromScreen`, Windows-only — returns `null` on other OSes by design), `JsonProfileRepository` (profiles as JSON under `%AppData%/AutoClicker/profiles`, atomic write via temp file + rename).
-- **`src/AutoClicker.App`** — Avalonia UI, MVVM via CommunityToolkit.Mvvm (`[ObservableProperty]`, `[RelayCommand]`). `ViewModels/` hold state and logic, `Views/*.axaml` are the XAML templates.
-- **`tests/AutoClicker.Core.Tests`** — xUnit + NSubstitute, tests only `AutoClicker.Core` (executor, Bézier path, jitter, order strategies) against fakes/mocks of the ports.
+- **`src/ClickAssistant.Core`** — pure domain logic, zero external package references. Defines the ports (`IInputSimulator`, `IGlobalInputListener`, `IScreenCaptureProvider`, `IScreenInfoProvider`, `IProfileRepository`) and the engine that only depends on those interfaces: `ClickSequenceExecutor`, `BezierMovementPathGenerator`, point-order strategies, timing/position jitter, `ProfileRescaler`. Models are records (`ClickPoint`, `ClickProfile`, `TimingConfig`, `HumanizationConfig`, `ScreenSnapshot`, `HotkeyConfig`).
+- **`src/ClickAssistant.Infrastructure`** — the only project allowed to depend on SharpHook/GDI. Implements the Core ports: `SharpHookGlobalListener` + `SharpHookInputSimulator` (global keyboard/mouse hooks and synthetic input via SharpHook), `WindowsScreenCaptureProvider` (GDI `CopyFromScreen`, Windows-only — returns `null` on other OSes by design), `JsonProfileRepository` (profiles as JSON under `%AppData%/ClickAssistant/profiles`, atomic write via temp file + rename).
+- **`src/ClickAssistant.App`** — Avalonia UI, MVVM via CommunityToolkit.Mvvm (`[ObservableProperty]`, `[RelayCommand]`). `ViewModels/` hold state and logic, `Views/*.axaml` are the XAML templates.
+- **`tests/ClickAssistant.Core.Tests`** — xUnit + NSubstitute, tests only `ClickAssistant.Core` (executor, Bézier path, jitter, order strategies) against fakes/mocks of the ports.
 
-**No DI container despite the package reference.** `Microsoft.Extensions.DependencyInjection` is referenced but unused — every concrete implementation is wired up by hand in one place: the `MainWindow` constructor (`src/AutoClicker.App/MainWindow.axaml.cs`). That constructor is the composition root; start there when tracing which concrete class backs an interface.
+**No DI container despite the package reference.** `Microsoft.Extensions.DependencyInjection` is referenced but unused — every concrete implementation is wired up by hand in one place: the `MainWindow` constructor (`src/ClickAssistant.App/MainWindow.axaml.cs`). That constructor is the composition root; start there when tracing which concrete class backs an interface.
 
 **`ClickSequenceExecutor.StartAsync` must stay fire-and-forget.** It launches the click loop via `Task.Run` and returns immediately; awaiting the inner loop directly would block until the sequence finishes, which never happens for infinite-repeat profiles and would deadlock `Stop()`. This was a real, previously-fixed bug — don't "simplify" it back to a direct await.
 
