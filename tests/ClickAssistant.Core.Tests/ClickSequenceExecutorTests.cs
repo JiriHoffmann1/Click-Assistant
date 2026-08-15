@@ -293,18 +293,52 @@ public class ClickSequenceExecutorTests
         var executor = new ClickSequenceExecutor(simulator, movementGenerator: pathGenerator);
         var profile = new ClickProfile
         {
-            // Jediný bod: lastCursorPos je před smyčkou nastaven na Points[0].Location, takže
-            // se křivkový pohyb (mockovaný generátor) uplatní přesně jednou.
-            Points = new List<ClickPoint> { new() { Name = "Target", Location = new ScreenPoint(100, 100) } },
+            // Dva body: na první bod nemáme žádnou známou předchozí pozici kurzoru, takže jde o
+            // přímý skok (bez generátoru) - křivkový pohyb (mockovaný generátor) se uplatní až na
+            // druhý bod, kdy už lastCursorPos odpovídá reálné pozici z prvního kliknutí.
+            Points = new List<ClickPoint>
+            {
+                new() { Name = "First", Location = new ScreenPoint(10, 10) },
+                new() { Name = "Target", Location = new ScreenPoint(100, 100) }
+            },
             Timing = new TimingConfig { BaseIntervalMs = 1, Repeat = RepeatMode.Once },
-            Humanization = new HumanizationConfig { Enabled = true, UseCurvedMovement = true }
+            // PositionJitterRadiusPx=0: this test is about curved movement, not position jitter -
+            // any nonzero radius would randomize the exact coordinates asserted below.
+            Humanization = new HumanizationConfig { Enabled = true, UseCurvedMovement = true, PositionJitterRadiusPx = 0 }
         };
 
         await RunToCompletionAsync(executor, profile);
 
-        pathGenerator.Received(1).GeneratePath(Arg.Any<ScreenPoint>(), Arg.Any<ScreenPoint>(), Arg.Any<HumanizationConfig>(), Arg.Any<Random>());
+        pathGenerator.Received(1).GeneratePath(new ScreenPoint(10, 10), new ScreenPoint(100, 100), Arg.Any<HumanizationConfig>(), Arg.Any<Random>());
         simulator.Received(1).MoveMouse(new ScreenPoint(50, 50));
         simulator.Received(1).MoveMouse(new ScreenPoint(100, 100));
+    }
+
+    [Fact]
+    public async Task StartAsync_HumanizedCurvedMovement_WrapsFromLastPointBackToFirstOnRepeat()
+    {
+        var simulator = Substitute.For<IInputSimulator>();
+        var pathGenerator = Substitute.For<IMovementPathGenerator>();
+        pathGenerator.GeneratePath(Arg.Any<ScreenPoint>(), Arg.Any<ScreenPoint>(), Arg.Any<HumanizationConfig>(), Arg.Any<Random>())
+            .Returns(new List<(ScreenPoint Point, int StepDelayMs)>());
+
+        var executor = new ClickSequenceExecutor(simulator, movementGenerator: pathGenerator);
+        var profile = new ClickProfile
+        {
+            Points = new List<ClickPoint>
+            {
+                new() { Name = "First", Location = new ScreenPoint(10, 10) },
+                new() { Name = "Last", Location = new ScreenPoint(100, 100) }
+            },
+            Timing = new TimingConfig { BaseIntervalMs = 1, Repeat = RepeatMode.FixedCount, RepeatCount = 2 },
+            Humanization = new HumanizationConfig { Enabled = true, UseCurvedMovement = true, PositionJitterRadiusPx = 0 }
+        };
+
+        await RunToCompletionAsync(executor, profile);
+
+        // Druhý cyklus: lastCursorPos přetrvává z konce prvního cyklu (poslední bod), takže i cesta
+        // zpátky na první bod nového cyklu je humanizovaná křivka, ne přímý skok.
+        pathGenerator.Received(1).GeneratePath(new ScreenPoint(100, 100), new ScreenPoint(10, 10), Arg.Any<HumanizationConfig>(), Arg.Any<Random>());
     }
 
     private static Task RunToCompletionAsync(ClickSequenceExecutor executor, ClickProfile profile, int timeoutMs = 5000)

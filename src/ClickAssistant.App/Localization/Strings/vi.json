@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Đã dừng – độ phân giải màn hình đã thay đổi",
   "status.profileSaved": "Đã lưu hồ sơ",
   "status.needStopHotkey": "Hãy thiết lập phím Dừng trước",
+  "status.needPoints": "Hãy thêm ít nhất một điểm trước",
+  "status.error": "Lỗi: {0}",
 
   "resolutionDialog.title": "Độ phân giải màn hình đã thay đổi",
   "resolutionDialog.message": "Độ phân giải màn hình đã thay đổi kể từ khi các điểm được xác định. Các điểm có thể không còn nhắm đúng vị trí nữa.",

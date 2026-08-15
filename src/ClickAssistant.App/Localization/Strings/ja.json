@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "停止 – 画面解像度が変更されました",
   "status.profileSaved": "プロファイルを保存しました",
   "status.needStopHotkey": "先に停止キーを設定してください",
+  "status.needPoints": "先に少なくとも1つのポイントを追加してください",
+  "status.error": "エラー: {0}",
 
   "resolutionDialog.title": "画面解像度が変更されました",
   "resolutionDialog.message": "ポイントを定義してから画面解像度が変更されました。ポイントが正しい場所を指さない可能性があります。",

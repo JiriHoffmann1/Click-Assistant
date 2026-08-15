@@ -65,7 +65,15 @@ public partial class MainWindow : Window
         SetupTrayIcon(viewModel, appIcon);
 
         _globalListener.Start();
-        Opened += async (_, _) => await viewModel.InitializeAsync();
+        Opened += async (_, _) =>
+        {
+            // async void event handler - an unhandled exception here (e.g. a non-JSON I/O error
+            // while loading profiles) would otherwise crash the whole app on launch instead of
+            // just leaving the profile list empty.
+            try { await viewModel.InitializeAsync(); }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        };
         Closing += OnWindowClosing;
         Closed += (_, _) => _globalListener.Stop();
     }

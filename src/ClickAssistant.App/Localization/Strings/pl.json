@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Zatrzymany – rozdzielczość ekranu się zmieniła",
   "status.profileSaved": "Profil zapisany",
   "status.needStopHotkey": "Najpierw ustaw skrót Stop",
+  "status.needPoints": "Najpierw dodaj co najmniej jeden punkt",
+  "status.error": "Błąd: {0}",
 
   "resolutionDialog.title": "Rozdzielczość ekranu się zmieniła",
   "resolutionDialog.message": "Rozdzielczość ekranu zmieniła się od czasu zdefiniowania punktów. Punkty mogą już nie wskazywać właściwego miejsca.",

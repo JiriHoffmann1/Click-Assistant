@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Leállítva – a képernyőfelbontás megváltozott",
   "status.profileSaved": "Profil elmentve",
   "status.needStopHotkey": "Először állítsd be a Leállítás gyorsbillentyűt",
+  "status.needPoints": "Adj hozzá legalább egy pontot",
+  "status.error": "Hiba: {0}",
 
   "resolutionDialog.title": "A képernyőfelbontás megváltozott",
   "resolutionDialog.message": "A képernyőfelbontás megváltozott azóta, hogy a pontok meghatározásra kerültek. Előfordulhat, hogy a pontok már nem a megfelelő helyre mutatnak.",

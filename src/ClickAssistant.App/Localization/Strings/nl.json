@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Gestopt – schermresolutie gewijzigd",
   "status.profileSaved": "Profiel opgeslagen",
   "status.needStopHotkey": "Stel eerst de Stop-sneltoets in",
+  "status.needPoints": "Voeg eerst minstens één punt toe",
+  "status.error": "Fout: {0}",
 
   "resolutionDialog.title": "Schermresolutie gewijzigd",
   "resolutionDialog.message": "De schermresolutie is gewijzigd sinds de punten zijn gedefinieerd. Punten wijzen mogelijk niet meer naar de juiste locatie.",

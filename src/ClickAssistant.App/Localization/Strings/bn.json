@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "থামানো হয়েছে – স্ক্রিন রেজোলিউশন পরিবর্তিত হয়েছে",
   "status.profileSaved": "প্রোফাইল সংরক্ষিত হয়েছে",
   "status.needStopHotkey": "প্রথমে স্টপ কী সেট করুন",
+  "status.needPoints": "প্রথমে অন্তত একটি পয়েন্ট যোগ করুন",
+  "status.error": "ত্রুটি: {0}",
 
   "resolutionDialog.title": "স্ক্রিন রেজোলিউশন পরিবর্তিত হয়েছে",
   "resolutionDialog.message": "পয়েন্ট নির্ধারণের পর থেকে স্ক্রিন রেজোলিউশন পরিবর্তিত হয়েছে। পয়েন্টগুলো আর সঠিক স্থানে নির্দেশ নাও করতে পারে।",

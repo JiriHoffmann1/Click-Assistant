@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Stoppet – skjermoppløsningen er endret",
   "status.profileSaved": "Profil lagret",
   "status.needStopHotkey": "Angi Stopp-hurtigtast først",
+  "status.needPoints": "Legg til minst ett punkt først",
+  "status.error": "Feil: {0}",
 
   "resolutionDialog.title": "Skjermoppløsningen er endret",
   "resolutionDialog.message": "Skjermoppløsningen er endret siden punktene ble definert. Punktene treffer kanskje ikke lenger riktig sted.",

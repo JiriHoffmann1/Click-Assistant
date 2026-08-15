@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Apturēts – ekrāna izšķirtspēja mainījusies",
   "status.profileSaved": "Profils saglabāts",
   "status.needStopHotkey": "Vispirms iestatiet apturēšanas karsto taustiņu",
+  "status.needPoints": "Vispirms pievieno vismaz vienu punktu",
+  "status.error": "Kļūda: {0}",
 
   "resolutionDialog.title": "Ekrāna izšķirtspēja mainījusies",
   "resolutionDialog.message": "Kopš punktu definēšanas ekrāna izšķirtspēja ir mainījusies. Punkti var vairs nenorādīt uz pareizo atrašanās vietu.",

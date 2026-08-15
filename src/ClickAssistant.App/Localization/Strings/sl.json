@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Ustavljeno – ločljivost zaslona se je spremenila",
   "status.profileSaved": "Profil shranjen",
   "status.needStopHotkey": "Najprej nastavite bližnjico za ustavitev",
+  "status.needPoints": "Najprej dodaj vsaj eno točko",
+  "status.error": "Napaka: {0}",
 
   "resolutionDialog.title": "Ločljivost zaslona se je spremenila",
   "resolutionDialog.message": "Ločljivost zaslona se je spremenila, odkar so bile točke določene. Točke morda ne kažejo več na pravilno mesto.",

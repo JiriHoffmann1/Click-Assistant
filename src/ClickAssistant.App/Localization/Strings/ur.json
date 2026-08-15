@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "روک دیا گیا – اسکرین ریزولوشن تبدیل ہو گیا",
   "status.profileSaved": "پروفائل محفوظ ہو گیا",
   "status.needStopHotkey": "پہلے اسٹاپ کی سیٹ کریں",
+  "status.needPoints": "پہلے کم از کم ایک پوائنٹ شامل کریں",
+  "status.error": "خرابی: {0}",
 
   "resolutionDialog.title": "اسکرین ریزولوشن تبدیل ہو گیا",
   "resolutionDialog.message": "پوائنٹس مقرر کرنے کے بعد سے اسکرین ریزولوشن تبدیل ہو گیا ہے۔ پوائنٹس اب درست مقام کی طرف اشارہ نہیں کر سکتے۔",

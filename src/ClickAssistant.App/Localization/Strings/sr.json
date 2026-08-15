@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Заустављено – резолуција екрана је промењена",
   "status.profileSaved": "Профил сачуван",
   "status.needStopHotkey": "Прво подесите пречицу за заустављање",
+  "status.needPoints": "Прво додајте бар једну тачку",
+  "status.error": "Грешка: {0}",
 
   "resolutionDialog.title": "Резолуција екрана је промењена",
   "resolutionDialog.message": "Резолуција екрана се променила откако су тачке дефинисане. Тачке можда више не циљају исправну локацију.",

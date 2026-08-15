@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Berhenti – resolusi layar berubah",
   "status.profileSaved": "Profil disimpan",
   "status.needStopHotkey": "Atur tombol Stop terlebih dahulu",
+  "status.needPoints": "Tambahkan setidaknya satu titik terlebih dahulu",
+  "status.error": "Kesalahan: {0}",
 
   "resolutionDialog.title": "Resolusi layar berubah",
   "resolutionDialog.message": "Resolusi layar telah berubah sejak titik-titik ditentukan. Titik-titik mungkin tidak lagi mengarah ke lokasi yang benar.",

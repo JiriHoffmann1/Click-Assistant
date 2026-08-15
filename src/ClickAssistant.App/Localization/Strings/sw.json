@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Imesimama – ubora wa skrini umebadilika",
   "status.profileSaved": "Wasifu umehifadhiwa",
   "status.needStopHotkey": "Weka kwanza kitufe cha Simamisha",
+  "status.needPoints": "Ongeza angalau kituo kimoja kwanza",
+  "status.error": "Hitilafu: {0}",
 
   "resolutionDialog.title": "Ubora wa skrini umebadilika",
   "resolutionDialog.message": "Ubora wa skrini umebadilika tangu vituo vilipoainishwa. Vituo huenda visielekeze tena mahali sahihi.",

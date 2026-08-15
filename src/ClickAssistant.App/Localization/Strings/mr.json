@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "थांबले – स्क्रीन रिझोल्यूशन बदलले",
   "status.profileSaved": "प्रोफाइल जतन झाली",
   "status.needStopHotkey": "आधी थांबवा की सेट करा",
+  "status.needPoints": "प्रथम किमान एक बिंदू जोडा",
+  "status.error": "त्रुटी: {0}",
 
   "resolutionDialog.title": "स्क्रीन रिझोल्यूशन बदलले",
   "resolutionDialog.message": "बिंदू निश्चित केल्यापासून स्क्रीन रिझोल्यूशन बदलले आहे. बिंदू आता योग्य ठिकाणी निर्देशित करणार नाहीत.",

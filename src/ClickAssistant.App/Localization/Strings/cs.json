@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Zastaveno – změnilo se rozlišení obrazovky",
   "status.profileSaved": "Profil uložen",
   "status.needStopHotkey": "Nejdřív nastav klávesu Stop",
+  "status.needPoints": "Nejdřív přidej alespoň jeden bod",
+  "status.error": "Chyba: {0}",
 
   "resolutionDialog.title": "Změna rozlišení obrazovky",
   "resolutionDialog.message": "Rozlišení obrazovky se od nadefinování bodů změnilo. Body tak nemusí mířit na správné místo.",

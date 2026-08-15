@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "ఆగిపోయింది – స్క్రీన్ రిజల్యూషన్ మారింది",
   "status.profileSaved": "ప్రొఫైల్ సేవ్ చేయబడింది",
   "status.needStopHotkey": "ముందుగా స్టాప్ కీని సెట్ చేయండి",
+  "status.needPoints": "ముందుగా కనీసం ఒక పాయింట్ జోడించండి",
+  "status.error": "లోపం: {0}",
 
   "resolutionDialog.title": "స్క్రీన్ రిజల్యూషన్ మారింది",
   "resolutionDialog.message": "పాయింట్లు నిర్వచించినప్పటి నుండి స్క్రీన్ రిజల్యూషన్ మారింది. పాయింట్లు ఇకపై సరైన స్థానాన్ని లక్ష్యంగా చేసుకోకపోవచ్చు.",

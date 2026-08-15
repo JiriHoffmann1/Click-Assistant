@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "متوقف – تغيرت دقة الشاشة",
   "status.profileSaved": "تم حفظ الملف الشخصي",
   "status.needStopHotkey": "اضبط مفتاح الإيقاف أولاً",
+  "status.needPoints": "أضف نقطة واحدة على الأقل أولاً",
+  "status.error": "خطأ: {0}",
 
   "resolutionDialog.title": "تغيرت دقة الشاشة",
   "resolutionDialog.message": "تغيرت دقة الشاشة منذ تحديد النقاط. قد لا تستهدف النقاط الموضع الصحيح بعد الآن.",

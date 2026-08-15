@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Zastavené – rozlíšenie obrazovky sa zmenilo",
   "status.profileSaved": "Profil uložený",
   "status.needStopHotkey": "Najprv nastavte klávesovú skratku na zastavenie",
+  "status.needPoints": "Najprv pridaj aspoň jeden bod",
+  "status.error": "Chyba: {0}",
 
   "resolutionDialog.title": "Rozlíšenie obrazovky sa zmenilo",
   "resolutionDialog.message": "Rozlíšenie obrazovky sa zmenilo odvtedy, čo boli body definované. Body už možno nemieria na správne miesto.",

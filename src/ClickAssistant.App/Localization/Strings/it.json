@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Fermato – la risoluzione dello schermo è cambiata",
   "status.profileSaved": "Profilo salvato",
   "status.needStopHotkey": "Imposta prima la scorciatoia di Stop",
+  "status.needPoints": "Aggiungi prima almeno un punto",
+  "status.error": "Errore: {0}",
 
   "resolutionDialog.title": "La risoluzione dello schermo è cambiata",
   "resolutionDialog.message": "La risoluzione dello schermo è cambiata da quando i punti sono stati definiti. I punti potrebbero non puntare più alla posizione corretta.",

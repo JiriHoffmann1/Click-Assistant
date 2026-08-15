@@ -16,12 +16,18 @@ public sealed class ClickSequenceExecutor
     private readonly IMovementPathGenerator _movementGenerator;
     private readonly IScreenInfoProvider? _screenInfoProvider;
     private CancellationTokenSource? _cts;
+    private volatile bool _isRunning;
 
     public event EventHandler<EngineStatusEventArgs>? StatusChanged;
     public event EventHandler<ClickPoint>? PointClicked;
     public event EventHandler<ResolutionChangedEventArgs>? ResolutionChangedDuringRun;
+    public event EventHandler<Exception>? Faulted;
 
-    public bool IsRunning => _cts is { IsCancellationRequested: false };
+    // Cancellation is requested (token flips) the instant Stop() is called, well before the loop
+    // actually observes it and exits - deriving IsRunning from the token let a fast Start-right-after-
+    // Stop pass this guard while the old loop was still mid-iteration, launching a second concurrent
+    // loop. This flag instead only clears once RunLoopAsync's finally block has truly finished.
+    public bool IsRunning => _isRunning;
 
     public ClickSequenceExecutor(
         IInputSimulator simulator,
@@ -37,6 +43,7 @@ public sealed class ClickSequenceExecutor
     {
         if (IsRunning || profile.Points.Count == 0) return Task.CompletedTask;
 
+        _isRunning = true;
         _cts = new CancellationTokenSource();
         var token = _cts.Token;
         _ = Task.Run(() => RunLoopAsync(profile, token), token);
@@ -51,7 +58,12 @@ public sealed class ClickSequenceExecutor
         var rng = new Random();
         int cyclesRun = 0;
         Guid? lastPointId = null;
-        ScreenPoint? lastCursorPos = profile.Points.Count > 0 ? profile.Points[0].Location : null;
+        // Necháváme null, dokud reálně neproběhne první krok - viz ExecuteSinglePointAsync, kde
+        // lastCursorPos==null vede na přímý skok (ne humanizovanou křivku) k prvnímu bodu. Dřívější
+        // seedování z Points[0].Location bylo špatně i pro Sequential (první bod je bez humanizace
+        // vždy stejně přímý skok), natožpak pro Random/CustomOrder, kde Points[0] často vůbec není
+        // bod, kterým sekvence skutečně začíná.
+        ScreenPoint? lastCursorPos = null;
 
         RaiseStatus(EngineStatus.Running);
         try
@@ -97,8 +109,16 @@ public sealed class ClickSequenceExecutor
         {
             // očekávané při Stop()
         }
+        catch (Exception ex)
+        {
+            // StartAsync běží smyčku přes zahozený Task.Run (viz komentář tam) - bez tohoto by
+            // jakákoliv jiná výjimka (např. z _simulator/movement generatoru) zmizela beze stopy
+            // v neodchycené Tasku a UI by dál klidně hlásilo, že se běh normálně zastavil.
+            Faulted?.Invoke(this, ex);
+        }
         finally
         {
+            _isRunning = false;
             RaiseStatus(EngineStatus.Stopped);
         }
     }

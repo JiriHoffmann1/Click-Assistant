@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Gestoppt – Bildschirmauflösung hat sich geändert",
   "status.profileSaved": "Profil gespeichert",
   "status.needStopHotkey": "Zuerst die Stopp-Taste festlegen",
+  "status.needPoints": "Füge zuerst mindestens einen Punkt hinzu",
+  "status.error": "Fehler: {0}",
 
   "resolutionDialog.title": "Bildschirmauflösung hat sich geändert",
   "resolutionDialog.message": "Die Bildschirmauflösung hat sich seit der Definition der Punkte geändert. Die Punkte zielen möglicherweise nicht mehr auf die richtige Stelle.",

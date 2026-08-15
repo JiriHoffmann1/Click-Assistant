@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Διακόπηκε – η ανάλυση οθόνης άλλαξε",
   "status.profileSaved": "Το προφίλ αποθηκεύτηκε",
   "status.needStopHotkey": "Ορίστε πρώτα τη συντόμευση Διακοπής",
+  "status.needPoints": "Προσθέστε πρώτα τουλάχιστον ένα σημείο",
+  "status.error": "Σφάλμα: {0}",
 
   "resolutionDialog.title": "Η ανάλυση οθόνης άλλαξε",
   "resolutionDialog.message": "Η ανάλυση οθόνης έχει αλλάξει από τότε που ορίστηκαν τα σημεία. Τα σημεία ενδέχεται να μην στοχεύουν πλέον στη σωστή θέση.",

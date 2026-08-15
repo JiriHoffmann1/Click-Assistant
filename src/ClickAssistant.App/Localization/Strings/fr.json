@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Arrêté – la résolution d'écran a changé",
   "status.profileSaved": "Profil enregistré",
   "status.needStopHotkey": "Définissez d'abord la touche Arrêt",
+  "status.needPoints": "Ajoutez d'abord au moins un point",
+  "status.error": "Erreur : {0}",
 
   "resolutionDialog.title": "La résolution d'écran a changé",
   "resolutionDialog.message": "La résolution de l'écran a changé depuis la définition des points. Les points peuvent ne plus viser le bon emplacement.",

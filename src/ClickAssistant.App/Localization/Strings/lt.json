@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Sustabdyta – pasikeitė ekrano skiriamoji geba",
   "status.profileSaved": "Profilis išsaugotas",
   "status.needStopHotkey": "Pirmiausia nustatykite sustabdymo spartųjį klavišą",
+  "status.needPoints": "Pirmiausia pridėkite bent vieną tašką",
+  "status.error": "Klaida: {0}",
 
   "resolutionDialog.title": "Pasikeitė ekrano skiriamoji geba",
   "resolutionDialog.message": "Nuo taškų nustatymo pasikeitė ekrano skiriamoji geba. Taškai gali nebenurodyti į teisingą vietą.",

@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Oprit – rezoluția ecranului s-a schimbat",
   "status.profileSaved": "Profil salvat",
   "status.needStopHotkey": "Setați mai întâi comanda rapidă de Oprire",
+  "status.needPoints": "Adaugă mai întâi cel puțin un punct",
+  "status.error": "Eroare: {0}",
 
   "resolutionDialog.title": "Rezoluția ecranului s-a schimbat",
   "resolutionDialog.message": "Rezoluția ecranului s-a schimbat de când au fost definite punctele. Este posibil ca punctele să nu mai vizeze locația corectă.",

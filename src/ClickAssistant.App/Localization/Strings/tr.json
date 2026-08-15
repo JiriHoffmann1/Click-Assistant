@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Durduruldu – ekran çözünürlüğü değişti",
   "status.profileSaved": "Profil kaydedildi",
   "status.needStopHotkey": "Önce Durdur tuşunu ayarlayın",
+  "status.needPoints": "Önce en az bir nokta ekleyin",
+  "status.error": "Hata: {0}",
 
   "resolutionDialog.title": "Ekran çözünürlüğü değişti",
   "resolutionDialog.message": "Noktalar tanımlandığından beri ekran çözünürlüğü değişti. Noktalar artık doğru konumu hedeflemeyebilir.",

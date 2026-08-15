@@ -69,11 +69,15 @@ public sealed class SharpHookGlobalListener : IGlobalInputListener, IDisposable
             if (entry.Triggered) continue;
             bool matches;
             lock (_pressedKeys) matches = Matches(entry.Config, _pressedKeys);
-            if (matches)
-            {
-                _hotkeys[id] = (entry.Config, true);
+            if (!matches) continue;
+
+            // TaskPoolGlobalHook dispatches on the thread pool and doesn't guarantee KeyPressed
+            // handlers run one at a time, so a held key's OS auto-repeat can invoke OnKeyPressed
+            // concurrently on two pool threads. A plain read-then-write here let both see
+            // Triggered==false and both raise HotkeyPressed for what should be one press.
+            // TryUpdate's compare-and-swap makes only one of them win the flip.
+            if (_hotkeys.TryUpdate(id, (entry.Config, true), (entry.Config, false)))
                 HotkeyPressed?.Invoke(this, new GlobalHotkeyEventArgs(id));
-            }
         }
     }
 

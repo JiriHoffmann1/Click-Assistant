@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Stoppet – skærmopløsningen er ændret",
   "status.profileSaved": "Profil gemt",
   "status.needStopHotkey": "Angiv først Stop-genvejstasten",
+  "status.needPoints": "Tilføj mindst ét punkt først",
+  "status.error": "Fejl: {0}",
 
   "resolutionDialog.title": "Skærmopløsningen er ændret",
   "resolutionDialog.message": "Skærmopløsningen er ændret, siden punkterne blev defineret. Punkterne rammer muligvis ikke længere det rigtige sted.",

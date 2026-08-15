@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Parado – a resolução da tela mudou",
   "status.profileSaved": "Perfil salvo",
   "status.needStopHotkey": "Defina primeiro a tecla Parar",
+  "status.needPoints": "Adicione pelo menos um ponto primeiro",
+  "status.error": "Erro: {0}",
 
   "resolutionDialog.title": "A resolução da tela mudou",
   "resolutionDialog.message": "A resolução da tela mudou desde que os pontos foram definidos. Os pontos podem não apontar mais para o local correto.",

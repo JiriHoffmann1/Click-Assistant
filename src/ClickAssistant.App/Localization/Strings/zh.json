@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "已停止 – 屏幕分辨率已更改",
   "status.profileSaved": "配置文件已保存",
   "status.needStopHotkey": "请先设置停止快捷键",
+  "status.needPoints": "请先添加至少一个点",
+  "status.error": "错误：{0}",
 
   "resolutionDialog.title": "屏幕分辨率已更改",
   "resolutionDialog.message": "自定义点以来屏幕分辨率已更改。点可能不再指向正确的位置。",

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
@@ -75,6 +76,7 @@ public partial class MainWindowViewModel : ObservableObject
         _appSettingsRepository = appSettingsRepository;
         _executor.StatusChanged += OnStatusChanged;
         _executor.ResolutionChangedDuringRun += OnResolutionChangedDuringRun;
+        _executor.Faulted += OnExecutorFaulted;
         _globalListener.HotkeyPressed += OnGlobalHotkeyPressed;
 
         Editor = new ProfileEditorViewModel(globalListener, screenInfoProvider, screenCaptureProvider, mouseInfoProvider);
@@ -87,7 +89,11 @@ public partial class MainWindowViewModel : ObservableObject
         Editor.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(ProfileEditorViewModel.HasStopHotkey)) UpdateCanStart();
+            // Steps itself is only reassigned wholesale (LoadFrom/ResetToNewProfile) - individual
+            // add/remove goes through the collection's own CollectionChanged, not this property's.
+            else if (e.PropertyName == nameof(ProfileEditorViewModel.Steps)) AttachStepsCountTracking();
         };
+        AttachStepsCountTracking();
         UpdateCanStart();
 
         _selectedLanguage = AvailableLanguages.FirstOrDefault(l => l.Code == LocalizationManager.Instance.CurrentLanguage)
@@ -121,7 +127,20 @@ public partial class MainWindowViewModel : ObservableObject
         _ = _appSettingsRepository.SaveAsync(new AppSettings { Language = SelectedLanguage.Code, Theme = value.Code });
     }
 
-    private void UpdateCanStart() => CanStart = !IsRunning && Editor.HasStopHotkey;
+    private NotifyCollectionChangedEventHandler? _stepsCollectionChangedHandler;
+    private ObservableCollection<SequenceStepViewModel>? _observedSteps;
+
+    private void AttachStepsCountTracking()
+    {
+        if (_observedSteps is not null && _stepsCollectionChangedHandler is not null)
+            _observedSteps.CollectionChanged -= _stepsCollectionChangedHandler;
+
+        _observedSteps = Editor.Steps;
+        _stepsCollectionChangedHandler = (_, _) => UpdateCanStart();
+        _observedSteps.CollectionChanged += _stepsCollectionChangedHandler;
+    }
+
+    private void UpdateCanStart() => CanStart = !IsRunning && Editor.HasStopHotkey && Editor.Steps.Count > 0;
 
     partial void OnIsRunningChanged(bool value) => UpdateCanStart();
 
@@ -187,7 +206,16 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task StartAsync()
     {
-        if (IsRunning || Editor.Steps.Count == 0) return;
+        if (IsRunning) return;
+
+        // CanStart already disables the Start button for this, but the Start hotkey (OnGlobalHotkeyPressed)
+        // calls this command directly regardless of CanStart, so this guard still needs its own explicit
+        // feedback - same reasoning as the missing-stop-hotkey case right below.
+        if (Editor.Steps.Count == 0)
+        {
+            StatusText = LocalizationManager.Instance["status.needPoints"];
+            return;
+        }
 
         // Same pending-NumericUpDown-commit reasoning as SaveProfileAsync above.
         OwnerWindow?.FocusManager?.ClearFocus();
@@ -239,17 +267,27 @@ public partial class MainWindowViewModel : ObservableObject
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            StatusText = LocalizationManager.Instance["status.stoppedResolutionChanged"];
+            // Post takes an Action, so this async lambda runs as async void - an unhandled
+            // exception here (e.g. the dialog or a rescale failing) would otherwise crash the app
+            // instead of just leaving it stopped.
+            try
+            {
+                StatusText = LocalizationManager.Instance["status.stoppedResolutionChanged"];
 
-            var choice = await ShowResolutionMismatchDialogAsync(e.Previous, e.Current);
-            if (choice == ResolutionMismatchChoice.Cancel || _lastStartedProfile is null) return;
+                var choice = await ShowResolutionMismatchDialogAsync(e.Previous, e.Current);
+                if (choice == ResolutionMismatchChoice.Cancel || _lastStartedProfile is null) return;
 
-            var profile = choice == ResolutionMismatchChoice.Rescale
-                ? ProfileRescaler.Rescale(_lastStartedProfile, e.Previous, e.Current)
-                : _lastStartedProfile with { CapturedScreenSnapshot = e.Current };
+                var profile = choice == ResolutionMismatchChoice.Rescale
+                    ? ProfileRescaler.Rescale(_lastStartedProfile, e.Previous, e.Current)
+                    : _lastStartedProfile with { CapturedScreenSnapshot = e.Current };
 
-            _lastStartedProfile = profile;
-            await _executor.StartAsync(profile);
+                _lastStartedProfile = profile;
+                await _executor.StartAsync(profile);
+            }
+            catch
+            {
+                StatusText = LocalizationManager.Instance["status.stopped"];
+            }
         });
     }
 
@@ -268,14 +306,31 @@ public partial class MainWindowViewModel : ObservableObject
         return -1;
     }
 
+    // Faulted always fires (synchronously, on the executor's background thread) strictly before the
+    // StatusChanged/Stopped that follows it in RunLoopAsync's catch+finally, so setting this here is
+    // guaranteed to happen before OnStatusChanged's posted continuation below runs and would otherwise
+    // clobber the error text back to the generic "Stopped" message.
+    private volatile bool _hasPendingFault;
+
+    private void OnExecutorFaulted(object? sender, Exception e)
+    {
+        _hasPendingFault = true;
+        Dispatcher.UIThread.Post(() =>
+            StatusText = string.Format(LocalizationManager.Instance["status.error"], e.Message));
+    }
+
     private void OnStatusChanged(object? sender, EngineStatusEventArgs e)
     {
         Dispatcher.UIThread.Post(() =>
         {
             IsRunning = e.Status == EngineStatus.Running;
             if (e.Status == EngineStatus.Running) StatusText = LocalizationManager.Instance["status.running"];
-            else if (e.Status == EngineStatus.Stopped && StatusText != LocalizationManager.Instance["status.stoppedResolutionChanged"])
-                StatusText = LocalizationManager.Instance["status.stopped"];
+            else if (e.Status == EngineStatus.Stopped)
+            {
+                if (_hasPendingFault) _hasPendingFault = false;
+                else if (StatusText != LocalizationManager.Instance["status.stoppedResolutionChanged"])
+                    StatusText = LocalizationManager.Instance["status.stopped"];
+            }
         });
     }
 }

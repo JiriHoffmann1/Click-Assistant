@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Detenido – la resolución de pantalla cambió",
   "status.profileSaved": "Perfil guardado",
   "status.needStopHotkey": "Configura primero la tecla Detener",
+  "status.needPoints": "Añade al menos un punto primero",
+  "status.error": "Error: {0}",
 
   "resolutionDialog.title": "La resolución de pantalla cambió",
   "resolutionDialog.message": "La resolución de la pantalla ha cambiado desde que se definieron los puntos. Es posible que los puntos ya no apunten al lugar correcto.",

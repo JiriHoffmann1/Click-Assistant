@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Stopped – screen resolution changed",
   "status.profileSaved": "Profile saved",
   "status.needStopHotkey": "Set the Stop hotkey first",
+  "status.needPoints": "Add at least one point first",
+  "status.error": "Error: {0}",
 
   "resolutionDialog.title": "Screen resolution changed",
   "resolutionDialog.message": "The screen resolution has changed since the points were defined. Points may no longer target the correct location.",

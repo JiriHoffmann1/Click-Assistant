@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Stoppad – skärmupplösningen har ändrats",
   "status.profileSaved": "Profil sparad",
   "status.needStopHotkey": "Ställ in Stopp-snabbtangenten först",
+  "status.needPoints": "Lägg till minst en punkt först",
+  "status.error": "Fel: {0}",
 
   "resolutionDialog.title": "Skärmupplösningen har ändrats",
   "resolutionDialog.message": "Skärmupplösningen har ändrats sedan punkterna definierades. Punkterna kanske inte längre pekar på rätt plats.",

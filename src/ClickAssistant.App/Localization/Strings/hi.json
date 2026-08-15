@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "रुका हुआ – स्क्रीन रिज़ॉल्यूशन बदल गया",
   "status.profileSaved": "प्रोफ़ाइल सहेजी गई",
   "status.needStopHotkey": "पहले स्टॉप कुंजी सेट करें",
+  "status.needPoints": "पहले कम से कम एक बिंदु जोड़ें",
+  "status.error": "त्रुटि: {0}",
 
   "resolutionDialog.title": "स्क्रीन रिज़ॉल्यूशन बदल गया",
   "resolutionDialog.message": "बिंदु परिभाषित करने के बाद से स्क्रीन रिज़ॉल्यूशन बदल गया है। बिंदु अब सही स्थान पर लक्षित नहीं हो सकते।",

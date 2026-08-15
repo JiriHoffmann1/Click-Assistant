@@ -102,6 +102,8 @@
   "status.stoppedResolutionChanged": "Pysäytetty – näytön resoluutio muuttui",
   "status.profileSaved": "Profiili tallennettu",
   "status.needStopHotkey": "Aseta ensin pysäytyspikanäppäin",
+  "status.needPoints": "Lisää ensin vähintään yksi piste",
+  "status.error": "Virhe: {0}",
 
   "resolutionDialog.title": "Näytön resoluutio muuttui",
   "resolutionDialog.message": "Näytön resoluutio on muuttunut sen jälkeen, kun pisteet määriteltiin. Pisteet eivät ehkä enää osoita oikeaan kohtaan.",
