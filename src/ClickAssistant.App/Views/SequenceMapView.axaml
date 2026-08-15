@@ -11,53 +11,27 @@
     <WrapPanel Orientation="Horizontal">
         <Border Classes="card" Margin="0,0,14,10">
         <StackPanel Spacing="10">
-            <CheckBox Content="{loc:Tr map.showScreenshot}" IsChecked="{Binding ShowRealScreenshot}" ToolTip.Tip="{loc:Tr map.showScreenshot.tooltip}" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <CheckBox Content="{loc:Tr map.showScreenshot}" IsChecked="{Binding ShowRealScreenshot}" ToolTip.Tip="{loc:Tr map.showScreenshot.tooltip}" />
+                <Button Content="{loc:Tr map.identify}" Command="{Binding IdentifyMonitorsCommand}" Classes="ghost" Padding="10,4" ToolTip.Tip="{loc:Tr map.identify.tooltip}" />
+            </StackPanel>
 
             <Border BorderBrush="{DynamicResource ThemeBorderBrush}" BorderThickness="1" CornerRadius="8"
-                    Background="{DynamicResource ThemeSurface2Brush}" Width="380" Height="200" ClipToBounds="True">
-                <Canvas Width="380" Height="200">
-                    <ItemsControl ItemsSource="{Binding MapMonitorRects}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <!-- Canvas bez explicitní velikosti se změří na 0x0 a ItemsPresenter na to ořízne děti,
-                                     i když mají platné Canvas.Left/Top - proto musí přesně sedět na velikost mapy (380x200 výše). -->
-                                <Canvas Width="380" Height="200" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="vm:MapMonitorRectViewModel">
-                                <Rectangle Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}"
-                                           Width="{Binding Width}" Height="{Binding Height}"
-                                           Classes.focused="{Binding IsFocused}"
-                                           Classes="monitorRect"
-                                           Stroke="{DynamicResource ThemeBorderBrush}" StrokeThickness="1.5" Fill="Transparent" Cursor="Hand"
-                                           Tapped="MonitorRect_OnTapped"
-                                           ToolTip.Tip="{loc:Tr map.monitor.focus.tooltip}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    Background="{DynamicResource ThemeSurface2Brush}" Width="{Binding MapWidth}" Height="{Binding MapHeight}" ClipToBounds="True">
+                <Canvas Width="{Binding MapWidth}" Height="{Binding MapHeight}">
+                    <!-- Obdélníky monitorů se spravují ručně v code-behind (MonitorRectsHost.Children), ne přes
+                         ItemsControl/DataTemplate - Avalonia u tohoto ItemsControlu+Canvas+ObservableCollection
+                         spolehlivě špatně vykreslovala více položek najednou (kontejnery si popletly pozici a
+                         velikost mezi sebou), zatímco ruční správa Canvas dětí funguje bez problémů. -->
+                    <Canvas x:Name="MonitorRectsHost" Width="{Binding MapWidth}" Height="{Binding MapHeight}" />
 
-                    <Polyline Points="{Binding MapPolylinePoints}" Stroke="{DynamicResource ThemeAccentBrush}" StrokeThickness="1.5" Opacity="0.85" />
+                    <Polyline Points="{Binding MapPolylinePoints}" Stroke="{DynamicResource ThemeAccentBrush}"
+                              StrokeThickness="2.5" StrokeJoin="Round" StrokeLineCap="Round" Opacity="0.9" />
 
-                    <ItemsControl ItemsSource="{Binding Steps}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas Width="380" Height="200" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="vm:SequenceStepViewModel">
-                                <Button Canvas.Left="{Binding MapX}" Canvas.Top="{Binding MapY}"
-                                        Width="18" Height="18" Padding="0" CornerRadius="9"
-                                        Background="{DynamicResource ThemeAccentBrush}"
-                                        Foreground="{DynamicResource ThemeAccentContrastBrush}"
-                                        Content="{Binding StepNumber}" FontSize="9" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                        Command="{Binding #Root.DataContext.SelectStepCommand}"
-                                        CommandParameter="{Binding}"
-                                        ToolTip.Tip="{Binding Name}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <!-- Tečky bodů sekvence se stejně jako obdélníky monitorů spravují ručně v code-behind
+                         (StepsHost.Children) - viz komentář u MonitorRectsHost výše, stejná Avalonia chyba
+                         postihuje i tento ItemsControl s 2+ položkami. -->
+                    <Canvas x:Name="StepsHost" Width="{Binding MapWidth}" Height="{Binding MapHeight}" />
                 </Canvas>
             </Border>
         </StackPanel>

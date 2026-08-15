@@ -30,12 +30,45 @@
                             </Grid>
                             <TextBox Text="{Binding Name}" Watermark="{loc:Tr step.name.watermark}" ToolTip.Tip="{loc:Tr step.name.tooltip}" />
 
-                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="6" RowSpacing="4" ToolTip.Tip="{loc:Tr step.xy.tooltip}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="{loc:Tr step.actionType.label}" VerticalAlignment="Center" Classes="fieldLabel" />
+                                <ComboBox SelectedItem="{Binding ActionType}" ItemsSource="{Binding ActionTypeValues}" Width="118" ToolTip.Tip="{loc:Tr step.actionType.tooltip}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="6" RowSpacing="4"
+                                  ToolTip.Tip="{loc:Tr step.xy.tooltip}" IsVisible="{Binding ShowPositionFields}">
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr step.x.label}" VerticalAlignment="Center" Classes="fieldLabel" />
                                 <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding X}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr step.y.label}" VerticalAlignment="Center" Classes="fieldLabel" />
                                 <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Y}" Minimum="0" Maximum="20000" ShowButtonSpinner="False" />
                             </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding ShowButtonField}">
+                                <TextBlock Text="{loc:Tr step.button.label}" VerticalAlignment="Center" Classes="fieldLabel" />
+                                <ComboBox SelectedItem="{Binding Button}" ItemsSource="{Binding MouseButtonValues}" Width="110">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" IsVisible="{Binding ShowKeyField}">
+                                <TextBlock Text="{loc:Tr step.key.label}" VerticalAlignment="Center" Margin="0,0,6,4" Classes="fieldLabel" />
+                                <TextBlock Text="{Binding KeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,4" />
+                                <Button Content="{loc:Tr hotkey.set}" Classes="ghost" Padding="8,2" Margin="0,0,0,4"
+                                        Command="{Binding #Root.DataContext.CaptureStepKeyCommand}" CommandParameter="{Binding}"
+                                        IsEnabled="{Binding !IsCapturingKey}" />
+                                <Button Content="{loc:Tr hotkey.cancel}" Classes="ghost" Padding="8,2" Margin="0,0,0,4"
+                                        Command="{Binding #Root.DataContext.CancelStepKeyCaptureCommand}" IsVisible="{Binding IsCapturingKey}" />
+                            </WrapPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <TextBlock Text="{loc:Tr step.clickCount.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr step.clickCount.tooltip}" Classes="fieldLabel" />

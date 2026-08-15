@@ -46,7 +46,7 @@ public sealed class BezierMovementPathGenerator : IMovementPathGenerator
         return result;
     }
 
-    private static (ScreenPoint, ScreenPoint) BuildControlPoints(ScreenPoint a, ScreenPoint b, double bow, Random rng)
+    private static (ScreenPoint, ScreenPoint) BuildControlPoints(ScreenPoint a, ScreenPoint b, double maxBow, Random rng)
     {
         double dx = b.X - a.X;
         double dy = b.Y - a.Y;
@@ -54,7 +54,10 @@ public sealed class BezierMovementPathGenerator : IMovementPathGenerator
         double px = -dy / (dist + 1e-6);
         double py = dx / (dist + 1e-6);
 
-        double bulge = dist * bow * (rng.NextDouble() * 0.6 + 0.7);
+        // Nastavená hodnota je horní mez - pro každý klik (každé zavolání GeneratePath) se vybere
+        // jedna náhodná síla ohybu mezi 0 a tímto maximem, aby se pohyby mezi kliky lišily.
+        double bow = maxBow * rng.NextDouble();
+        double bulge = dist * bow;
         double sign = rng.NextDouble() < 0.5 ? -1 : 1;
 
         var control1 = new ScreenPoint(

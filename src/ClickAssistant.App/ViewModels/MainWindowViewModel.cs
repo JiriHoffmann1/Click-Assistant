@@ -65,6 +65,7 @@ public partial class MainWindowViewModel : ObservableObject
         IGlobalInputListener globalListener,
         IScreenInfoProvider screenInfoProvider,
         IScreenCaptureProvider screenCaptureProvider,
+        IMouseInfoProvider mouseInfoProvider,
         IAppSettingsRepository appSettingsRepository)
     {
         _profileRepository = profileRepository;
@@ -76,7 +77,7 @@ public partial class MainWindowViewModel : ObservableObject
         _executor.ResolutionChangedDuringRun += OnResolutionChangedDuringRun;
         _globalListener.HotkeyPressed += OnGlobalHotkeyPressed;
 
-        Editor = new ProfileEditorViewModel(globalListener, screenInfoProvider, screenCaptureProvider);
+        Editor = new ProfileEditorViewModel(globalListener, screenInfoProvider, screenCaptureProvider, mouseInfoProvider);
         Editor.HotkeyChanged += hotkey => _globalListener.RegisterHotkey(hotkey, _startHotkeySubscriberId);
         Editor.StopHotkeyChanged += hotkey =>
         {

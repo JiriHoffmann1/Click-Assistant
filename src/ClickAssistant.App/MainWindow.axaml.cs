@@ -50,6 +50,7 @@ public partial class MainWindow : Window
             _globalListener,
             screenInfoProvider,
             new WindowsScreenCaptureProvider(),
+            new WindowsMouseInfoProvider(),
             settingsRepository)
         {
             OwnerWindow = this

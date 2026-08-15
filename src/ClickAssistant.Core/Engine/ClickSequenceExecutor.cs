@@ -114,9 +114,17 @@ public sealed class ClickSequenceExecutor
         return true;
     }
 
-    private async Task<ScreenPoint> ExecuteSinglePointAsync(
+    private async Task<ScreenPoint?> ExecuteSinglePointAsync(
         ClickPoint point, HumanizationConfig humanization, ScreenPoint? lastCursorPos, Random rng, CancellationToken token)
     {
+        if (point.ActionType == StepActionType.KeyPress)
+        {
+            await PressKeyRepeatedlyAsync(point, token);
+            // Klávesová akce beze změny pozice se vrací beze změny, aby další bod s pohybem
+            // kurzoru navazoval na skutečnou poslední pozici myši, ne na (nepoužitou) Location tohoto bodu.
+            return lastCursorPos;
+        }
+
         var target = humanization.Enabled
             ? PositionJitter.Apply(point.Location, humanization.PositionJitterRadiusPx, rng)
             : point.Location;
@@ -136,16 +144,37 @@ public sealed class ClickSequenceExecutor
             _simulator.MoveMouse(target);
         }
 
-        for (int i = 0; i < point.ClickCount; i++)
+        if (point.ActionType == StepActionType.KeyPressAtPosition)
         {
-            token.ThrowIfCancellationRequested();
-            _simulator.MouseDown(point.Button);
-            await CancellableDelay(50, token);
-            _simulator.MouseUp(point.Button);
-            if (point.ClickCount > 1) await CancellableDelay(80, token);
+            await PressKeyRepeatedlyAsync(point, token);
+        }
+        else
+        {
+            for (int i = 0; i < point.ClickCount; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                _simulator.MouseDown(point.Button);
+                await CancellableDelay(50, token);
+                _simulator.MouseUp(point.Button);
+                if (point.ClickCount > 1) await CancellableDelay(80, token);
+            }
         }
 
         return target;
+    }
+
+    private async Task PressKeyRepeatedlyAsync(ClickPoint point, CancellationToken token)
+    {
+        if (point.Key is not { } key) return;
+
+        for (int i = 0; i < point.ClickCount; i++)
+        {
+            token.ThrowIfCancellationRequested();
+            _simulator.KeyDown(key);
+            await CancellableDelay(50, token);
+            _simulator.KeyUp(key);
+            if (point.ClickCount > 1) await CancellableDelay(80, token);
+        }
     }
 
     private static Task CancellableDelay(int ms, CancellationToken token) =>

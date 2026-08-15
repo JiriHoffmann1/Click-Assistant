@@ -110,6 +110,7 @@
                 <WrapPanel Orientation="Horizontal">
                     <Button Content="{loc:Tr editor.addPoint}" Command="{Binding AddPointCommand}" IsEnabled="{Binding !IsCapturingPoint}" Classes="primary" ToolTip.Tip="{loc:Tr editor.addPoint.tooltip}" Margin="0,0,10,6" />
                     <Button Content="{loc:Tr editor.cancelCapture}" Command="{Binding CancelCaptureCommand}" IsVisible="{Binding IsCapturingPoint}" Classes="ghost" Margin="0,0,10,6" />
+                    <Button Content="{loc:Tr editor.addKeyStep}" Command="{Binding AddKeyStepCommand}" Classes="ghost" ToolTip.Tip="{loc:Tr editor.addKeyStep.tooltip}" Margin="0,0,10,6" />
                     <TextBlock Text="{loc:Tr editor.capturingPoint.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
                                IsVisible="{Binding IsCapturingPoint}" FontStyle="Italic" Foreground="{DynamicResource ThemeInkDimBrush}" />
                 </WrapPanel>

@@ -242,10 +242,20 @@
     <Setter Property="Foreground" Value="{DynamicResource ThemeGoodBrush}" />
   </Style>
 
-  <!-- Monitor rect in the sequence map: highlighted when the user has focused it via click. -->
+  <!-- Monitor rect in the sequence map: tinted fill so it reads clearly against the map background,
+       and strongly highlighted with a bold accent-colored border when the user has focused it via click.
+       Focused state deliberately keeps the same subtle fill as the base state (not a solid accent fill) -
+       a fully opaque accent fill made the whole rectangle read as a solid purple block. -->
+  <Style Selector="Rectangle.monitorRect">
+    <Setter Property="Stroke" Value="{DynamicResource ThemeInkDimBrush}" />
+    <Setter Property="StrokeThickness" Value="2" />
+    <Setter Property="Fill" Value="{DynamicResource ThemeBorderBrush}" />
+    <Setter Property="Opacity" Value="0.9" />
+  </Style>
   <Style Selector="Rectangle.monitorRect.focused">
     <Setter Property="Stroke" Value="{DynamicResource ThemeAccentBrush}" />
-    <Setter Property="StrokeThickness" Value="2.5" />
+    <Setter Property="StrokeThickness" Value="3" />
+    <Setter Property="Opacity" Value="1" />
   </Style>
 
 </Styles>
