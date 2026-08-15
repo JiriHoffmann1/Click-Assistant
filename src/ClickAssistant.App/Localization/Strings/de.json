@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Startet die Erfassung eines neuen Punkts - klicke irgendwo auf den Bildschirm, und die App merkt sich diese Position.",
   "editor.cancelCapture": "Punktauswahl abbrechen",
   "editor.capturingPoint.hint": "Klicke irgendwo auf den Bildschirm, um einen Punkt zu erfassen…",
+  "editor.addKeyStep": "Taste hinzufügen",
+  "editor.addKeyStep.tooltip": "Fügt einen Schritt hinzu, der während der Sequenz eine gewählte Taste auf der Tastatur drückt, anstatt mit der Maus zu klicken. Bildschirmkoordinaten werden für diesen Schritt nicht verwendet.",
 
   "hotkey.start.label": "Globale Start-Taste:",
   "hotkey.start.tooltip": "Eine Tastenkombination, die das Klicken von überall im System aus startet, auch ohne aktives App-Fenster.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Detail des ausgewählten Punkts (2× vergrößert)",
   "map.detailPlaceholder": "Wähle einen Punkt auf der Karte oder der Zeitleiste",
   "map.monitor.focus.tooltip": "Klicke auf einen Monitor, um nur ihn zu vergrößern. Erneut klicken zeigt wieder alle Monitore.",
+  "map.identify": "Identifizieren",
+  "map.identify.tooltip": "Zeigt kurz eine große Nummer über jedem Monitor in der Karte an, damit du erkennen kannst, welches Rechteck zu welchem physischen Monitor gehört.",
 
   "step.number": "Schritt {0}",
   "step.select": "Auswählen",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "Die Bildschirmkoordinaten des Punkts in Pixeln (X = horizontal, Y = vertikal von der oberen linken Ecke aus).",
+  "step.actionType.label": "Aktion:",
+  "step.actionType.tooltip": "Was die App bei diesem Schritt tut: mit der Maus auf die Koordinaten klicken, eine Taste drücken, ohne den Mauszeiger zu bewegen, oder den Mauszeiger zu den Koordinaten bewegen und dort eine Taste drücken (nützlich für UI, die auf Hover reagiert).",
+  "step.button.label": "Maustaste:",
+  "step.key.label": "Taste:",
   "step.clickCount.label": "Klickanzahl:",
   "step.clickCount.tooltip": "Wie oft die App auf diesen Punkt klickt, bevor sie zum nächsten übergeht.",
   "step.customDelay": "Eigene Verzögerung nach Klick",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Einmal",
   "enum.RepeatMode.FixedCount": "Feste Anzahl",
   "enum.RepeatMode.Infinite": "Unendlich",
+  "enum.StepActionType.MouseClick": "Mausklick",
+  "enum.StepActionType.KeyPress": "Tastendruck",
+  "enum.StepActionType.KeyPressAtPosition": "Taste an Position",
+  "enum.MouseButtonType.Left": "Links",
+  "enum.MouseButtonType.Right": "Rechts",
+  "enum.MouseButtonType.Middle": "Mitte",
+  "enum.MouseButtonType.Back": "Zurück (seitlich)",
+  "enum.MouseButtonType.Forward": "Vor (seitlich)",
 
   "profile.defaultName": "Neues Profil",
   "point.defaultNameFormat": "Punkt {0}"

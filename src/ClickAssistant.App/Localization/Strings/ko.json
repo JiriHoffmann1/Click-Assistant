@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "새 포인트 캡처를 시작합니다 - 화면 아무 곳이나 클릭하면 앱이 그 위치를 기억합니다.",
   "editor.cancelCapture": "포인트 선택 취소",
   "editor.capturingPoint.hint": "포인트를 캡처하려면 화면 아무 곳이나 클릭하세요…",
+  "editor.addKeyStep": "키 추가",
+  "editor.addKeyStep.tooltip": "시퀀스 중 마우스를 클릭하는 대신 선택한 키보드 키를 누르는 단계를 추가합니다. 이 단계에서는 화면 좌표를 사용하지 않습니다.",
 
   "hotkey.start.label": "전역 시작 단축키:",
   "hotkey.start.tooltip": "앱 창이 활성화되어 있지 않아도 시스템 어디에서나 클릭을 시작하는 키보드 단축키입니다.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "선택한 포인트 상세 (2배 확대)",
   "map.detailPlaceholder": "지도 또는 타임라인에서 포인트를 선택하세요",
   "map.monitor.focus.tooltip": "모니터를 클릭하면 해당 모니터만 확대됩니다. 다시 클릭하면 모든 모니터가 표시됩니다.",
+  "map.identify": "식별",
+  "map.identify.tooltip": "각 모니터 위에 큰 번호를 잠시 표시하여 어떤 사각형이 어떤 실제 모니터에 해당하는지 알 수 있습니다.",
 
   "step.number": "단계 {0}",
   "step.select": "선택",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "픽셀 단위의 화면상 포인트 좌표(X = 수평, Y = 왼쪽 상단 모서리로부터 수직).",
+  "step.actionType.label": "동작:",
+  "step.actionType.tooltip": "이 단계에서 앱이 수행하는 작업: 좌표에서 마우스 클릭, 커서를 움직이지 않고 키 누르기, 또는 커서를 좌표로 이동한 후 키 누르기(호버에 의존하는 UI에 유용).",
+  "step.button.label": "버튼:",
+  "step.key.label": "키:",
   "step.clickCount.label": "클릭 횟수:",
   "step.clickCount.tooltip": "다음 포인트로 이동하기 전에 앱이 이 포인트를 클릭하는 횟수.",
   "step.customDelay": "클릭 후 사용자 지정 지연",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "한 번",
   "enum.RepeatMode.FixedCount": "고정 횟수",
   "enum.RepeatMode.Infinite": "무한",
+  "enum.StepActionType.MouseClick": "마우스 클릭",
+  "enum.StepActionType.KeyPress": "키 누름",
+  "enum.StepActionType.KeyPressAtPosition": "위치에서 키 누름",
+  "enum.MouseButtonType.Left": "왼쪽",
+  "enum.MouseButtonType.Right": "오른쪽",
+  "enum.MouseButtonType.Middle": "가운데",
+  "enum.MouseButtonType.Back": "뒤로(측면)",
+  "enum.MouseButtonType.Forward": "앞으로(측면)",
 
   "profile.defaultName": "새 프로필",
   "point.defaultNameFormat": "포인트 {0}"

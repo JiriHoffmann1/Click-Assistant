@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Запускает захват новой точки - кликните в любом месте экрана, и приложение запомнит эту позицию.",
   "editor.cancelCapture": "Отменить выбор точки",
   "editor.capturingPoint.hint": "Кликните в любом месте экрана, чтобы захватить точку…",
+  "editor.addKeyStep": "Добавить клавишу",
+  "editor.addKeyStep.tooltip": "Добавляет шаг, который нажимает выбранную клавишу на клавиатуре во время последовательности вместо щелчка мышью. Координаты экрана для этого шага не используются.",
 
   "hotkey.start.label": "Глобальная клавиша Старт:",
   "hotkey.start.tooltip": "Комбинация клавиш, которая запускает клики из любого места в системе, даже без активного окна приложения.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Детали выбранной точки (увеличено в 2×)",
   "map.detailPlaceholder": "Выберите точку на карте или временной шкале",
   "map.monitor.focus.tooltip": "Нажмите на монитор, чтобы приблизить только его. Нажмите ещё раз, чтобы показать все мониторы.",
+  "map.identify": "Определить",
+  "map.identify.tooltip": "Кратко показывает большой номер над каждым монитором на карте, чтобы вы могли понять, какой прямоугольник соответствует какому физическому монитору.",
 
   "step.number": "Шаг {0}",
   "step.select": "Выбрать",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "Координаты точки на экране в пикселях (X = по горизонтали, Y = по вертикали от левого верхнего угла).",
+  "step.actionType.label": "Действие:",
+  "step.actionType.tooltip": "Что приложение делает на этом шаге: щёлкает мышью по координатам, нажимает клавишу без перемещения курсора или перемещает курсор к координатам и нажимает там клавишу (полезно для интерфейсов, зависящих от наведения).",
+  "step.button.label": "Кнопка:",
+  "step.key.label": "Клавиша:",
   "step.clickCount.label": "Число кликов:",
   "step.clickCount.tooltip": "Сколько раз приложение кликнет по этой точке, прежде чем перейти к следующей.",
   "step.customDelay": "Своя задержка после клика",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Один раз",
   "enum.RepeatMode.FixedCount": "Фиксированное число",
   "enum.RepeatMode.Infinite": "Бесконечно",
+  "enum.StepActionType.MouseClick": "Клик мышью",
+  "enum.StepActionType.KeyPress": "Нажатие клавиши",
+  "enum.StepActionType.KeyPressAtPosition": "Клавиша в позиции",
+  "enum.MouseButtonType.Left": "Левая",
+  "enum.MouseButtonType.Right": "Правая",
+  "enum.MouseButtonType.Middle": "Средняя",
+  "enum.MouseButtonType.Back": "Назад (боковая)",
+  "enum.MouseButtonType.Forward": "Вперёд (боковая)",
 
   "profile.defaultName": "Новый профиль",
   "point.defaultNameFormat": "Точка {0}"

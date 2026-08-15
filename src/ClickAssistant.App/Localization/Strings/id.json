@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Memulai penangkapan titik baru - klik di mana saja pada layar dan aplikasi akan mengingat posisi tersebut.",
   "editor.cancelCapture": "Batalkan pemilihan titik",
   "editor.capturingPoint.hint": "Klik di mana saja pada layar untuk menangkap titik…",
+  "editor.addKeyStep": "Tambah tombol",
+  "editor.addKeyStep.tooltip": "Menambahkan langkah yang menekan tombol keyboard pilihan selama urutan, alih-alih mengklik mouse. Koordinat layar tidak digunakan untuk langkah ini.",
 
   "hotkey.start.label": "Tombol pintas Mulai global:",
   "hotkey.start.tooltip": "Pintasan keyboard yang memulai klik dari mana saja di sistem, bahkan tanpa jendela aplikasi aktif.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Detail titik terpilih (diperbesar 2×)",
   "map.detailPlaceholder": "Pilih titik pada peta atau linimasa",
   "map.monitor.focus.tooltip": "Klik monitor untuk memperbesar hanya monitor itu. Klik lagi untuk menampilkan semua monitor.",
+  "map.identify": "Identifikasi",
+  "map.identify.tooltip": "Menampilkan sebentar nomor besar di atas setiap monitor pada peta, agar Anda tahu persegi panjang mana yang sesuai dengan monitor fisik mana.",
 
   "step.number": "Langkah {0}",
   "step.select": "Pilih",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "Koordinat titik pada layar dalam piksel (X = horizontal, Y = vertikal dari sudut kiri atas).",
+  "step.actionType.label": "Aksi:",
+  "step.actionType.tooltip": "Yang dilakukan aplikasi pada langkah ini: mengklik mouse pada koordinat, menekan tombol keyboard tanpa menggerakkan kursor, atau menggerakkan kursor ke koordinat lalu menekan tombol di sana (berguna untuk UI yang bergantung pada hover).",
+  "step.button.label": "Tombol mouse:",
+  "step.key.label": "Tombol keyboard:",
   "step.clickCount.label": "Jumlah klik:",
   "step.clickCount.tooltip": "Berapa kali aplikasi mengklik titik ini sebelum berpindah ke titik berikutnya.",
   "step.customDelay": "Penundaan khusus setelah klik",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Sekali",
   "enum.RepeatMode.FixedCount": "Jumlah tetap",
   "enum.RepeatMode.Infinite": "Tanpa batas",
+  "enum.StepActionType.MouseClick": "Klik mouse",
+  "enum.StepActionType.KeyPress": "Tekan tombol",
+  "enum.StepActionType.KeyPressAtPosition": "Tombol pada posisi",
+  "enum.MouseButtonType.Left": "Kiri",
+  "enum.MouseButtonType.Right": "Kanan",
+  "enum.MouseButtonType.Middle": "Tengah",
+  "enum.MouseButtonType.Back": "Mundur (samping)",
+  "enum.MouseButtonType.Forward": "Maju (samping)",
 
   "profile.defaultName": "Profil baru",
   "point.defaultNameFormat": "Titik {0}"

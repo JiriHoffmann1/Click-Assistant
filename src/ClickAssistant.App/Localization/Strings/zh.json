@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "开始捕获新点 - 在屏幕上任意位置点击，应用会记住该位置。",
   "editor.cancelCapture": "取消选点",
   "editor.capturingPoint.hint": "点击屏幕上任意位置以捕获该点…",
+  "editor.addKeyStep": "添加按键",
+  "editor.addKeyStep.tooltip": "添加一个在序列中按下所选键盘按键的步骤，而不是点击鼠标。此步骤不使用屏幕坐标。",
 
   "hotkey.start.label": "全局开始快捷键：",
   "hotkey.start.tooltip": "一个键盘快捷键，可在系统中任何位置启动点击，即使应用窗口未处于焦点状态。",
@@ -71,6 +73,8 @@
   "map.detailTitle": "所选点详情（放大 2 倍）",
   "map.detailPlaceholder": "在地图或时间轴上选择一个点",
   "map.monitor.focus.tooltip": "点击某个显示器可仅放大显示该显示器。再次点击可显示所有显示器。",
+  "map.identify": "标识",
+  "map.identify.tooltip": "在地图上的每个显示器上短暂显示一个大号数字，方便你分辨哪个矩形对应哪个物理显示器。",
 
   "step.number": "步骤 {0}",
   "step.select": "选择",
@@ -80,6 +84,10 @@
   "step.x.label": "X：",
   "step.y.label": "Y：",
   "step.xy.tooltip": "该点在屏幕上的像素坐标（X = 水平，Y = 从左上角开始的垂直方向）。",
+  "step.actionType.label": "操作:",
+  "step.actionType.tooltip": "应用在此步骤中执行的操作:在坐标处点击鼠标、不移动光标按下按键，或将光标移到坐标处再按下按键(适用于依赖悬停的界面)。",
+  "step.button.label": "按钮:",
+  "step.key.label": "按键:",
   "step.clickCount.label": "点击次数：",
   "step.clickCount.tooltip": "应用在移动到下一个点之前点击此点的次数。",
   "step.customDelay": "点击后自定义延迟",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "一次",
   "enum.RepeatMode.FixedCount": "固定次数",
   "enum.RepeatMode.Infinite": "无限次",
+  "enum.StepActionType.MouseClick": "鼠标点击",
+  "enum.StepActionType.KeyPress": "按键",
+  "enum.StepActionType.KeyPressAtPosition": "位置按键",
+  "enum.MouseButtonType.Left": "左键",
+  "enum.MouseButtonType.Right": "右键",
+  "enum.MouseButtonType.Middle": "中键",
+  "enum.MouseButtonType.Back": "后退(侧键)",
+  "enum.MouseButtonType.Forward": "前进(侧键)",
 
   "profile.defaultName": "新配置文件",
   "point.defaultNameFormat": "点 {0}"

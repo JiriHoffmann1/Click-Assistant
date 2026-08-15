@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Démarre la capture d'un nouveau point - cliquez n'importe où sur l'écran et l'appli mémorisera cette position.",
   "editor.cancelCapture": "Annuler la sélection du point",
   "editor.capturingPoint.hint": "Cliquez n'importe où sur l'écran pour capturer un point…",
+  "editor.addKeyStep": "Ajouter une touche",
+  "editor.addKeyStep.tooltip": "Ajoute une étape qui appuie sur une touche du clavier choisie pendant la séquence, au lieu de cliquer avec la souris. Les coordonnées d'écran ne sont pas utilisées pour cette étape.",
 
   "hotkey.start.label": "Raccourci global Démarrer :",
   "hotkey.start.tooltip": "Un raccourci clavier qui démarre les clics depuis n'importe où dans le système, même sans que la fenêtre de l'appli soit active.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Détail du point sélectionné (zoom 2×)",
   "map.detailPlaceholder": "Sélectionnez un point sur la carte ou la chronologie",
   "map.monitor.focus.tooltip": "Cliquez sur un moniteur pour zoomer uniquement sur celui-ci. Cliquez à nouveau pour afficher tous les moniteurs.",
+  "map.identify": "Identifier",
+  "map.identify.tooltip": "Affiche brièvement un grand numéro sur chaque écran dans la carte, pour que vous puissiez savoir quel rectangle correspond à quel écran physique.",
 
   "step.number": "Étape {0}",
   "step.select": "Sélectionner",
@@ -80,6 +84,10 @@
   "step.x.label": "X :",
   "step.y.label": "Y :",
   "step.xy.tooltip": "Les coordonnées du point à l'écran en pixels (X = horizontal, Y = vertical depuis le coin supérieur gauche).",
+  "step.actionType.label": "Action :",
+  "step.actionType.tooltip": "Ce que l'application fait à cette étape : cliquer avec la souris aux coordonnées, appuyer sur une touche sans déplacer le curseur, ou déplacer le curseur aux coordonnées puis appuyer sur une touche (utile pour les interfaces réagissant au survol).",
+  "step.button.label": "Bouton :",
+  "step.key.label": "Touche :",
   "step.clickCount.label": "Nombre de clics :",
   "step.clickCount.tooltip": "Combien de fois l'appli clique sur ce point avant de passer au suivant.",
   "step.customDelay": "Délai personnalisé après clic",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Une fois",
   "enum.RepeatMode.FixedCount": "Nombre fixe",
   "enum.RepeatMode.Infinite": "Infini",
+  "enum.StepActionType.MouseClick": "Clic de souris",
+  "enum.StepActionType.KeyPress": "Appui sur une touche",
+  "enum.StepActionType.KeyPressAtPosition": "Touche à une position",
+  "enum.MouseButtonType.Left": "Gauche",
+  "enum.MouseButtonType.Right": "Droit",
+  "enum.MouseButtonType.Middle": "Milieu",
+  "enum.MouseButtonType.Back": "Retour (latéral)",
+  "enum.MouseButtonType.Forward": "Suivant (latéral)",
 
   "profile.defaultName": "Nouveau profil",
   "point.defaultNameFormat": "Point {0}"

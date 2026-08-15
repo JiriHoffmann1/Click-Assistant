@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Bắt đầu ghi lại một điểm mới - nhấp vào bất kỳ đâu trên màn hình và ứng dụng sẽ ghi nhớ vị trí đó.",
   "editor.cancelCapture": "Hủy chọn điểm",
   "editor.capturingPoint.hint": "Nhấp vào bất kỳ đâu trên màn hình để ghi lại một điểm…",
+  "editor.addKeyStep": "Thêm phím",
+  "editor.addKeyStep.tooltip": "Thêm một bước nhấn một phím bàn phím đã chọn trong chuỗi thao tác, thay vì nhấp chuột. Bước này không sử dụng tọa độ màn hình.",
 
   "hotkey.start.label": "Phím tắt Bắt đầu toàn cục:",
   "hotkey.start.tooltip": "Một phím tắt bàn phím giúp bắt đầu nhấp chuột từ bất kỳ đâu trong hệ thống, ngay cả khi cửa sổ ứng dụng không hoạt động.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Chi tiết điểm đã chọn (phóng to 2×)",
   "map.detailPlaceholder": "Chọn một điểm trên bản đồ hoặc dòng thời gian",
   "map.monitor.focus.tooltip": "Nhấp vào một màn hình để chỉ phóng to màn hình đó. Nhấp lại để hiển thị tất cả màn hình.",
+  "map.identify": "Nhận diện",
+  "map.identify.tooltip": "Hiển thị trong giây lát một số lớn trên mỗi màn hình trong bản đồ, để bạn biết hình chữ nhật nào tương ứng với màn hình vật lý nào.",
 
   "step.number": "Bước {0}",
   "step.select": "Chọn",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "Tọa độ màn hình của điểm tính bằng pixel (X = ngang, Y = dọc tính từ góc trên bên trái).",
+  "step.actionType.label": "Hành động:",
+  "step.actionType.tooltip": "Ứng dụng làm gì ở bước này: nhấp chuột tại tọa độ, nhấn một phím mà không di chuyển con trỏ, hoặc di chuyển con trỏ đến tọa độ rồi nhấn phím tại đó (hữu ích cho giao diện phụ thuộc vào di chuột).",
+  "step.button.label": "Nút:",
+  "step.key.label": "Phím:",
   "step.clickCount.label": "Số lần nhấp:",
   "step.clickCount.tooltip": "Số lần ứng dụng nhấp vào điểm này trước khi chuyển sang điểm tiếp theo.",
   "step.customDelay": "Độ trễ tùy chỉnh sau khi nhấp",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Một lần",
   "enum.RepeatMode.FixedCount": "Số lần cố định",
   "enum.RepeatMode.Infinite": "Vô hạn",
+  "enum.StepActionType.MouseClick": "Nhấp chuột",
+  "enum.StepActionType.KeyPress": "Nhấn phím",
+  "enum.StepActionType.KeyPressAtPosition": "Phím tại vị trí",
+  "enum.MouseButtonType.Left": "Trái",
+  "enum.MouseButtonType.Right": "Phải",
+  "enum.MouseButtonType.Middle": "Giữa",
+  "enum.MouseButtonType.Back": "Lùi (bên)",
+  "enum.MouseButtonType.Forward": "Tiến (bên)",
 
   "profile.defaultName": "Hồ sơ mới",
   "point.defaultNameFormat": "Điểm {0}"

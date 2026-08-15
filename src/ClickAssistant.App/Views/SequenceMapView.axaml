@@ -51,7 +51,7 @@
                     <!-- Kroužek znázorňuje oblast náhodné odchylky (Humanization.PositionJitterRadiusPx) kolem bodu -->
                     <Ellipse Width="{Binding DetailJitterDisplayDiameter}" Height="{Binding DetailJitterDisplayDiameter}"
                              HorizontalAlignment="Center" VerticalAlignment="Center"
-                             Stroke="Red" StrokeThickness="1.5" StrokeDashArray="4,3" Opacity="0.8"
+                             Fill="#26FF0000" Stroke="Red" StrokeThickness="1.5" StrokeDashArray="4,3" Opacity="0.8"
                              IsVisible="{Binding ShowJitterCircle}" />
 
                     <!-- Střed cílového bodu vyznačen křížkem uprostřed výřezu -->

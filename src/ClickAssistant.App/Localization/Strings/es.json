@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Inicia la captura de un nuevo punto: haz clic en cualquier lugar de la pantalla y la app recordará esa posición.",
   "editor.cancelCapture": "Cancelar selección de punto",
   "editor.capturingPoint.hint": "Haz clic en cualquier lugar de la pantalla para capturar un punto…",
+  "editor.addKeyStep": "Añadir tecla",
+  "editor.addKeyStep.tooltip": "Añade un paso que pulsa una tecla del teclado durante la secuencia en lugar de hacer clic con el ratón. Las coordenadas de pantalla no se usan en este paso.",
 
   "hotkey.start.label": "Tecla de acceso rápido global de Inicio:",
   "hotkey.start.tooltip": "Un atajo de teclado que inicia los clics desde cualquier parte del sistema, incluso sin que la ventana de la app esté activa.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Detalle del punto seleccionado (2× ampliado)",
   "map.detailPlaceholder": "Selecciona un punto en el mapa o en la línea de tiempo",
   "map.monitor.focus.tooltip": "Haz clic en un monitor para acercarte solo a él. Vuelve a hacer clic para mostrar todos los monitores.",
+  "map.identify": "Identificar",
+  "map.identify.tooltip": "Muestra brevemente un número grande sobre cada monitor en el mapa, para que puedas saber qué rectángulo corresponde a qué monitor físico.",
 
   "step.number": "Paso {0}",
   "step.select": "Seleccionar",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "Las coordenadas del punto en la pantalla en píxeles (X = horizontal, Y = vertical desde la esquina superior izquierda).",
+  "step.actionType.label": "Acción:",
+  "step.actionType.tooltip": "Qué hace la aplicación en este paso: hacer clic con el ratón en las coordenadas, pulsar una tecla sin mover el cursor, o mover el cursor a las coordenadas y pulsar una tecla allí (útil para interfaces que dependen del hover).",
+  "step.button.label": "Botón:",
+  "step.key.label": "Tecla:",
   "step.clickCount.label": "Número de clics:",
   "step.clickCount.tooltip": "Cuántas veces la app hace clic en este punto antes de pasar al siguiente.",
   "step.customDelay": "Retraso personalizado tras el clic",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Una vez",
   "enum.RepeatMode.FixedCount": "Número fijo",
   "enum.RepeatMode.Infinite": "Infinito",
+  "enum.StepActionType.MouseClick": "Clic de ratón",
+  "enum.StepActionType.KeyPress": "Pulsación de tecla",
+  "enum.StepActionType.KeyPressAtPosition": "Tecla en posición",
+  "enum.MouseButtonType.Left": "Izquierdo",
+  "enum.MouseButtonType.Right": "Derecho",
+  "enum.MouseButtonType.Middle": "Central",
+  "enum.MouseButtonType.Back": "Atrás (lateral)",
+  "enum.MouseButtonType.Forward": "Adelante (lateral)",
 
   "profile.defaultName": "Nuevo perfil",
   "point.defaultNameFormat": "Punto {0}"

@@ -24,6 +24,7 @@
       <!-- Muted, not the full bright accent - sits right at the top of a near-black window,
            so it needs to read as "brass" without fighting the dark content underneath it. -->
       <SolidColorBrush x:Key="ThemeTitleBarBrush" Color="#3C331F" />
+      <SolidColorBrush x:Key="ThemeTitleBarInkBrush" Color="#E9C878" />
       <SolidColorBrush x:Key="ThemeGoodBrush" Color="#7CBF8E" />
       <SolidColorBrush x:Key="ThemeBadBrush" Color="#D98F7A" />
       <SolidColorBrush x:Key="ThemeDangerBorderBrush" Color="#3D2E28" />
@@ -39,9 +40,10 @@
       <SolidColorBrush x:Key="ThemeAccentBrush" Color="#9C7A2E" />
       <SolidColorBrush x:Key="ThemeAccentContrastBrush" Color="#FBF3E2" />
       <SolidColorBrush x:Key="ThemeAccentInkBrush" Color="#7C5A1E" />
-      <!-- Same idea as Dark's: softened toward the parchment background instead of the full
-           saturated accent, so the bar reads as part of the same surface family. -->
-      <SolidColorBrush x:Key="ThemeTitleBarBrush" Color="#D9C69A" />
+      <!-- Light keeps the full accent here (unlike Dark) - a softened/lightened version tested
+           too washed-out against the parchment background, the plain accent read better. -->
+      <SolidColorBrush x:Key="ThemeTitleBarBrush" Color="#9C7A2E" />
+      <SolidColorBrush x:Key="ThemeTitleBarInkBrush" Color="#FBF3E2" />
       <SolidColorBrush x:Key="ThemeGoodBrush" Color="#4F8F63" />
       <SolidColorBrush x:Key="ThemeBadBrush" Color="#B06A4E" />
       <SolidColorBrush x:Key="ThemeDangerBorderBrush" Color="#E8DAC4" />

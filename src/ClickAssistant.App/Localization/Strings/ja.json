@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "新しいポイントのキャプチャを開始します - 画面上の任意の場所をクリックすると、アプリがその位置を記憶します。",
   "editor.cancelCapture": "ポイント選択をキャンセル",
   "editor.capturingPoint.hint": "ポイントをキャプチャするには画面上の任意の場所をクリックしてください…",
+  "editor.addKeyStep": "キーを追加",
+  "editor.addKeyStep.tooltip": "マウスをクリックする代わりに、シーケンス中に選択したキーボードのキーを押すステップを追加します。このステップでは画面座標は使用されません。",
 
   "hotkey.start.label": "グローバル開始ホットキー:",
   "hotkey.start.tooltip": "アプリのウィンドウがアクティブでなくても、システム内のどこからでもクリックを開始するキーボードショートカット。",
@@ -71,6 +73,8 @@
   "map.detailTitle": "選択したポイントの詳細(2倍ズーム)",
   "map.detailPlaceholder": "マップまたはタイムライン上のポイントを選択してください",
   "map.monitor.focus.tooltip": "モニターをクリックするとそのモニターだけを拡大表示します。もう一度クリックするとすべてのモニターを表示します。",
+  "map.identify": "識別",
+  "map.identify.tooltip": "マップ上の各モニターに大きな番号を短時間表示し、どの四角形がどの物理モニターに対応するかを確認できます。",
 
   "step.number": "ステップ {0}",
   "step.select": "選択",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "画面上のポイントのピクセル座標(X = 水平、Y = 左上隅からの垂直)。",
+  "step.actionType.label": "アクション:",
+  "step.actionType.tooltip": "このステップでアプリが行うこと: 座標でマウスをクリックする、カーソルを動かさずにキーを押す、またはカーソルを座標に移動してそこでキーを押す(ホバーに依存するUIで便利)。",
+  "step.button.label": "ボタン:",
+  "step.key.label": "キー:",
   "step.clickCount.label": "クリック数:",
   "step.clickCount.tooltip": "次のポイントに移る前に、アプリがこのポイントをクリックする回数。",
   "step.customDelay": "クリック後のカスタム遅延",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "1回",
   "enum.RepeatMode.FixedCount": "固定回数",
   "enum.RepeatMode.Infinite": "無限",
+  "enum.StepActionType.MouseClick": "マウスクリック",
+  "enum.StepActionType.KeyPress": "キー押下",
+  "enum.StepActionType.KeyPressAtPosition": "位置でキー押下",
+  "enum.MouseButtonType.Left": "左",
+  "enum.MouseButtonType.Right": "右",
+  "enum.MouseButtonType.Middle": "中央",
+  "enum.MouseButtonType.Back": "戻る（サイド）",
+  "enum.MouseButtonType.Forward": "進む（サイド）",
 
   "profile.defaultName": "新しいプロファイル",
   "point.defaultNameFormat": "ポイント {0}"

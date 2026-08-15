@@ -22,9 +22,9 @@
         <Border Grid.Row="0" Height="34" Background="{DynamicResource ThemeTitleBarBrush}"
                 PointerPressed="TitleBar_PointerPressed">
             <StackPanel Orientation="Horizontal" Spacing="8" Margin="16,0,0,0" VerticalAlignment="Center">
-                <Image x:Name="TitleBarIcon" Width="16" Height="16" />
+                <Image x:Name="TitleBarIcon" Width="22" Height="22" />
                 <TextBlock Text="{loc:Tr app.title}" FontWeight="SemiBold" FontSize="12.5"
-                           Foreground="{DynamicResource ThemeAccentInkBrush}" VerticalAlignment="Center" />
+                           Foreground="{DynamicResource ThemeTitleBarInkBrush}" VerticalAlignment="Center" />
             </StackPanel>
         </Border>
 
@@ -47,11 +47,10 @@
         </DockPanel>
 
         <!-- Editor profilu + ovládání -->
-        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <DockPanel>
-            <!-- Horní lišta: akce, stav běhu, jazyk, motiv -->
+        <DockPanel Grid.Column="1">
+            <!-- Horní lišta: akce, stav běhu, jazyk, motiv. Docked outside the ScrollViewer
+                 so it stays pinned at the top instead of scrolling away with the editor content. -->
             <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,14">
-                <Button Content="{loc:Tr toolbar.save}" Command="{Binding SaveProfileCommand}" ToolTip.Tip="{loc:Tr toolbar.save.tooltip}" Margin="0,0,8,6" />
                 <!-- Border wraps each Button so the tooltip still shows while the Button itself is disabled
                      (Avalonia does not raise pointer/tooltip events on a disabled control). -->
                 <Border Background="Transparent" ToolTip.Tip="{loc:Tr toolbar.start.tooltip}" Margin="0,0,8,6">
@@ -90,6 +89,8 @@
                 </ListBox>
             </WrapPanel>
 
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <DockPanel>
             <StackPanel DockPanel.Dock="Top" Spacing="12" DataContext="{Binding Editor}" x:DataType="vm:ProfileEditorViewModel">
                 <TextBox Text="{Binding Name}" Watermark="{loc:Tr editor.name.watermark}" ToolTip.Tip="{loc:Tr editor.name.tooltip}" FontSize="16" FontWeight="Bold" />
 
@@ -186,8 +187,9 @@
                 <views:SequenceMapView Grid.Column="0" DataContext="{Binding Editor}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,14,0" />
                 <views:SequenceTimelineView Grid.Column="1" DataContext="{Binding Editor}" VerticalAlignment="Top" />
             </Grid>
+            </DockPanel>
+            </ScrollViewer>
         </DockPanel>
-        </ScrollViewer>
     </Grid>
     </Grid>
 </Window>

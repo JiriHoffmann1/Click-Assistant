@@ -173,10 +173,15 @@ public partial class SequenceMapView : UserControl
             double newX = _dragStartX + dx;
             double newY = _dragStartY + dy;
             (newX, newY) = SnapToOtherMonitors(index, newX, newY, shape.Width, shape.Height);
+            // UpdateMonitorManualPosition vrací výslednou pozici PO vyřešení kolizí s ostatními monitory
+            // a s okrajem mapy (viz ProfileEditorViewModel.ResolveMonitorDragPosition) - ta se může lišit
+            // od navržené newX/newY, takže obdélník musí sledovat právě ji, ne vlastní neomezený návrh.
+            if (_viewModel is not null)
+            {
+                (newX, newY) = _viewModel.UpdateMonitorManualPosition(index, newX, newY);
+            }
             Canvas.SetLeft(shape, newX);
             Canvas.SetTop(shape, newY);
-            // Živě přepočítá i body a čáry mezi nimi na tomto monitoru (viz ProfileEditorViewModel.RecomputeMap).
-            _viewModel?.UpdateMonitorManualPosition(index, newX, newY);
             args.Handled = true;
         };
 
@@ -195,9 +200,13 @@ public partial class SequenceMapView : UserControl
 
     private const double SnapThresholdPx = 10;
 
+    /// <summary>Stejná mezera jako mezi monitory v automatickém rozložení mapy (ProfileEditorViewModel.
+    /// MonitorGapPx) - "dotykové" přichycení hranou k hraně má mít stejný odstup, ne se slepit na 0 px.</summary>
+    private const double SnapGapPx = 6;
+
     /// <summary>Při přetahování "přichytí" hranu taženého monitoru k hraně kteréhokoliv jiného monitoru
-    /// v mapě, když jsou v rámci pár pixelů (dotyk hran nebo zarovnání hran) - stejná logika na obou osách
-    /// nezávisle, ať jde monitory poskládat vedle/pod sebe přesně na sebe navazující bez ručního doladění.</summary>
+    /// v mapě, když jsou v rámci pár pixelů (dotyk hran s mezerou SnapGapPx, nebo přesné zarovnání hran) -
+    /// stejná logika na obou osách nezávisle, ať jde monitory poskládat vedle/pod sebe bez ručního doladění.</summary>
     private (double X, double Y) SnapToOtherMonitors(int draggedIndex, double x, double y, double width, double height)
     {
         if (_viewModel is null) return (x, y);
@@ -209,14 +218,15 @@ public partial class SequenceMapView : UserControl
         {
             if (other.Index == draggedIndex) continue;
 
-            double[] candidatesX = { other.X - width, other.X + other.Width, other.X, other.X + other.Width - width };
+            // Dotyk hran (s mezerou) i přesné zarovnání hran (bez mezery - řadí do stejného sloupce/řádku).
+            double[] candidatesX = { other.X - width - SnapGapPx, other.X + other.Width + SnapGapPx, other.X, other.X + other.Width - width };
             foreach (var candidateX in candidatesX)
             {
                 double dx = Math.Abs(candidateX - x);
                 if (dx < bestDx) { bestDx = dx; snappedX = candidateX; }
             }
 
-            double[] candidatesY = { other.Y - height, other.Y + other.Height, other.Y, other.Y + other.Height - height };
+            double[] candidatesY = { other.Y - height - SnapGapPx, other.Y + other.Height + SnapGapPx, other.Y, other.Y + other.Height - height };
             foreach (var candidateY in candidatesY)
             {
                 double dy = Math.Abs(candidateY - y);

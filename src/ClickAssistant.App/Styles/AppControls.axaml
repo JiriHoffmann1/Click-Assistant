@@ -170,6 +170,17 @@
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 
+  <!-- Profiles list specifically: the selected profile gets the brass accent (a border, not a
+       full accent fill - a solid accent-filled row read as too heavy at this width), on top of
+       the shared selected/hover styling above. -->
+  <Style Selector="ListBox.profiles ListBoxItem:selected">
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="BorderThickness" Value="1.5" />
+  </Style>
+  <Style Selector="ListBox.profiles ListBoxItem:selected TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeAccentInkBrush}" />
+  </Style>
+
   <!-- Segmented Auto/Light/Dark theme picker: a ListBox rendered as a row of pill buttons. -->
   <Style Selector="ListBox.segmented">
     <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />

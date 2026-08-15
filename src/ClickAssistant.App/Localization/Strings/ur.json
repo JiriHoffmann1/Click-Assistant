@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "نئے پوائنٹ کو کیپچر کرنا شروع کرتا ہے - اسکرین پر کہیں بھی کلک کریں اور ایپ اس مقام کو یاد رکھے گی۔",
   "editor.cancelCapture": "پوائنٹ انتخاب منسوخ کریں",
   "editor.capturingPoint.hint": "پوائنٹ کیپچر کرنے کے لیے اسکرین پر کہیں بھی کلک کریں…",
+  "editor.addKeyStep": "کلید شامل کریں",
+  "editor.addKeyStep.tooltip": "ایک ایسا مرحلہ شامل کرتا ہے جو ماؤس کلک کرنے کے بجائے ترتیب کے دوران منتخب کردہ کی بورڈ کلید دباتا ہے۔ اس مرحلے کے لیے اسکرین کوآرڈینیٹس استعمال نہیں ہوتے۔",
 
   "hotkey.start.label": "عالمی اسٹارٹ ہاٹ کی:",
   "hotkey.start.tooltip": "کی بورڈ شارٹ کٹ جو سسٹم میں کہیں سے بھی کلکنگ شروع کرتا ہے، چاہے ایپ کی ونڈو فعال نہ ہو۔",
@@ -71,6 +73,8 @@
   "map.detailTitle": "منتخب پوائنٹ کی تفصیل (2× زوم)",
   "map.detailPlaceholder": "نقشے یا ٹائم لائن پر ایک پوائنٹ منتخب کریں",
   "map.monitor.focus.tooltip": "صرف اُس مانیٹر پر زوم کرنے کے لیے اُس پر کلک کریں۔ تمام مانیٹرز دکھانے کے لیے دوبارہ کلک کریں۔",
+  "map.identify": "شناخت کریں",
+  "map.identify.tooltip": "نقشے میں ہر مانیٹر کے اوپر مختصر طور پر ایک بڑا نمبر دکھاتا ہے، تاکہ آپ جان سکیں کہ کون سا مستطیل کس اصل مانیٹر سے مطابقت رکھتا ہے۔",
 
   "step.number": "مرحلہ {0}",
   "step.select": "منتخب کریں",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "پکسلز میں اسکرین پر پوائنٹ کے متناسقات (X = افقی، Y = عمودی، اوپری بائیں کونے سے)۔",
+  "step.actionType.label": "عمل:",
+  "step.actionType.tooltip": "اس مرحلے میں ایپ کیا کرتی ہے: کوآرڈینیٹس پر ماؤس کلک کرنا، کرسر کو حرکت دیے بغیر کلید دبانا، یا کرسر کو کوآرڈینیٹس پر لے جا کر وہاں کلید دبانا (hover پر منحصر UI کے لیے مفید)۔",
+  "step.button.label": "بٹن:",
+  "step.key.label": "کلید:",
   "step.clickCount.label": "کلکس کی تعداد:",
   "step.clickCount.tooltip": "اگلے پوائنٹ پر جانے سے پہلے ایپ اس پوائنٹ پر کتنی بار کلک کرتی ہے۔",
   "step.customDelay": "کلک کے بعد حسب ضرورت تاخیر",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "ایک بار",
   "enum.RepeatMode.FixedCount": "مقررہ تعداد",
   "enum.RepeatMode.Infinite": "لامحدود",
+  "enum.StepActionType.MouseClick": "ماؤس کلک",
+  "enum.StepActionType.KeyPress": "کلید دبانا",
+  "enum.StepActionType.KeyPressAtPosition": "پوزیشن پر کلید",
+  "enum.MouseButtonType.Left": "بائیں",
+  "enum.MouseButtonType.Right": "دائیں",
+  "enum.MouseButtonType.Middle": "درمیانی",
+  "enum.MouseButtonType.Back": "پیچھے (سائیڈ)",
+  "enum.MouseButtonType.Forward": "آگے (سائیڈ)",
 
   "profile.defaultName": "نیا پروفائل",
   "point.defaultNameFormat": "پوائنٹ {0}"

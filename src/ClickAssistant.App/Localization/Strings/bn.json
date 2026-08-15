@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "একটি নতুন পয়েন্ট ক্যাপচার শুরু করে - স্ক্রিনের যেকোনো জায়গায় ক্লিক করুন এবং অ্যাপটি সেই অবস্থান মনে রাখবে।",
   "editor.cancelCapture": "পয়েন্ট নির্বাচন বাতিল করুন",
   "editor.capturingPoint.hint": "একটি পয়েন্ট ক্যাপচার করতে স্ক্রিনের যেকোনো জায়গায় ক্লিক করুন…",
+  "editor.addKeyStep": "কী যোগ করুন",
+  "editor.addKeyStep.tooltip": "মাউস ক্লিক করার পরিবর্তে ক্রমের সময় একটি নির্বাচিত কীবোর্ড কী চাপার একটি ধাপ যোগ করে। এই ধাপের জন্য স্ক্রিন স্থানাঙ্ক ব্যবহৃত হয় না।",
 
   "hotkey.start.label": "গ্লোবাল স্টার্ট হটকি:",
   "hotkey.start.tooltip": "একটি কীবোর্ড শর্টকাট যা সিস্টেমের যেকোনো জায়গা থেকে ক্লিকিং শুরু করে, এমনকি অ্যাপ উইন্ডো সক্রিয় না থাকলেও।",
@@ -71,6 +73,8 @@
   "map.detailTitle": "নির্বাচিত পয়েন্টের বিবরণ (2× জুম)",
   "map.detailPlaceholder": "মানচিত্র বা টাইমলাইনে একটি পয়েন্ট নির্বাচন করুন",
   "map.monitor.focus.tooltip": "শুধু সেই মনিটরে জুম করতে একটি মনিটরে ক্লিক করুন। সব মনিটর দেখাতে আবার ক্লিক করুন।",
+  "map.identify": "শনাক্ত করুন",
+  "map.identify.tooltip": "মানচিত্রে প্রতিটি মনিটরের ওপর সংক্ষিপ্তভাবে একটি বড় সংখ্যা দেখায়, যাতে আপনি বুঝতে পারেন কোন আয়তক্ষেত্র কোন প্রকৃত মনিটরের সাথে মেলে।",
 
   "step.number": "ধাপ {0}",
   "step.select": "নির্বাচন করুন",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "পিক্সেলে পয়েন্টের স্ক্রিন স্থানাঙ্ক (X = অনুভূমিক, Y = উপরের-বাম কোণ থেকে উল্লম্ব)।",
+  "step.actionType.label": "ক্রিয়া:",
+  "step.actionType.tooltip": "এই ধাপে অ্যাপটি কী করে: স্থানাঙ্কে মাউস ক্লিক করা, কার্সার না নড়িয়ে একটি কী চাপা, অথবা কার্সারকে স্থানাঙ্কে সরিয়ে সেখানে একটি কী চাপা (হোভার-নির্ভর UI-এর জন্য উপযোগী)।",
+  "step.button.label": "বোতাম:",
+  "step.key.label": "কী:",
   "step.clickCount.label": "ক্লিক সংখ্যা:",
   "step.clickCount.tooltip": "পরবর্তী পয়েন্টে যাওয়ার আগে অ্যাপটি এই পয়েন্টে কতবার ক্লিক করে।",
   "step.customDelay": "ক্লিকের পর কাস্টম বিলম্ব",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "একবার",
   "enum.RepeatMode.FixedCount": "নির্দিষ্ট সংখ্যা",
   "enum.RepeatMode.Infinite": "অসীম",
+  "enum.StepActionType.MouseClick": "মাউস ক্লিক",
+  "enum.StepActionType.KeyPress": "কী চাপা",
+  "enum.StepActionType.KeyPressAtPosition": "অবস্থানে কী",
+  "enum.MouseButtonType.Left": "বাম",
+  "enum.MouseButtonType.Right": "ডান",
+  "enum.MouseButtonType.Middle": "মধ্য",
+  "enum.MouseButtonType.Back": "পেছনে (পাশের)",
+  "enum.MouseButtonType.Forward": "সামনে (পাশের)",
 
   "profile.defaultName": "নতুন প্রোফাইল",
   "point.defaultNameFormat": "পয়েন্ট {0}"

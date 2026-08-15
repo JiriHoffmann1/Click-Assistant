@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "يبدأ التقاط نقطة جديدة - انقر في أي مكان على الشاشة وسيتذكر التطبيق ذلك الموضع.",
   "editor.cancelCapture": "إلغاء اختيار النقطة",
   "editor.capturingPoint.hint": "انقر في أي مكان على الشاشة لالتقاط نقطة…",
+  "editor.addKeyStep": "إضافة مفتاح",
+  "editor.addKeyStep.tooltip": "يضيف خطوة تضغط مفتاحًا معينًا على لوحة المفاتيح أثناء التسلسل بدلاً من النقر بالماوس. لا تُستخدم إحداثيات الشاشة لهذه الخطوة.",
 
   "hotkey.start.label": "اختصار البدء العام:",
   "hotkey.start.tooltip": "اختصار لوحة مفاتيح يبدأ النقر من أي مكان في النظام، حتى دون أن تكون نافذة التطبيق نشطة.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "تفاصيل النقطة المحددة (تكبير 2×)",
   "map.detailPlaceholder": "اختر نقطة على الخريطة أو الجدول الزمني",
   "map.monitor.focus.tooltip": "انقر فوق شاشة لتكبيرها فقط. انقر مرة أخرى لعرض جميع الشاشات.",
+  "map.identify": "تعريف",
+  "map.identify.tooltip": "يعرض رقمًا كبيرًا لفترة وجيزة فوق كل شاشة في الخريطة، لتتمكن من معرفة أي مستطيل يطابق أي شاشة فعلية.",
 
   "step.number": "الخطوة {0}",
   "step.select": "اختيار",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "إحداثيات النقطة على الشاشة بالبكسل (X = أفقي، Y = رأسي من الزاوية العلوية اليسرى).",
+  "step.actionType.label": "الإجراء:",
+  "step.actionType.tooltip": "ما يفعله التطبيق في هذه الخطوة: النقر بالماوس عند الإحداثيات، أو ضغط مفتاح لوحة مفاتيح دون تحريك المؤشر، أو تحريك المؤشر إلى الإحداثيات ثم ضغط مفتاح هناك (مفيد لواجهات المستخدم التي تعتمد على التحويم).",
+  "step.button.label": "الزر:",
+  "step.key.label": "المفتاح:",
   "step.clickCount.label": "عدد النقرات:",
   "step.clickCount.tooltip": "عدد مرات نقر التطبيق على هذه النقطة قبل الانتقال إلى التالية.",
   "step.customDelay": "تأخير مخصص بعد النقر",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "مرة واحدة",
   "enum.RepeatMode.FixedCount": "عدد ثابت",
   "enum.RepeatMode.Infinite": "لا نهائي",
+  "enum.StepActionType.MouseClick": "نقرة ماوس",
+  "enum.StepActionType.KeyPress": "ضغط مفتاح",
+  "enum.StepActionType.KeyPressAtPosition": "مفتاح عند موضع",
+  "enum.MouseButtonType.Left": "يسار",
+  "enum.MouseButtonType.Right": "يمين",
+  "enum.MouseButtonType.Middle": "أوسط",
+  "enum.MouseButtonType.Back": "رجوع (جانبي)",
+  "enum.MouseButtonType.Forward": "تقدّم (جانبي)",
 
   "profile.defaultName": "ملف شخصي جديد",
   "point.defaultNameFormat": "نقطة {0}"

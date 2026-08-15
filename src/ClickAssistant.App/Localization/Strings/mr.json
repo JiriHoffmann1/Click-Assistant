@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "नवीन बिंदू कॅप्चर करणे सुरू करते - स्क्रीनवर कुठेही क्लिक करा आणि अ‍ॅप ती स्थिती लक्षात ठेवेल.",
   "editor.cancelCapture": "बिंदू निवड रद्द करा",
   "editor.capturingPoint.hint": "बिंदू कॅप्चर करण्यासाठी स्क्रीनवर कुठेही क्लिक करा…",
+  "editor.addKeyStep": "की जोडा",
+  "editor.addKeyStep.tooltip": "अनुक्रमादरम्यान माउस क्लिक करण्याऐवजी निवडलेली कीबोर्ड की दाबणारी पायरी जोडते. या पायरीसाठी स्क्रीन निर्देशांक वापरले जात नाहीत.",
 
   "hotkey.start.label": "जागतिक सुरू हॉटकी:",
   "hotkey.start.tooltip": "एक कीबोर्ड शॉर्टकट जो अ‍ॅप विंडो सक्रिय नसतानाही सिस्टममध्ये कुठूनही क्लिकिंग सुरू करतो.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "निवडलेल्या बिंदूचा तपशील (2× झूम)",
   "map.detailPlaceholder": "नकाशावर किंवा टाइमलाइनवर एक बिंदू निवडा",
   "map.monitor.focus.tooltip": "फक्त त्या मॉनिटरवर झूम करण्यासाठी मॉनिटरवर क्लिक करा. सर्व मॉनिटर्स दाखवण्यासाठी पुन्हा क्लिक करा.",
+  "map.identify": "ओळखा",
+  "map.identify.tooltip": "नकाशातील प्रत्येक मॉनिटरवर थोड्या वेळासाठी मोठा क्रमांक दाखवते, जेणेकरून कोणता आयत कोणत्या प्रत्यक्ष मॉनिटरशी जुळतो हे कळेल.",
 
   "step.number": "पायरी {0}",
   "step.select": "निवडा",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "पिक्सेलमध्ये स्क्रीनवरील बिंदूचे निर्देशांक (X = आडवे, Y = वरच्या-डाव्या कोपऱ्यापासून उभे).",
+  "step.actionType.label": "क्रिया:",
+  "step.actionType.tooltip": "या पायरीत अॅप काय करते: निर्देशांकावर माउस क्लिक करणे, कर्सर न हलवता की दाबणे, किंवा कर्सर निर्देशांकावर हलवून तिथे की दाबणे (होव्हरवर अवलंबून असलेल्या UI साठी उपयुक्त).",
+  "step.button.label": "बटण:",
+  "step.key.label": "की:",
   "step.clickCount.label": "क्लिकची संख्या:",
   "step.clickCount.tooltip": "पुढच्या बिंदूकडे जाण्यापूर्वी अ‍ॅप या बिंदूवर किती वेळा क्लिक करते.",
   "step.customDelay": "क्लिकनंतर सानुकूल विलंब",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "एकदा",
   "enum.RepeatMode.FixedCount": "निश्चित संख्या",
   "enum.RepeatMode.Infinite": "अनंत",
+  "enum.StepActionType.MouseClick": "माउस क्लिक",
+  "enum.StepActionType.KeyPress": "की दाबणे",
+  "enum.StepActionType.KeyPressAtPosition": "स्थानावर की",
+  "enum.MouseButtonType.Left": "डावे",
+  "enum.MouseButtonType.Right": "उजवे",
+  "enum.MouseButtonType.Middle": "मध्य",
+  "enum.MouseButtonType.Back": "मागे (साइड)",
+  "enum.MouseButtonType.Forward": "पुढे (साइड)",
 
   "profile.defaultName": "नवीन प्रोफाइल",
   "point.defaultNameFormat": "बिंदू {0}"

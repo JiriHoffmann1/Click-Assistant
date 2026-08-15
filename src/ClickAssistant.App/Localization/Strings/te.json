@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "కొత్త పాయింట్‌ను క్యాప్చర్ చేయడం ప్రారంభిస్తుంది - స్క్రీన్‌పై ఎక్కడైనా క్లిక్ చేయండి, యాప్ ఆ స్థానాన్ని గుర్తుంచుకుంటుంది.",
   "editor.cancelCapture": "పాయింట్ ఎంపికను రద్దు చేయి",
   "editor.capturingPoint.hint": "పాయింట్‌ను క్యాప్చర్ చేయడానికి స్క్రీన్‌పై ఎక్కడైనా క్లిక్ చేయండి…",
+  "editor.addKeyStep": "కీ జోడించు",
+  "editor.addKeyStep.tooltip": "క్రమంలో మౌస్ క్లిక్ చేయడానికి బదులుగా ఎంచుకున్న కీబోర్డ్ కీని నొక్కే దశను జోడిస్తుంది. ఈ దశకు స్క్రీన్ కోఆర్డినేట్‌లు ఉపయోగించబడవు.",
 
   "hotkey.start.label": "గ్లోబల్ ప్రారంభ హాట్‌కీ:",
   "hotkey.start.tooltip": "యాప్ విండో యాక్టివ్‌గా లేకపోయినా సిస్టమ్‌లో ఎక్కడి నుండైనా క్లికింగ్‌ను ప్రారంభించే కీబోర్డ్ షార్ట్‌కట్.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "ఎంచుకున్న పాయింట్ వివరాలు (2× జూమ్)",
   "map.detailPlaceholder": "మ్యాప్ లేదా టైమ్‌లైన్‌లో ఒక పాయింట్‌ను ఎంచుకోండి",
   "map.monitor.focus.tooltip": "ఒక మానిటర్‌ను మాత్రమే జూమ్ చేయడానికి దానిపై క్లిక్ చేయండి. అన్ని మానిటర్‌లను చూపించడానికి మళ్లీ క్లిక్ చేయండి.",
+  "map.identify": "గుర్తించు",
+  "map.identify.tooltip": "మ్యాప్‌లోని ప్రతి మానిటర్‌పై కొద్దిసేపు పెద్ద సంఖ్యను చూపిస్తుంది, తద్వారా ఏ దీర్ఘచతురస్రం ఏ నిజమైన మానిటర్‌కు సరిపోతుందో మీరు తెలుసుకోవచ్చు.",
 
   "step.number": "దశ {0}",
   "step.select": "ఎంచుకో",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "పిక్సెల్స్‌లో స్క్రీన్‌పై పాయింట్ నిర్దేశాంకాలు (X = అడ్డం, Y = ఎగువ-ఎడమ మూల నుండి నిలువు).",
+  "step.actionType.label": "చర్య:",
+  "step.actionType.tooltip": "ఈ దశలో యాప్ ఏమి చేస్తుంది: కోఆర్డినేట్‌ల వద్ద మౌస్‌ను క్లిక్ చేయడం, కర్సర్‌ను కదిలించకుండా కీని నొక్కడం, లేదా కర్సర్‌ను కోఆర్డినేట్‌లకు తరలించి అక్కడ కీని నొక్కడం (హోవర్‌పై ఆధారపడే UI కోసం ఉపయోగకరం).",
+  "step.button.label": "బటన్:",
+  "step.key.label": "కీ:",
   "step.clickCount.label": "క్లిక్‌ల సంఖ్య:",
   "step.clickCount.tooltip": "తర్వాతి పాయింట్‌కు వెళ్లే ముందు యాప్ ఈ పాయింట్‌పై ఎన్నిసార్లు క్లిక్ చేస్తుంది.",
   "step.customDelay": "క్లిక్ తర్వాత అనుకూల ఆలస్యం",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "ఒకసారి",
   "enum.RepeatMode.FixedCount": "స్థిర సంఖ్య",
   "enum.RepeatMode.Infinite": "అనంతం",
+  "enum.StepActionType.MouseClick": "మౌస్ క్లిక్",
+  "enum.StepActionType.KeyPress": "కీ నొక్కడం",
+  "enum.StepActionType.KeyPressAtPosition": "స్థానంలో కీ",
+  "enum.MouseButtonType.Left": "ఎడమ",
+  "enum.MouseButtonType.Right": "కుడి",
+  "enum.MouseButtonType.Middle": "మధ్య",
+  "enum.MouseButtonType.Back": "వెనుకకు (సైడ్)",
+  "enum.MouseButtonType.Forward": "ముందుకు (సైడ్)",
 
   "profile.defaultName": "కొత్త ప్రొఫైల్",
   "point.defaultNameFormat": "పాయింట్ {0}"

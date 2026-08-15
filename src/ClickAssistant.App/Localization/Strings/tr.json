@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Yeni bir noktayı yakalamaya başlar - ekranda herhangi bir yere tıklayın, uygulama bu konumu hatırlayacaktır.",
   "editor.cancelCapture": "Nokta seçimini iptal et",
   "editor.capturingPoint.hint": "Bir noktayı yakalamak için ekranda herhangi bir yere tıklayın…",
+  "editor.addKeyStep": "Tuş ekle",
+  "editor.addKeyStep.tooltip": "Sırada fare tıklaması yerine seçilen bir klavye tuşuna basan bir adım ekler. Bu adımda ekran koordinatları kullanılmaz.",
 
   "hotkey.start.label": "Genel Başlat kısayol tuşu:",
   "hotkey.start.tooltip": "Uygulama penceresi etkin olmasa bile sistemin herhangi bir yerinden tıklamayı başlatan bir klavye kısayolu.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Seçili noktanın ayrıntısı (2× yakınlaştırılmış)",
   "map.detailPlaceholder": "Haritada veya zaman çizelgesinde bir nokta seçin",
   "map.monitor.focus.tooltip": "Yalnızca o monitöre yakınlaşmak için üzerine tıklayın. Tüm monitörleri göstermek için tekrar tıklayın.",
+  "map.identify": "Tanımla",
+  "map.identify.tooltip": "Haritada her monitörün üzerinde kısaca büyük bir numara gösterir, böylece hangi dikdörtgenin hangi fiziksel monitöre karşılık geldiğini anlayabilirsiniz.",
 
   "step.number": "Adım {0}",
   "step.select": "Seç",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "Noktanın piksel cinsinden ekran koordinatları (X = yatay, Y = sol üst köşeden dikey).",
+  "step.actionType.label": "Eylem:",
+  "step.actionType.tooltip": "Uygulamanın bu adımda ne yaptığı: koordinatlarda fareyle tıklama, imleci hareket ettirmeden bir tuşa basma veya imleci koordinatlara taşıyıp orada bir tuşa basma (üzerine gelmeye bağlı arayüzler için kullanışlıdır).",
+  "step.button.label": "Düğme:",
+  "step.key.label": "Tuş:",
   "step.clickCount.label": "Tıklama sayısı:",
   "step.clickCount.tooltip": "Uygulamanın bir sonrakine geçmeden önce bu noktaya kaç kez tıklayacağı.",
   "step.customDelay": "Tıklamadan sonra özel gecikme",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Bir kez",
   "enum.RepeatMode.FixedCount": "Sabit sayı",
   "enum.RepeatMode.Infinite": "Sonsuz",
+  "enum.StepActionType.MouseClick": "Fare tıklaması",
+  "enum.StepActionType.KeyPress": "Tuşa basma",
+  "enum.StepActionType.KeyPressAtPosition": "Konumda tuş",
+  "enum.MouseButtonType.Left": "Sol",
+  "enum.MouseButtonType.Right": "Sağ",
+  "enum.MouseButtonType.Middle": "Orta",
+  "enum.MouseButtonType.Back": "Geri (yan)",
+  "enum.MouseButtonType.Forward": "İleri (yan)",
 
   "profile.defaultName": "Yeni profil",
   "point.defaultNameFormat": "Nokta {0}"

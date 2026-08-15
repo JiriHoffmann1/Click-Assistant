@@ -39,6 +39,8 @@
   "editor.addPoint.tooltip": "Huanza kunasa kituo kipya - bofya popote kwenye skrini na programu itakumbuka nafasi hiyo.",
   "editor.cancelCapture": "Ghairi uchaguzi wa kituo",
   "editor.capturingPoint.hint": "Bofya popote kwenye skrini kunasa kituo…",
+  "editor.addKeyStep": "Ongeza kitufe",
+  "editor.addKeyStep.tooltip": "Inaongeza hatua inayobonyeza kitufe cha kibodi kilichochaguliwa wakati wa mfuatano, badala ya kubofya kipanya. Kuratibu za skrini hazitumiki kwa hatua hii.",
 
   "hotkey.start.label": "Kitufe cha mkato cha kimataifa cha Anza:",
   "hotkey.start.tooltip": "Mchanganyiko wa vitufe unaoanzisha kubofya kutoka mahali popote kwenye mfumo, hata bila dirisha la programu kuwa hai.",
@@ -71,6 +73,8 @@
   "map.detailTitle": "Maelezo ya kituo kilichochaguliwa (kukuzwa mara 2)",
   "map.detailPlaceholder": "Chagua kituo kwenye ramani au ratiba ya matukio",
   "map.monitor.focus.tooltip": "Bofya kifuatiliaji kimoja ili kukikuza pekee. Bofya tena kuonyesha vifuatiliaji vyote.",
+  "map.identify": "Tambua",
+  "map.identify.tooltip": "Inaonyesha kwa muda mfupi nambari kubwa juu ya kila kifuatiliaji kwenye ramani, ili ujue mstatili upi unaolingana na kifuatiliaji kipi halisi.",
 
   "step.number": "Hatua {0}",
   "step.select": "Chagua",
@@ -80,6 +84,10 @@
   "step.x.label": "X:",
   "step.y.label": "Y:",
   "step.xy.tooltip": "Kuratibu za kituo kwenye skrini kwa pikseli (X = mlalo, Y = wima kutoka kona ya juu kushoto).",
+  "step.actionType.label": "Kitendo:",
+  "step.actionType.tooltip": "Programu inafanya nini katika hatua hii: kubofya kipanya kwenye kuratibu, kubonyeza kitufe cha kibodi bila kusogeza kishale, au kusogeza kishale hadi kwenye kuratibu na kubonyeza kitufe hapo (muhimu kwa violesura vinavyotegemea kuelea kwa kishale).",
+  "step.button.label": "Kitufe cha kipanya:",
+  "step.key.label": "Kitufe cha kibodi:",
   "step.clickCount.label": "Idadi ya mibofyo:",
   "step.clickCount.tooltip": "Ni mara ngapi programu inabofya kituo hiki kabla ya kuhamia kinachofuata.",
   "step.customDelay": "Ucheleweshaji maalum baada ya kubofya",
@@ -109,6 +117,14 @@
   "enum.RepeatMode.Once": "Mara moja",
   "enum.RepeatMode.FixedCount": "Idadi maalum",
   "enum.RepeatMode.Infinite": "Bila kikomo",
+  "enum.StepActionType.MouseClick": "Bofya la kipanya",
+  "enum.StepActionType.KeyPress": "Kubonyeza kitufe",
+  "enum.StepActionType.KeyPressAtPosition": "Kitufe kwenye nafasi",
+  "enum.MouseButtonType.Left": "Kushoto",
+  "enum.MouseButtonType.Right": "Kulia",
+  "enum.MouseButtonType.Middle": "Katikati",
+  "enum.MouseButtonType.Back": "Nyuma (pembeni)",
+  "enum.MouseButtonType.Forward": "Mbele (pembeni)",
 
   "profile.defaultName": "Wasifu mpya",
   "point.defaultNameFormat": "Kituo {0}"

@@ -28,6 +28,7 @@ public partial class ProfileEditorViewModel : ObservableObject
     private HotkeyConfig? _stopHotkey;
     private DispatcherTimer? _captureDebounceTimer;
     private DispatcherTimer? _identifyMonitorsTimer;
+    private DispatcherTimer? _liveDetailRefreshTimer;
 
     /// <summary>Ruční pozice monitorů v mapě (klíč = Index monitoru), když je uživatel po zobrazení
     /// přetáhl na jiné místo než automatický layout - viz UpdateMonitorManualPosition.</summary>
@@ -157,12 +158,36 @@ public partial class ProfileEditorViewModel : ObservableObject
 
         _captureDebounceTimer?.Stop();
         RefreshDetailCapture();
+        UpdateLiveDetailRefreshTimer();
     }
 
     partial void OnShowRealScreenshotChanged(bool value)
     {
         _captureDebounceTimer?.Stop();
         RefreshDetailCapture();
+        UpdateLiveDetailRefreshTimer();
+    }
+
+    /// <summary>Zapne/vypne periodickou obnovu náhledu, dokud je vybraný bod a "Show real screen content" je
+    /// zapnuté - jinak by náhled zůstal zamrzlý na stavu obrazovky z okamžiku výběru bodu, i když se pod tím
+    /// bodem mezitím něco skutečně změnilo (uživatel přesunul/zascrolloval okno pod tím místem apod.).
+    /// Neběží, když se náhled nezobrazuje, ať appka zbytečně nezatěžuje GDI CopyFromScreen na pozadí.</summary>
+    private void UpdateLiveDetailRefreshTimer()
+    {
+        bool shouldRun = ShowRealScreenshot && SelectedStep is not null;
+
+        if (!shouldRun)
+        {
+            _liveDetailRefreshTimer?.Stop();
+            return;
+        }
+
+        if (_liveDetailRefreshTimer is null)
+        {
+            _liveDetailRefreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(700) };
+            _liveDetailRefreshTimer.Tick += (_, _) => RefreshDetailCapture();
+        }
+        _liveDetailRefreshTimer.Start();
     }
 
     partial void OnHumanizationEnabledChanged(bool value) => OnPropertyChanged(nameof(ShowJitterCircle));
@@ -504,12 +529,95 @@ public partial class ProfileEditorViewModel : ObservableObject
     public IReadOnlyList<MonitorBounds> GetCurrentMonitors() =>
         (CapturedScreenSnapshot ?? _screenInfoProvider.GetCurrentSnapshot()).Monitors;
 
-    /// <summary>Zavolá se z code-behind mapy při přetahování obdélníku monitoru myší - uloží ruční pozici
-    /// a přepočítá mapu, ať se spolu s monitorem přesunou i jeho body a čáry mezi nimi.</summary>
-    public void UpdateMonitorManualPosition(int monitorIndex, double x, double y)
+    /// <summary>Zavolá se z code-behind mapy při přetahování obdélníku monitoru myší - vyřeší kolize s ostatními
+    /// monitory a s okrajem mapy (viz ResolveMonitorDragPosition), uloží výsledné ruční pozice (přetahovaného
+    /// monitoru i případně odsunutých ostatních) a přepočítá mapu, ať se spolu s monitorem přesunou i jeho body
+    /// a čáry mezi nimi. Vrací výslednou (po vyřešení kolizí) pozici přetahovaného monitoru, ať ji code-behind
+    /// může použít pro jeho obdélník - ta se totiž může lišit od navržené pozice (viz komentář u RebuildMonitorRects
+    /// o tom, že přetahovaný monitor si Canvas.Left/Top řídí sám mimo běžný přepočet).</summary>
+    public (double X, double Y) UpdateMonitorManualPosition(int monitorIndex, double x, double y)
     {
-        _manualMonitorPositions[monitorIndex] = (x, y);
+        var resolved = ResolveMonitorDragPosition(monitorIndex, x, y);
         RecomputeMap();
+        return resolved;
+    }
+
+    /// <summary>Vyřeší navrženou pozici přetahovaného monitoru vůči dvěma tvrdým omezením: nesmí přesahovat
+    /// mimo okraj mapy a nesmí se překrývat s žádným jiným monitorem. Nejdřív navrženou pozici ořízne do
+    /// hranic mapy. Pokud by tak stále překrývala jiný monitor, zkusí přednostně "udělat mu místo" - odsune
+    /// *všechny* ostatní monitory jako jeden tuhý celek (zachová se tak, jak jsou vzájemně postavené) ve směru
+    /// tažení, a to jen do té míry, do jaké se ještě vejdou do mapy. Pokud ani to nestačí (na odsunutí není
+    /// v mapě místo), dotáhne se místo toho zpátky sám přetahovaný monitor - výsledkem je vždy nejbližší
+    /// legální pozice k tomu, co uživatel navrhoval, bez kolizí a bez přesahu za okraj.</summary>
+    private (double X, double Y) ResolveMonitorDragPosition(int draggedIndex, double proposedX, double proposedY)
+    {
+        var draggedRect = MapMonitorRects.FirstOrDefault(r => r.Index == draggedIndex);
+        double width = draggedRect?.Width ?? 0;
+        double height = draggedRect?.Height ?? 0;
+
+        double x = Math.Clamp(proposedX, 0, Math.Max(0, MapWidth - width));
+        double y = Math.Clamp(proposedY, 0, Math.Max(0, MapHeight - height));
+
+        var others = MapMonitorRects
+            .Where(r => r.Index != draggedIndex)
+            .ToDictionary(r => r.Index, r => (r.X, r.Y, r.Width, r.Height));
+
+        const double gap = MonitorGapPx;
+        const int maxIterations = 8;
+        for (int iteration = 0; iteration < maxIterations; iteration++)
+        {
+            var collisions = others.Values
+                .Where(o => RangesOverlap(x, x + width, o.X, o.X + o.Width) && RangesOverlap(y, y + height, o.Y, o.Y + o.Height))
+                .ToList();
+            if (collisions.Count == 0) break;
+
+            // Nejvýznamnější kolize = nejmenší potřebný posun na jedné z os, aby se dvojice rozdělila
+            // (standardní heuristika minimálního vytlačení) - tu vyřešíme v tomto průchodu, zbylé případné
+            // kolize (nebo nové, vzniklé odsunutím) doladí další iterace.
+            var worst = collisions
+                .Select(o => (Other: o, OverlapX: Math.Min(x + width, o.X + o.Width) - Math.Max(x, o.X), OverlapY: Math.Min(y + height, o.Y + o.Height) - Math.Max(y, o.Y)))
+                .OrderBy(t => Math.Min(t.OverlapX, t.OverlapY))
+                .First();
+
+            bool resolveOnX = worst.OverlapX <= worst.OverlapY;
+            double draggedCenter = resolveOnX ? x + width / 2 : y + height / 2;
+            double otherCenter = resolveOnX ? worst.Other.X + worst.Other.Width / 2 : worst.Other.Y + worst.Other.Height / 2;
+            double direction = otherCenter >= draggedCenter ? 1 : -1;
+            double needed = (resolveOnX ? worst.OverlapX : worst.OverlapY) + gap;
+
+            double maxAllowedPush = double.MaxValue;
+            foreach (var o in others.Values)
+            {
+                double room = resolveOnX
+                    ? (direction > 0 ? MapWidth - (o.X + o.Width) : o.X)
+                    : (direction > 0 ? MapHeight - (o.Y + o.Height) : o.Y);
+                maxAllowedPush = Math.Min(maxAllowedPush, Math.Max(0, room));
+            }
+
+            double appliedPush = Math.Min(needed, maxAllowedPush);
+            if (appliedPush > 0)
+            {
+                foreach (var key in others.Keys.ToList())
+                {
+                    var o = others[key];
+                    others[key] = resolveOnX ? (o.X + direction * appliedPush, o.Y, o.Width, o.Height) : (o.X, o.Y + direction * appliedPush, o.Width, o.Height);
+                }
+            }
+
+            // Zbytek (co se nepodařilo vyřešit odsunutím ostatních kvůli okraji mapy) se doplní ustoupením
+            // samotného přetahovaného monitoru - výsledná pozice tak nikdy nezůstane v kolizi.
+            double residual = needed - appliedPush;
+            if (residual > 0)
+            {
+                if (resolveOnX) x = Math.Clamp(x - direction * residual, 0, Math.Max(0, MapWidth - width));
+                else y = Math.Clamp(y - direction * residual, 0, Math.Max(0, MapHeight - height));
+            }
+        }
+
+        foreach (var (index, pos) in others) _manualMonitorPositions[index] = (pos.X, pos.Y);
+        _manualMonitorPositions[draggedIndex] = (x, y);
+
+        return (x, y);
     }
 
     /// <summary>Klik na obdélník monitoru v mapě - přiblíží mapu na ten jeden monitor (užitečné, když body leží
