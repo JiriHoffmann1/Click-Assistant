@@ -155,6 +155,13 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task SaveProfileAsync()
     {
+        // NumericUpDown (Interval/Jitter/humanization fields) only pushes its typed text into the
+        // bound Value when it loses focus, not per keystroke - clicking Save right after typing a
+        // number can otherwise still be reading the pre-edit value, so the first click appears to
+        // "not save" and only the second one (after focus has since moved) picks up the change.
+        // Clearing focus here forces that pending commit before we snapshot the editor state.
+        OwnerWindow?.FocusManager?.ClearFocus();
+
         var profile = Editor.ToClickProfile();
         await _profileRepository.SaveAsync(profile);
 
@@ -181,6 +188,9 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task StartAsync()
     {
         if (IsRunning || Editor.Steps.Count == 0) return;
+
+        // Same pending-NumericUpDown-commit reasoning as SaveProfileAsync above.
+        OwnerWindow?.FocusManager?.ClearFocus();
 
         var currentSnapshot = _screenInfoProvider.GetCurrentSnapshot();
         var profile = Editor.ToClickProfile(currentSnapshot);

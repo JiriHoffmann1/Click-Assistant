@@ -67,13 +67,14 @@
                     </StackPanel>
                 </Border>
 
-                <ComboBox ItemsSource="{Binding AvailableLanguages}" SelectedItem="{Binding SelectedLanguage}"
+                <!-- Pevná šířka, aby se ComboBox neroztahoval/nesmršťoval podle délky jména vybraného jazyka -->
+                <ComboBox Width="190" HorizontalContentAlignment="Left" ItemsSource="{Binding AvailableLanguages}" SelectedItem="{Binding SelectedLanguage}"
                           ToolTip.Tip="{loc:Tr language.tooltip}" Margin="0,0,8,6">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <TextBlock Text="{Binding Flag}" FontSize="16" FontFamily="Segoe UI Emoji" VerticalAlignment="Center" />
-                                <TextBlock Text="{Binding NativeName}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding NativeName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="140" />
                             </StackPanel>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
@@ -89,41 +90,66 @@
                 </ListBox>
             </WrapPanel>
 
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <DockPanel>
             <StackPanel DockPanel.Dock="Top" Spacing="12" DataContext="{Binding Editor}" x:DataType="vm:ProfileEditorViewModel">
                 <TextBox Text="{Binding Name}" Watermark="{loc:Tr editor.name.watermark}" ToolTip.Tip="{loc:Tr editor.name.tooltip}" FontSize="16" FontWeight="Bold" />
 
-                <Border Classes="card">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="{loc:Tr editor.timingCard.header}" Classes="cardTitle" Margin="0" />
-                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="8">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr editor.order.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.order.tooltip}" />
-                            <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="{Binding OrderMode}" ItemsSource="{Binding OrderModeValues}" ToolTip.Tip="{loc:Tr editor.order.tooltip}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                <!-- Hotkeys a timing vedle sebe; WrapPanel je smrskne pod sebe jen když se okno zúží. -->
+                <WrapPanel Orientation="Horizontal">
+                    <Border Classes="card" MinWidth="380" Margin="0,0,14,12">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="{loc:Tr hotkeys.header}" Classes="cardTitle" Margin="0" />
+                            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="{loc:Tr hotkey.start.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr hotkey.start.tooltip}" Margin="0,0,10,6" Classes="fieldLabel" />
+                                <TextBlock Text="{Binding HotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,6" />
+                                <Button Content="{loc:Tr hotkey.set}" Command="{Binding SetHotkeyCommand}" IsEnabled="{Binding !IsCapturingHotkey}" Classes="ghost" Margin="0,0,10,6" />
+                                <Button Content="{loc:Tr hotkey.cancel}" Command="{Binding CancelHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingHotkey}" Classes="ghost" Margin="0,0,10,6" />
+                                <TextBlock Text="{loc:Tr hotkey.capturing.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
+                                           IsVisible="{Binding IsCapturingHotkey}" FontStyle="Italic" Foreground="{DynamicResource ThemeInkDimBrush}" />
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="{loc:Tr hotkey.stop.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr hotkey.stop.tooltip}" Margin="0,0,10,6" Classes="fieldLabel" />
+                                <TextBlock Text="{Binding StopHotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,6" />
+                                <Button Content="{loc:Tr hotkey.set}" Command="{Binding SetStopHotkeyCommand}" IsEnabled="{Binding !IsCapturingStopHotkey}" Classes="ghost" Margin="0,0,10,6" />
+                                <Button Content="{loc:Tr hotkey.cancel}" Command="{Binding CancelStopHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingStopHotkey}" Classes="ghost" Margin="0,0,10,6" />
+                                <TextBlock Text="{loc:Tr hotkey.capturing.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
+                                           IsVisible="{Binding IsCapturingStopHotkey}" FontStyle="Italic" Foreground="{DynamicResource ThemeInkDimBrush}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
 
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{loc:Tr editor.repeat.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.repeat.tooltip}" />
-                            <ComboBox Grid.Row="0" Grid.Column="3" SelectedItem="{Binding Repeat}" ItemsSource="{Binding RepeatModeValues}" ToolTip.Tip="{loc:Tr editor.repeat.tooltip}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                    <Border Classes="card" MinWidth="380" Margin="0,0,0,12">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="{loc:Tr editor.timingCard.header}" Classes="cardTitle" Margin="0" />
+                            <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Tr editor.order.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.order.tooltip}" />
+                                <ComboBox Grid.Row="0" Grid.Column="1" SelectedItem="{Binding OrderMode}" ItemsSource="{Binding OrderModeValues}" ToolTip.Tip="{loc:Tr editor.order.tooltip}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr editor.interval.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.interval.tooltip}" />
-                            <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding BaseIntervalMs}" Minimum="10" Maximum="600000" ToolTip.Tip="{loc:Tr editor.interval.tooltip}" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{loc:Tr editor.repeat.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.repeat.tooltip}" />
+                                <ComboBox Grid.Row="0" Grid.Column="3" SelectedItem="{Binding Repeat}" ItemsSource="{Binding RepeatModeValues}" ToolTip.Tip="{loc:Tr editor.repeat.tooltip}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={x:Static loc:EnumTranslationConverter.Instance}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
 
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{loc:Tr editor.jitter.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.jitter.tooltip}" />
-                            <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding JitterMs}" Minimum="0" Maximum="60000" ToolTip.Tip="{loc:Tr editor.jitter.tooltip}" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Tr editor.interval.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.interval.tooltip}" />
+                                <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding BaseIntervalMs}" Minimum="10" Maximum="600000" ToolTip.Tip="{loc:Tr editor.interval.tooltip}" />
+
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{loc:Tr editor.jitter.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr editor.jitter.tooltip}" />
+                                <NumericUpDown Grid.Row="1" Grid.Column="3" Value="{Binding JitterMs}" Minimum="0" Maximum="60000" ToolTip.Tip="{loc:Tr editor.jitter.tooltip}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </WrapPanel>
 
                 <WrapPanel Orientation="Horizontal">
                     <Button Content="{loc:Tr editor.addPoint}" Command="{Binding AddPointCommand}" IsEnabled="{Binding !IsCapturingPoint}" Classes="primary" ToolTip.Tip="{loc:Tr editor.addPoint.tooltip}" Margin="0,0,10,6" />
@@ -132,28 +158,6 @@
                     <TextBlock Text="{loc:Tr editor.capturingPoint.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
                                IsVisible="{Binding IsCapturingPoint}" FontStyle="Italic" Foreground="{DynamicResource ThemeInkDimBrush}" />
                 </WrapPanel>
-
-                <Border Classes="card">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="{loc:Tr hotkeys.header}" Classes="cardTitle" Margin="0" />
-                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{loc:Tr hotkey.start.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr hotkey.start.tooltip}" Margin="0,0,10,6" Classes="fieldLabel" />
-                            <TextBlock Text="{Binding HotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,6" />
-                            <Button Content="{loc:Tr hotkey.set}" Command="{Binding SetHotkeyCommand}" IsEnabled="{Binding !IsCapturingHotkey}" Classes="ghost" Margin="0,0,10,6" />
-                            <Button Content="{loc:Tr hotkey.cancel}" Command="{Binding CancelHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingHotkey}" Classes="ghost" Margin="0,0,10,6" />
-                            <TextBlock Text="{loc:Tr hotkey.capturing.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
-                                       IsVisible="{Binding IsCapturingHotkey}" FontStyle="Italic" Foreground="{DynamicResource ThemeInkDimBrush}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{loc:Tr hotkey.stop.label}" VerticalAlignment="Center" ToolTip.Tip="{loc:Tr hotkey.stop.tooltip}" Margin="0,0,10,6" Classes="fieldLabel" />
-                            <TextBlock Text="{Binding StopHotkeyDisplayText}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,6" />
-                            <Button Content="{loc:Tr hotkey.set}" Command="{Binding SetStopHotkeyCommand}" IsEnabled="{Binding !IsCapturingStopHotkey}" Classes="ghost" Margin="0,0,10,6" />
-                            <Button Content="{loc:Tr hotkey.cancel}" Command="{Binding CancelStopHotkeyCaptureCommand}" IsVisible="{Binding IsCapturingStopHotkey}" Classes="ghost" Margin="0,0,10,6" />
-                            <TextBlock Text="{loc:Tr hotkey.capturing.hint}" VerticalAlignment="Center" Margin="0,0,10,6"
-                                       IsVisible="{Binding IsCapturingStopHotkey}" FontStyle="Italic" Foreground="{DynamicResource ThemeInkDimBrush}" />
-                        </WrapPanel>
-                    </StackPanel>
-                </Border>
 
                 <Expander Header="{loc:Tr humanization.header}" ToolTip.Tip="{loc:Tr humanization.header.tooltip}">
                     <StackPanel Spacing="8" Margin="0,8,0,0">

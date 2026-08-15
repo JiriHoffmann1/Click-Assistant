@@ -72,6 +72,31 @@
     <Setter Property="CornerRadius" Value="8" />
     <Setter Property="Padding" Value="4" />
   </Style>
+  <!-- RepeatButton derives from Button, so the generic Button style above (its own Background/
+       BorderBrush/BorderThickness/CornerRadius) was also landing on the up/down spinner buttons
+       inside NumericUpDown's template. Fluent's own template only rounds the NumericUpDown's
+       root border on the text-box side and leaves the spinner side square, relying on
+       PART_IncreaseButton/PART_DecreaseButton to each round just their own outer corner - our
+       generic Button style was overriding that with a uniform CornerRadius on all four corners
+       of each tiny button, which broke the curve where it meets the root border (looked like a
+       chunk of the rounded edge next to the down-arrow was missing). Give the spinner buttons a
+       transparent, borderless surface again, but restore the single-corner rounding so the right
+       edge reads as one continuous rounded rectangle. -->
+  <Style Selector="NumericUpDown /template/ RepeatButton">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="6,0" />
+  </Style>
+  <Style Selector="NumericUpDown /template/ RepeatButton#PART_IncreaseButton">
+    <Setter Property="CornerRadius" Value="0,7,0,0" />
+  </Style>
+  <Style Selector="NumericUpDown /template/ RepeatButton#PART_DecreaseButton">
+    <Setter Property="CornerRadius" Value="0,0,7,0" />
+  </Style>
+  <Style Selector="NumericUpDown /template/ RepeatButton:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource ThemeSurface2Brush}" />
+  </Style>
 
   <!-- ===================== ComboBox ===================== -->
   <Style Selector="ComboBox">
