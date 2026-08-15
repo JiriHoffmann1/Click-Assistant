@@ -10,17 +10,34 @@
         x:DataType="vm:MainWindowViewModel"
         Title="{loc:Tr app.title}"
         Background="{DynamicResource ThemeBackgroundBrush}"
-        Width="960" Height="640" MinWidth="900" MinHeight="560">
+        Width="960" Height="640" MinWidth="900" MinHeight="560"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        ExtendClientAreaTitleBarHeightHint="34">
 
-    <Grid ColumnDefinitions="Auto,*" Margin="14">
+    <Grid RowDefinitions="Auto,*">
+        <!-- Custom brass title bar: the OS keeps drawing the min/max/close buttons
+             (PreferSystemChrome), we draw everything left of them ourselves so the
+             accent color actually reaches the strip the window title lives in. -->
+        <Border Grid.Row="0" Height="34" Background="{DynamicResource ThemeTitleBarBrush}"
+                PointerPressed="TitleBar_PointerPressed">
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="16,0,0,0" VerticalAlignment="Center">
+                <Image x:Name="TitleBarIcon" Width="16" Height="16" />
+                <TextBlock Text="{loc:Tr app.title}" FontWeight="SemiBold" FontSize="12.5"
+                           Foreground="{DynamicResource ThemeAccentInkBrush}" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+    <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="14">
         <!-- Seznam profilů -->
         <DockPanel Grid.Column="0" MinWidth="180" MaxWidth="320" Margin="0,0,10,0">
             <TextBlock DockPanel.Dock="Top" Text="{loc:Tr profiles.header}" Classes="cardTitle" Margin="4,0,0,8" />
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
                 <Button Content="{loc:Tr profiles.new}" Command="{Binding NewProfileCommand}" Classes="ghost" ToolTip.Tip="{loc:Tr profiles.new.tooltip}" />
+                <Button Content="{loc:Tr toolbar.save}" Command="{Binding SaveProfileCommand}" ToolTip.Tip="{loc:Tr toolbar.save.tooltip}" />
                 <Button Content="{loc:Tr profiles.delete}" Command="{Binding DeleteProfileCommand}" Classes="ghost" ToolTip.Tip="{loc:Tr profiles.delete.tooltip}" />
             </StackPanel>
-            <ListBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
+            <ListBox Classes="profiles" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
@@ -171,5 +188,6 @@
             </Grid>
         </DockPanel>
         </ScrollViewer>
+    </Grid>
     </Grid>
 </Window>

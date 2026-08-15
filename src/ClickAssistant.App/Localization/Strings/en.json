@@ -51,8 +51,8 @@
   "hotkey.capturing.hint": "Press a key combination…",
   "hotkey.notSet": "Not set",
 
-  "humanization.header": "Humanization (anti-detection mode)",
-  "humanization.header.tooltip": "A set of options that make mouse movement and clicking less robotically regular and harder to recognize as automation.",
+  "humanization.header": "Humanization (human-like movement)",
+  "humanization.header.tooltip": "A set of options that make mouse movement and clicking feel more natural and closer to real human input, instead of a perfectly regular robotic pattern.",
   "humanization.enabled": "Enable humanization",
   "humanization.enabled.tooltip": "Enables random offset of the click point and, optionally, curved cursor movement instead of an exact instant jump.",
   "humanization.positionJitter.label": "Position jitter (px):",

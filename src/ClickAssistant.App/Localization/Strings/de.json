@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "Drücke eine Tastenkombination…",
   "hotkey.notSet": "Nicht festgelegt",
 
-  "humanization.header": "Humanisierung (Anti-Erkennungsmodus)",
-  "humanization.header.tooltip": "Eine Reihe von Optionen, die Mausbewegung und Klicken weniger mechanisch regelmäßig und schwerer als Automatisierung erkennbar machen.",
+  "humanization.header": "Humanisierung (menschenähnliche Bewegung)",
+  "humanization.header.tooltip": "Eine Reihe von Optionen, die Mausbewegung und Klicken natürlicher wirken lassen, näher an echter menschlicher Eingabe, statt einem perfekt regelmäßigen, robotischen Muster.",
   "humanization.enabled": "Humanisierung aktivieren",
   "humanization.enabled.tooltip": "Aktiviert die zufällige Verschiebung des Klickpunkts und optional eine kurvige Cursorbewegung anstelle eines exakten sofortigen Sprungs.",
   "humanization.positionJitter.label": "Positionsstreuung (px):",

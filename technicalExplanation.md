@@ -818,8 +818,8 @@ customOrder, rng)`.
 
 ## B.7 Humanizace – jitter a Bézierův pohyb
 
-Cíl: aby appka neklikala "roboticky" na milimetr přesně ve stejném intervalu (běžný způsob, jak anti-cheat/
-anti-bot systémy detekují autoclickery).
+Cíl: aby appka neklikala "roboticky" na milimetr přesně ve stejném intervalu, ale aby pohyb a časování
+připomínaly to, jak vypadá vstup od skutečného člověka.
 
 ### B.7.1 `TimingJitter` (`Engine/Jitter/TimingJitter.cs`)
 Přidá náhodnou odchylku k intervalu mezi kliky: `baseMs + náhodné číslo v rozsahu ±jitterMs`, s tvrdou

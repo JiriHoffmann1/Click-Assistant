@@ -51,8 +51,8 @@
   "hotkey.capturing.hint": "Stiskni kombinaci kláves…",
   "hotkey.notSet": "Nenastaveno",
 
-  "humanization.header": "Humanizace (anti-detekční mód)",
-  "humanization.header.tooltip": "Sada voleb, které dělají pohyb myši a klikání méně roboticky pravidelné a hůř rozpoznatelné jako automatizace.",
+  "humanization.header": "Humanizace (lidský pohyb)",
+  "humanization.header.tooltip": "Sada voleb, které dělají pohyb myši a klikání přirozenější a víc podobné tomu, jak vypadá vstup od skutečného člověka, místo dokonale pravidelného robotického vzoru.",
   "humanization.enabled": "Zapnout humanizaci",
   "humanization.enabled.tooltip": "Zapne náhodný posun bodu kliknutí a volitelně zakřivený pohyb kurzoru místo přesného okamžitého skoku.",
   "humanization.positionJitter.label": "Rozptyl pozice (px):",

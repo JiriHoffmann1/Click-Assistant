@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "Nhấn tổ hợp phím…",
   "hotkey.notSet": "Chưa thiết lập",
 
-  "humanization.header": "Nhân hóa (chế độ chống phát hiện)",
-  "humanization.header.tooltip": "Một tập hợp các tùy chọn khiến chuyển động chuột và nhấp chuột ít đều đặn một cách máy móc và khó nhận ra là tự động hóa hơn.",
+  "humanization.header": "Nhân hóa (chuyển động giống con người)",
+  "humanization.header.tooltip": "Một tập hợp các tùy chọn giúp chuyển động chuột và nhấp chuột tự nhiên hơn, gần với thao tác thực của con người hơn, thay vì một khuôn mẫu máy móc đều đặn hoàn hảo.",
   "humanization.enabled": "Bật nhân hóa",
   "humanization.enabled.tooltip": "Bật độ lệch ngẫu nhiên của điểm nhấp và, tùy chọn, chuyển động con trỏ theo đường cong thay vì bước nhảy tức thời chính xác.",
   "humanization.positionJitter.label": "Độ dao động vị trí (px):",

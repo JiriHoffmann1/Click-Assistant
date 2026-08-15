@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "Bonyeza mchanganyiko wa vitufe…",
   "hotkey.notSet": "Haijawekwa",
 
-  "humanization.header": "Uwanadamu (hali ya kuzuia ugunduzi)",
-  "humanization.header.tooltip": "Kikundi cha chaguo kinachofanya mwendo wa kipanya na kubofya kuwa si sawia kimekaniki na kugumu kutambulika kama otomatiki.",
+  "humanization.header": "Uwanadamu (mwendo kama wa binadamu)",
+  "humanization.header.tooltip": "Kikundi cha chaguo kinachofanya mwendo wa kipanya na kubofya kuhisi asili zaidi na karibu na mwingiliano halisi wa binadamu, badala ya mfumo wa kimitambo ulio sawia kikamilifu.",
   "humanization.enabled": "Washa uwanadamu",
   "humanization.enabled.tooltip": "Huwasha mhamo usio na mpangilio wa kituo cha kubofya na, kwa hiari, mwendo wa mviringo wa kishale badala ya mruko wa papo hapo sahihi.",
   "humanization.positionJitter.label": "Mtetemo wa nafasi (px):",

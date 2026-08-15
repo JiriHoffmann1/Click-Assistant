@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "Pressione uma combinação de teclas…",
   "hotkey.notSet": "Não definida",
 
-  "humanization.header": "Humanização (modo anti-detecção)",
-  "humanization.header.tooltip": "Um conjunto de opções que tornam o movimento do mouse e os cliques menos regularmente mecânicos e mais difíceis de reconhecer como automação.",
+  "humanization.header": "Humanização (movimento humano)",
+  "humanization.header.tooltip": "Um conjunto de opções que tornam o movimento do mouse e os cliques mais naturais, mais próximos de uma entrada humana real, em vez de um padrão robótico perfeitamente regular.",
   "humanization.enabled": "Ativar humanização",
   "humanization.enabled.tooltip": "Ativa o deslocamento aleatório do ponto de clique e, opcionalmente, o movimento curvo do cursor em vez de um salto instantâneo exato.",
   "humanization.positionJitter.label": "Variação de posição (px):",

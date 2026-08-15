@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "Bir tuş kombinasyonuna basın…",
   "hotkey.notSet": "Ayarlanmadı",
 
-  "humanization.header": "İnsanileştirme (algılama karşıtı mod)",
-  "humanization.header.tooltip": "Fare hareketini ve tıklamayı mekanik olarak daha az düzenli ve otomasyon olarak tanınması daha zor hale getiren bir seçenekler kümesi.",
+  "humanization.header": "İnsanileştirme (insan benzeri hareket)",
+  "humanization.header.tooltip": "Fare hareketini ve tıklamayı, mükemmel düzenli robotik bir örüntü yerine, daha doğal ve gerçek bir insan girdisine daha yakın hale getiren bir seçenekler kümesi.",
   "humanization.enabled": "İnsanileştirmeyi etkinleştir",
   "humanization.enabled.tooltip": "Kesin anlık bir sıçrama yerine tıklama noktasının rastgele kaymasını ve isteğe bağlı olarak eğrisel imleç hareketini etkinleştirir.",
   "humanization.positionJitter.label": "Konum titreşimi (px):",

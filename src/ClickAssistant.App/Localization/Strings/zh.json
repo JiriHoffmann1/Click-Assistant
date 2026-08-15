@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "请按下组合键…",
   "hotkey.notSet": "未设置",
 
-  "humanization.header": "人性化（反检测模式）",
-  "humanization.header.tooltip": "一组选项，使鼠标移动和点击不那么机械规律，更难被识别为自动化。",
+  "humanization.header": "人性化（类人动作）",
+  "humanization.header.tooltip": "一组选项，让鼠标移动和点击更自然，更接近真实人类的操作，而不是完全规律的机械模式。",
   "humanization.enabled": "启用人性化",
   "humanization.enabled.tooltip": "启用点击位置的随机偏移，并可选择使用曲线光标移动代替精确的瞬间跳转。",
   "humanization.positionJitter.label": "位置抖动（像素）：",

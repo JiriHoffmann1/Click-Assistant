@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "Tekan kombinasi tombol…",
   "hotkey.notSet": "Belum diatur",
 
-  "humanization.header": "Humanisasi (mode anti-deteksi)",
-  "humanization.header.tooltip": "Sekumpulan opsi yang membuat gerakan mouse dan klik menjadi kurang teratur secara mekanis dan lebih sulit dikenali sebagai otomatisasi.",
+  "humanization.header": "Humanisasi (gerakan seperti manusia)",
+  "humanization.header.tooltip": "Sekumpulan opsi yang membuat gerakan mouse dan klik terasa lebih alami dan mendekati input manusia sungguhan, bukan pola robotik yang teratur sempurna.",
   "humanization.enabled": "Aktifkan humanisasi",
   "humanization.enabled.tooltip": "Mengaktifkan pergeseran acak titik klik dan, secara opsional, gerakan kursor melengkung alih-alih lompatan instan yang tepat.",
   "humanization.positionJitter.label": "Jitter posisi (px):",

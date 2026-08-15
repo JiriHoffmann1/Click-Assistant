@@ -1,6 +1,8 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using ClickAssistant.App.Localization;
@@ -39,8 +41,10 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
-        var appIcon = new WindowIcon(AssetLoader.Open(new Uri("avares://ClickAssistant.App/Assets/tray-icon.ico")));
+        var iconUri = new Uri("avares://ClickAssistant.App/Assets/tray-icon.ico");
+        var appIcon = new WindowIcon(AssetLoader.Open(iconUri));
         Icon = appIcon;
+        TitleBarIcon.Source = new Bitmap(AssetLoader.Open(iconUri));
 
         var screenInfoProvider = new AvaloniaScreenInfoProvider(this);
         var executor = new ClickSequenceExecutor(new SharpHookInputSimulator(), screenInfoProvider: screenInfoProvider);
@@ -102,6 +106,26 @@ public partial class MainWindow : Window
         Show();
         WindowState = WindowState.Normal;
         Activate();
+    }
+
+    /// <summary>
+    /// The custom brass title bar Border isn't a real OS title bar (ExtendClientAreaChromeHints
+    /// leaves window dragging/maximize entirely to us for whatever area we draw), so it has to
+    /// opt back into that behaviour by hand: left-drag moves the window, a double-click toggles
+    /// maximize, matching what the native title bar would have done.
+    /// </summary>
+    private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+
+        if (e.ClickCount == 2)
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+        else
+        {
+            BeginMoveDrag(e);
+        }
     }
 
     private void OnWindowClosing(object? sender, WindowClosingEventArgs e)

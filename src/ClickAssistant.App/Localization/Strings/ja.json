@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "キーの組み合わせを押してください…",
   "hotkey.notSet": "未設定",
 
-  "humanization.header": "ヒューマナイズ(検出回避モード)",
-  "humanization.header.tooltip": "マウスの動きとクリックを機械的に規則的でなくし、自動化として認識されにくくするオプション群。",
+  "humanization.header": "ヒューマナイズ(人間らしい動き)",
+  "humanization.header.tooltip": "マウスの動きとクリックを、完璧に規則的な機械的パターンではなく、より自然で実際の人間の入力に近づけるオプション群。",
   "humanization.enabled": "ヒューマナイズを有効化",
   "humanization.enabled.tooltip": "正確な瞬間ジャンプの代わりに、クリックポイントのランダムなずれと、任意でカーソルの曲線移動を有効にします。",
   "humanization.positionJitter.label": "位置ジッター (px):",

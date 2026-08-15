@@ -49,8 +49,8 @@
   "hotkey.capturing.hint": "키 조합을 누르세요…",
   "hotkey.notSet": "설정되지 않음",
 
-  "humanization.header": "휴머나이제이션(탐지 방지 모드)",
-  "humanization.header.tooltip": "마우스 움직임과 클릭을 기계적으로 덜 규칙적으로 만들어 자동화로 인식하기 어렵게 만드는 옵션 모음입니다.",
+  "humanization.header": "휴머나이제이션(사람 같은 움직임)",
+  "humanization.header.tooltip": "마우스 움직임과 클릭을 완벽하게 규칙적인 기계적 패턴 대신, 더 자연스럽고 실제 사람의 입력에 가깝게 만드는 옵션 모음입니다.",
   "humanization.enabled": "휴머나이제이션 활성화",
   "humanization.enabled.tooltip": "정확한 즉시 점프 대신 클릭 지점의 무작위 이동과, 선택적으로 곡선 커서 이동을 활성화합니다.",
   "humanization.positionJitter.label": "위치 지터 (px):",
