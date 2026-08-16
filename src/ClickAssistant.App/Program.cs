@@ -34,7 +34,9 @@ class Program
             return;
         }
 
-        StartActivationListener();
+        // Named EventWaitHandle is Windows-only in .NET (unlike named Mutex, which .NET emulates on
+        // Unix via a named semaphore) - the second-instance activation signal is a Windows-only nicety.
+        if (OperatingSystem.IsWindows()) StartActivationListener();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
@@ -59,6 +61,7 @@ class Program
         }
     }
 
+    [SupportedOSPlatform("windows")]
     private static void StartActivationListener()
     {
         var signal = new EventWaitHandle(false, EventResetMode.AutoReset, ActivateSignalName);
