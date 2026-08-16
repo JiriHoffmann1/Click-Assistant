@@ -115,7 +115,13 @@ jobs:
           mkdir -p dmg-root
           cp -r ClickAssistant.app dmg-root/
           ln -s /Applications dmg-root/Applications
-          hdiutil create -volname "Click Assistant" -srcfolder dmg-root -ov -format UDZO "ClickAssistant-${{ matrix.rid }}.dmg"
+
+          # hdiutil sizes its staging volume from `du`, which regularly undershoots for a
+          # self-contained .NET publish (many small files -> filesystem overhead); pad generously
+          # to avoid a spurious "No space left on device" on the *virtual* dmg volume.
+          SRC_MB=$(du -sm dmg-root | cut -f1)
+          SIZE_MB=$((SRC_MB * 2 + 100))
+          hdiutil create -volname "Click Assistant" -srcfolder dmg-root -ov -format UDZO -size "${SIZE_MB}m" "ClickAssistant-${{ matrix.rid }}.dmg"
 
       - uses: actions/upload-artifact@v4
         with:
