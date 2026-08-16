@@ -1,0 +1,138 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT: src/ClickAssistant.App/ClickAssistant.App.csproj
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Publish
+        run: >
+          dotnet publish ${{ env.PROJECT }} -c Release -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
+
+      - name: Zip
+        run: Compress-Archive -Path publish/ClickAssistant.App.exe -DestinationPath ClickAssistant-win-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClickAssistant-win-x64
+          path: ClickAssistant-win-x64.zip
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Publish
+        run: >
+          dotnet publish ${{ env.PROJECT }} -c Release -r linux-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
+
+      - name: Package
+        run: |
+          chmod +x publish/ClickAssistant.App
+          tar -czf ClickAssistant-linux-x64.tar.gz -C publish .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClickAssistant-linux-x64
+          path: ClickAssistant-linux-x64.tar.gz
+
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        rid: [osx-arm64, osx-x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Publish
+        run: >
+          dotnet publish ${{ env.PROJECT }} -c Release -r ${{ matrix.rid }}
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
+
+      - name: Build .app bundle
+        run: |
+          set -euo pipefail
+          APP="ClickAssistant.app"
+          rm -rf "$APP"
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+          cp -r publish/* "$APP/Contents/MacOS/"
+          chmod +x "$APP/Contents/MacOS/ClickAssistant.App"
+          cp packaging/macos/Info.plist "$APP/Contents/Info.plist"
+
+          ICONSET=AppIcon.iconset
+          mkdir -p "$ICONSET"
+          SRC=src/ClickAssistant.App/Assets/app-icon-source.png
+          sips -z 16 16     "$SRC" --out "$ICONSET/icon_16x16.png"
+          sips -z 32 32     "$SRC" --out "$ICONSET/icon_16x16@2x.png"
+          sips -z 32 32     "$SRC" --out "$ICONSET/icon_32x32.png"
+          sips -z 64 64     "$SRC" --out "$ICONSET/icon_32x32@2x.png"
+          sips -z 128 128   "$SRC" --out "$ICONSET/icon_128x128.png"
+          sips -z 256 256   "$SRC" --out "$ICONSET/icon_128x128@2x.png"
+          sips -z 256 256   "$SRC" --out "$ICONSET/icon_256x256.png"
+          sips -z 512 512   "$SRC" --out "$ICONSET/icon_256x256@2x.png"
+          sips -z 512 512   "$SRC" --out "$ICONSET/icon_512x512.png"
+          sips -z 1024 1024 "$SRC" --out "$ICONSET/icon_512x512@2x.png"
+          iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
+
+          # Ad-hoc signature so the bundle isn't flagged as "damaged" when unzipped;
+          # this is NOT Apple notarization, so first launch still needs a right-click > Open.
+          codesign --force --deep --sign - "$APP"
+
+      - name: Create dmg
+        run: |
+          set -euo pipefail
+          mkdir -p dmg-root
+          cp -r ClickAssistant.app dmg-root/
+          ln -s /Applications dmg-root/Applications
+          hdiutil create -volname "Click Assistant" -srcfolder dmg-root -ov -format UDZO "ClickAssistant-${{ matrix.rid }}.dmg"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClickAssistant-${{ matrix.rid }}-dmg
+          path: ClickAssistant-${{ matrix.rid }}.dmg
+
+  release:
+    needs: [build-windows, build-linux, build-macos]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
